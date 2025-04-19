@@ -3,7 +3,7 @@ import { Layout } from "./components/layout/Layout";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
-import SurveyDashboard from "./pages/SurveyDashboard";
+import SurveyDashboard from "./pages/Visualizations";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/dashboard" element={<SurveyDashboard />} />
+          <Route path="/visualizations" element={<SurveyDashboard />} />
         </Route>
       </Routes>
     </Router>
