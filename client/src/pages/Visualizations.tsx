@@ -4,6 +4,7 @@ import { SurveyResponse } from "../api/survey";
 import { GenderPieChart } from "../components/graphs/GenderPieChart";
 import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
+import { PriorityPerformanceChart } from "../components/graphs/PriorityPerformanceChart";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
@@ -74,17 +75,26 @@ const SurveyDashboard: React.FC = () => {
         Displaying data from {dataCount} survey responses
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <AgeHistogramChart data={surveyData} />
+          <PriorityPerformanceChart
+            data={surveyData}
+            title="Nashville Priority Performance Ratings (1-10 Scale)"
+          />
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <GenderPieChart data={surveyData} />
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <AgeHistogramChart data={surveyData} />
+          </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <EthnicityPieChart data={surveyData} />
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <GenderPieChart data={surveyData} />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <EthnicityPieChart data={surveyData} />
+          </div>
         </div>
       </div>
     </div>
