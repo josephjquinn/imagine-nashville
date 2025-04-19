@@ -2,11 +2,7 @@ import React from "react";
 import { BaseGraph } from "./BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "../../api/survey";
-import {
-  decodeSurveyResponses,
-  getQuestionText,
-  getAnswerText,
-} from "../../utils/surveyDecoder";
+import { getQuestionText, getAnswerText } from "../../utils/surveyDecoder";
 
 interface DemographicDistributionGraphProps {
   data: SurveyResponse[];
@@ -17,14 +13,12 @@ interface DemographicDistributionGraphProps {
 export const DemographicDistributionGraph: React.FC<
   DemographicDistributionGraphProps
 > = ({ data, field, title }) => {
-  // Decode the responses
-  const decodedResponses = decodeSurveyResponses(data);
-
   // Process data to get distribution with null checking
-  const distribution = decodedResponses.reduce((acc, response) => {
+  // Instead of decoding the entire dataset upfront, decode values as needed
+  const distribution = data.reduce((acc, response) => {
     const value = response[field];
     if (value !== undefined && value !== null && value !== "") {
-      const decodedValue = getAnswerText(field as string, value);
+      const decodedValue = getAnswerText(field as string, String(value));
       acc[decodedValue] = (acc[decodedValue] || 0) + 1;
     }
     return acc;

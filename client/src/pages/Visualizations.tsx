@@ -3,20 +3,20 @@ import { surveyService } from "../api/survey";
 import { ResponseTrendGraph } from "../components/graphs/ResponseTrendGraph";
 import { DemographicDistributionGraph } from "../components/graphs/DemographicDistributionGraph";
 import { SurveyResponse } from "../api/survey";
-import { decodeSurveyResponses } from "../utils/surveyDecoder";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
-  const [decodedData, setDecodedData] = useState<SurveyResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dataCount, setDataCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await surveyService.getSurveyResponses();
-        setSurveyData(data);
-        setDecodedData(decodeSurveyResponses(data));
+        setLoading(true);
+        const allData = await surveyService.getAllSurveyResponses();
+        setSurveyData(allData);
+        setDataCount(allData.length);
       } catch (err) {
         console.error("Error fetching survey data:", err);
         if (err instanceof Error) {
@@ -68,6 +68,10 @@ const SurveyDashboard: React.FC = () => {
       <h1 className="text-3xl font-bold mb-8 text-center">
         Survey Analytics Dashboard
       </h1>
+
+      <div className="mb-6 text-center text-gray-600">
+        Displaying data from {dataCount} survey responses
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white p-6 rounded-lg shadow-lg">
