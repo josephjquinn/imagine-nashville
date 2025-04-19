@@ -1,0 +1,95 @@
+import React from "react";
+import { BaseGraph } from "./BaseGraph";
+import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "../../api/survey";
+import {
+  decodeSurveyResponses,
+  getQuestionText,
+  getAnswerText,
+} from "../../utils/surveyDecoder";
+
+interface DemographicDistributionGraphProps {
+  data: SurveyResponse[];
+  field: keyof SurveyResponse;
+  title?: string;
+}
+
+export const DemographicDistributionGraph: React.FC<
+  DemographicDistributionGraphProps
+> = ({ data, field, title }) => {
+  // Decode the responses
+  const decodedResponses = decodeSurveyResponses(data);
+
+  // Process data to get distribution with null checking
+  const distribution = decodedResponses.reduce((acc, response) => {
+    const value = response[field];
+    if (value !== undefined && value !== null && value !== "") {
+      const decodedValue = getAnswerText(field as string, value);
+      acc[decodedValue] = (acc[decodedValue] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
+  const pieData = Object.entries(distribution)
+    .map(([name, value]) => ({
+      name,
+      value,
+    }))
+    .sort((a, b) => b.value - a.value); // Sort by value descending
+
+  // If no valid data, show empty state
+  if (pieData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-500">
+          No valid data available for {getQuestionText(field as string)}
+        </p>
+      </div>
+    );
+  }
+
+  const option: EChartsOption = {
+    title: {
+      text: title || getQuestionText(field as string),
+      left: "center",
+    },
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c} ({d}%)",
+    },
+    legend: {
+      orient: "vertical",
+      left: "left",
+      type: "scroll",
+    },
+    series: [
+      {
+        type: "pie",
+        radius: ["40%", "70%"],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+        label: {
+          show: false,
+          position: "center",
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: "18",
+            fontWeight: "bold",
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: pieData,
+      },
+    ],
+  };
+
+  return <BaseGraph option={option} />;
+};
