@@ -2,7 +2,7 @@ import React from "react";
 import { BaseGraph } from "./BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "../../api/survey";
-import { getQuestionText, getAnswerText } from "../../utils/surveyDecoder";
+import { getAnswerText } from "../../utils/surveyDecoder";
 
 interface GenderPieChartProps {
   data: SurveyResponse[];
@@ -13,7 +13,7 @@ export const GenderPieChart: React.FC<GenderPieChartProps> = ({
   data,
   title,
 }) => {
-  const field = "GENDER_GROUP";
+  const field = "Q105";
 
   // Process data to get distribution with null checking
   const distribution = data.reduce((acc, response) => {
