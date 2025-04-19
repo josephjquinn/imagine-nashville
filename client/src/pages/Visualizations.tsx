@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { surveyService } from "../api/survey";
 import { ResponseTrendGraph } from "../components/graphs/ResponseTrendGraph";
-import { DemographicDistributionGraph } from "../components/graphs/DemographicDistributionGraph";
 import { SurveyResponse } from "../api/survey";
+import { GenderPieChart } from "../components/graphs/GenderPieChart";
+import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
+import { RegionPieChart } from "../components/graphs/RegionPieChart";
+import { SatisfactionPieChart } from "../components/graphs/SatisfactionPieChart";
+import { FuturePlansPieChart } from "../components/graphs/FuturePlansPieChart";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
@@ -79,26 +83,23 @@ const SurveyDashboard: React.FC = () => {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <DemographicDistributionGraph
-            data={surveyData}
-            field="GENDER_GROUP"
-          />
+          <GenderPieChart data={surveyData} />
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <DemographicDistributionGraph data={surveyData} field="ETHNICITY" />
+          <EthnicityPieChart data={surveyData} />
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <DemographicDistributionGraph data={surveyData} field="Region_NEW" />
+          <RegionPieChart data={surveyData} />
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <DemographicDistributionGraph data={surveyData} field="Q100" />
+          <SatisfactionPieChart data={surveyData} />
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg">
-          <DemographicDistributionGraph data={surveyData} field="Q105" />
+          <FuturePlansPieChart data={surveyData} />
         </div>
       </div>
     </div>
