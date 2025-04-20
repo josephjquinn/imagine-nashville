@@ -1,32 +1,130 @@
 import React from "react";
 import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
+import { MobilityPrioritiesTable } from "../components/graphs/MobilityPrioritiesTable";
 import { useSurveyData } from "../hooks/useSurveyData";
 
 export const NeighborhoodBreakdown: React.FC = () => {
   const { data, isLoading, error } = useSurveyData();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex justify-center items-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Loading insights...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error loading data: {error.message}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex justify-center items-center">
+        <div className="text-center max-w-md mx-auto p-8 bg-white rounded-xl shadow-lg">
+          <div className="text-red-500 text-4xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Unable to Load Data
+          </h2>
+          <p className="text-gray-600 mb-4">{error.message}</p>
+          <p className="text-sm text-gray-500">
+            Please try refreshing the page. If the issue persists, contact
+            support.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Neighborhood Breakdown</h1>
-      <p className="text-gray-600 mb-8">
-        Explore how different neighborhoods prioritize mobility goals across
-        Nashville.
-      </p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-[95%] mx-auto px-2 sm:px-4 py-8">
+        <div className="max-w-4xl mx-auto text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            Nashville Neighborhood Insights
+          </h1>
+          <p className="text-xl text-gray-600 leading-relaxed">
+            Discover how mobility priorities and goals vary across Nashville's
+            diverse neighborhoods
+          </p>
+        </div>
 
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <MobilityGoalsByNeighborhoodChart
-          data={data}
-          title="Top Goals of Mobility by Neighborhood"
-          subtitle="Percentage of residents who selected each goal as their first priority"
-        />
+        <div className="space-y-8">
+          <section>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-gray-100 pb-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      Mobility Priorities by Neighborhood
+                    </h2>
+                    <p className="text-gray-600">
+                      Mean scores across different areas of Nashville
+                    </p>
+                  </div>
+                  <div className="mt-4 sm:mt-0">
+                    <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
+                      <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                      Highest scoring regions
+                    </div>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <MobilityPrioritiesTable data={data} />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-gray-100 pb-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      Mobility Goals Distribution
+                    </h2>
+                    <p className="text-gray-600">
+                      First priority selections across neighborhoods
+                    </p>
+                  </div>
+                  <div className="mt-4 sm:mt-0">
+                    <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
+                      <span className="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
+                      Priority distribution
+                    </div>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <MobilityGoalsByNeighborhoodChart
+                    data={data}
+                    title="Neighborhood Mobility Goals"
+                    subtitle="Distribution of primary mobility goals by neighborhood"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 max-w-4xl mx-auto">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Understanding the Data
+              </h3>
+              <div className="space-y-4 text-gray-600">
+                <p>
+                  This analysis combines mean priority scores and goal
+                  distributions to provide a comprehensive view of mobility
+                  preferences across Nashville's neighborhoods.
+                </p>
+                <p>
+                  The scores (1-10) indicate the importance residents place on
+                  each mobility aspect, while the distribution shows which goals
+                  are selected as top priorities.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
