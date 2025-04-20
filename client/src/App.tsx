@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
 import SurveyDashboard from "./pages/Visualizations";
+import { NeighborhoodBreakdown } from "./pages/NeighborhoodBreakdown";
 
 function App() {
   return (
@@ -14,6 +15,10 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/visualizations" element={<SurveyDashboard />} />
+          <Route
+            path="/neighborhood-breakdown"
+            element={<NeighborhoodBreakdown />}
+          />
         </Route>
       </Routes>
     </Router>

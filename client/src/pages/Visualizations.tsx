@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { surveyService } from "../api/survey";
+import React from "react";
 import { SurveyResponse } from "../api/survey";
 import { GenderPieChart } from "../components/graphs/GenderPieChart";
 import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
@@ -10,40 +9,18 @@ import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
+import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
+import { useSurveyData } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
-  const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [dataCount, setDataCount] = useState<number>(0);
+  const { data: surveyData, isLoading: loading, error } = useSurveyData();
+  const [dataCount, setDataCount] = React.useState<number>(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const allData = await surveyService.getAllSurveyResponses();
-        setSurveyData(allData);
-        setDataCount(allData.length);
-      } catch (err) {
-        console.error("Error fetching survey data:", err);
-        if (err instanceof Error) {
-          if (err.message.includes("Authentication error")) {
-            setError(
-              "Authentication error. Please check your Supabase credentials and try again."
-            );
-          } else {
-            setError(`Failed to fetch survey data: ${err.message}`);
-          }
-        } else {
-          setError("An unexpected error occurred while fetching survey data.");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  React.useEffect(() => {
+    if (surveyData) {
+      setDataCount(surveyData.length);
+    }
+  }, [surveyData]);
 
   if (loading) {
     return (
@@ -61,7 +38,7 @@ const SurveyDashboard: React.FC = () => {
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">
           <div className="text-red-500 text-4xl mb-4">⚠️</div>
-          <p className="text-red-500 text-lg mb-2">{error}</p>
+          <p className="text-red-500 text-lg mb-2">{error.message}</p>
           <p className="text-gray-600 text-sm">
             If this issue persists, please contact support.
           </p>
