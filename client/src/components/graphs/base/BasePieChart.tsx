@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "./BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "../../../api/survey";
 
 export interface PieChartData {
   name: string;

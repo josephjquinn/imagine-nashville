@@ -1,5 +1,5 @@
 import React from "react";
-import { BasePieChart } from "./BasePieChart";
+import { BasePieChart } from "./base/BasePieChart";
 import { SurveyResponse } from "../../api/survey";
 
 const ETHNICITY_MAPPINGS = {

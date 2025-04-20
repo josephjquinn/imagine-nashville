@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode } from "react";
 import { SurveyResponse } from "../../api/survey";
-import { BaseGraph } from "./BaseGraph";
+import { BaseGraph } from "./base/BaseGraph";
 import * as echarts from "echarts";
 
 interface MobilityGoalsProps {

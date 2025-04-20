@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BasePieChart } from "./BasePieChart";
+import { BasePieChart } from "./base/BasePieChart";
 import { SurveyResponse } from "../../api/survey";
 
 // Define the agreement scale with colors and mappings

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./BaseGraph";
+import { BaseGraph } from "./base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "../../api/survey";
 
