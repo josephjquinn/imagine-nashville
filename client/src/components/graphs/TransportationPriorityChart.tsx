@@ -41,12 +41,8 @@ interface TransportationPriorityChartProps {
 
 export const TransportationPriorityChart: React.FC<
   TransportationPriorityChartProps
-> = ({
-  data,
-  title = "Public Transportation Priority",
-  subtitle = "To what extent do you agree with the statement: Investing in city-wide public transportation is an important priority for Nashville?",
-}) => {
-  const getAnswerText = (field: string, value: string): string => {
+> = ({ data, title = "Public Transportation Priority" }) => {
+  const getAnswerText = (value: string): string => {
     return (
       TRANSPORTATION_MAPPINGS[value as keyof typeof TRANSPORTATION_MAPPINGS] ||
       value

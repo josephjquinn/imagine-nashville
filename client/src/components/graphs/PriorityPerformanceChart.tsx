@@ -128,18 +128,6 @@ export const PriorityPerformanceChart: React.FC<
     );
   }
 
-  // Calculate appropriate left grid margin
-  const calculateLeftMargin = () => {
-    // Fixed larger margin to accommodate text
-    return 300; // Simple fixed value that gives plenty of room
-  };
-
-  // Calculate appropriate width for y-axis labels
-  const calculateYAxisLabelWidth = () => {
-    // Fixed width for labels
-    return 250; // Simple fixed value that gives plenty of room
-  };
-
   const option: EChartsOption = {
     title: [
       {
@@ -257,13 +245,6 @@ export const PriorityPerformanceChart: React.FC<
       },
     ],
   };
-
-  // Calculate dynamic height based on number of items
-  const calculateChartHeight = () => {
-    // Base height plus height per item
-    return Math.max(500, priorityRatings.length * 35 + 150);
-  };
-
   return <BaseGraph option={option} style={{ height: "600px" }} />;
 };
 

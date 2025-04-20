@@ -3,41 +3,6 @@ import { BaseGraph } from "./base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "../../api/survey";
 
-// Define the negative impact categories
-const NEGATIVE_IMPACT_CATEGORIES = [
-  { id: "high_cost", label: "High cost of living" },
-  { id: "housing", label: "Lack of affordable housing" },
-  { id: "education", label: "Poor quality of K-12 education" },
-  { id: "traffic", label: "Traffic congestion/Hard to get around" },
-  { id: "transportation", label: "Lack of public transportation" },
-  { id: "growth", label: "Increased crime/growth" },
-  { id: "homelessness", label: "Homelessness" },
-  { id: "jobs", label: "Few/low paying jobs/economic inequality" },
-  { id: "growth_management", label: "Too much growth/Not being managed well" },
-  { id: "housing_costs", label: "Increased housing/renting costs" },
-  { id: "opportunities", label: "Lack of opportunities for young people" },
-  { id: "community", label: "Lack of community/engagement" },
-  { id: "walkability", label: "Walkability issues" },
-];
-
-// Field mapping for negative impacts from the survey
-// This would need to be updated based on the actual survey data structure
-const NEGATIVE_IMPACT_FIELDS = {
-  Q_DISLIKE_1: "High cost of living",
-  Q_DISLIKE_2: "Lack of affordable housing",
-  Q_DISLIKE_3: "Poor quality of K-12 education",
-  Q_DISLIKE_4: "Traffic congestion",
-  Q_DISLIKE_5: "Lack of public transportation",
-  Q_DISLIKE_6: "Increased crime/growth",
-  Q_DISLIKE_7: "Homelessness",
-  Q_DISLIKE_8: "Few/low paying jobs",
-  Q_DISLIKE_9: "Too much growth",
-  Q_DISLIKE_10: "Increased housing costs",
-  Q_DISLIKE_11: "Lack of opportunities",
-  Q_DISLIKE_12: "Lack of community",
-  Q_DISLIKE_13: "Walkability issues",
-};
-
 // Fields from the image provided (Q405)
 const Q405_FIELDS = [
   { field: "Q405_1", label: "High cost of living" },
@@ -239,7 +204,7 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
       {
         name: "Greatest Personal Impact",
         type: "bar",
-        data: negativeImpactsData.map((item, index) => {
+        data: negativeImpactsData.map((item) => {
           return {
             value: item.greatestImpact,
             name: item.name,

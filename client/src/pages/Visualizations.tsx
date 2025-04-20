@@ -1,5 +1,4 @@
 import React from "react";
-import { SurveyResponse } from "../api/survey";
 import { GenderPieChart } from "../components/graphs/GenderPieChart";
 import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
@@ -9,7 +8,6 @@ import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
-import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
 import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
 import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
 import { useSurveyData } from "../hooks/useSurveyData";
