@@ -11,6 +11,7 @@ import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart"
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
 import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
 import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
+import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
 import { useSurveyData } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
@@ -59,6 +60,10 @@ const SurveyDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-8">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <QualityOfLifeLadderChart data={surveyData} />
+        </div>
+
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <NegativeImpactsChart
             data={surveyData}
