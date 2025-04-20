@@ -128,6 +128,18 @@ export const PriorityPerformanceChart: React.FC<
     );
   }
 
+  // Calculate appropriate left grid margin
+  const calculateLeftMargin = () => {
+    // Fixed larger margin to accommodate text
+    return 300; // Simple fixed value that gives plenty of room
+  };
+
+  // Calculate appropriate width for y-axis labels
+  const calculateYAxisLabelWidth = () => {
+    // Fixed width for labels
+    return 250; // Simple fixed value that gives plenty of room
+  };
+
   const option: EChartsOption = {
     title: [
       {
@@ -184,12 +196,13 @@ export const PriorityPerformanceChart: React.FC<
 
         return tooltipContent;
       },
+      confine: true,
     },
     grid: {
-      left: 150,
-      right: 20,
+      left: "45%", // Increase to give more room for labels
+      right: "5%",
       bottom: 30,
-      top: 80, // Increased to make room for subtitle
+      top: 80,
       containLabel: false,
     },
     xAxis: {
@@ -207,9 +220,18 @@ export const PriorityPerformanceChart: React.FC<
     yAxis: {
       type: "category",
       data: priorityRatings.map((item) => item.priority),
+      axisLine: {
+        show: true,
+      },
+      axisTick: {
+        show: true,
+      },
       axisLabel: {
-        width: 120,
-        overflow: "break",
+        overflow: "none", // Don't truncate or wrap text
+        lineHeight: 16,
+        margin: 440,
+        align: "left",
+        fontSize: 12, // Ensure font size is appropriate
       },
     },
     series: [
@@ -227,13 +249,22 @@ export const PriorityPerformanceChart: React.FC<
           show: true,
           position: "right",
           formatter: "{c} / 10",
+          fontSize: 12,
+          distance: 5,
         },
-        barMaxWidth: 30,
+        barMaxWidth: 25,
+        barGap: "30%",
       },
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "500px" }} />;
+  // Calculate dynamic height based on number of items
+  const calculateChartHeight = () => {
+    // Base height plus height per item
+    return Math.max(500, priorityRatings.length * 35 + 150);
+  };
+
+  return <BaseGraph option={option} style={{ height: "600px" }} />;
 };
 
 // Helper function to generate color based on rating
