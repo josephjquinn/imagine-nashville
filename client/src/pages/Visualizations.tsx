@@ -5,6 +5,7 @@ import { GenderPieChart } from "../components/graphs/GenderPieChart";
 import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
 import { PriorityPerformanceChart } from "../components/graphs/PriorityPerformanceChart";
+import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
@@ -86,6 +87,10 @@ const SurveyDashboard: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <AgeHistogramChart data={surveyData} />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <BelongingBarChart data={surveyData} />
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
