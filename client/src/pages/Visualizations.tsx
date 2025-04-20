@@ -10,6 +10,7 @@ import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChar
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
 import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
+import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
 import { useSurveyData } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
@@ -110,6 +111,10 @@ const SurveyDashboard: React.FC = () => {
               title="Is Nashville's Growth Making Things Better or Worse?"
               subtitle="Residents' perceptions of Nashville's rapid growth"
             />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <TransportationPriorityChart data={surveyData} />
           </div>
         </div>
       </div>
