@@ -10,6 +10,7 @@ import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChar
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
 import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
+import { HousingGoalsByNeighborhoodChart } from "../components/graphs/HousingGoalsByNeighborhood";
 import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
 import { useSurveyData } from "../hooks/useSurveyData";
 
@@ -85,6 +86,14 @@ const SurveyDashboard: React.FC = () => {
           <PriorityPerformanceChart
             data={surveyData}
             title="Nashville Priority Performance Ratings (1-10 Scale)"
+          />
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <HousingGoalsByNeighborhoodChart
+            data={surveyData}
+            title="Housing Goals by Neighborhood"
+            subtitle="Distribution of primary housing goals by neighborhood"
           />
         </div>
 
