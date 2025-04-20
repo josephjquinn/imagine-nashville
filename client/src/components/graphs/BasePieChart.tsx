@@ -1,0 +1,128 @@
+import React, { useMemo } from "react";
+import { BaseGraph } from "./BaseGraph";
+import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "../../api/survey";
+
+export interface PieChartData {
+  name: string;
+  value: number;
+  color?: string;
+}
+
+export interface BasePieChartProps {
+  data: SurveyResponse[];
+  field: string;
+  title: string;
+  emptyStateMessage?: string;
+  getAnswerText: (field: string, value: string) => string;
+  customColors?: string[];
+  radius?: [string, string];
+  showLegend?: boolean;
+  legendPosition?: "left" | "right" | "top" | "bottom";
+  tooltipFormatter?: (params: any) => string;
+}
+
+export const BasePieChart: React.FC<BasePieChartProps> = ({
+  data,
+  field,
+  title,
+  emptyStateMessage = "No valid data available",
+  getAnswerText,
+  customColors,
+  radius = ["40%", "70%"],
+  showLegend = true,
+  legendPosition = "left",
+  tooltipFormatter,
+}) => {
+  const processedData = useMemo(() => {
+    const distribution = data.reduce((acc, response) => {
+      const value = response[field];
+      if (value !== undefined && value !== null && value !== "") {
+        const decodedValue = getAnswerText(field, String(value));
+        acc[decodedValue] = (acc[decodedValue] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    return Object.entries(distribution)
+      .map(([name, value]) => ({
+        name,
+        value,
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [data, field, getAnswerText]);
+
+  if (processedData.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-500">{emptyStateMessage}</p>
+      </div>
+    );
+  }
+
+  const option: EChartsOption = {
+    title: {
+      text: title,
+      left: "center",
+    },
+    tooltip: {
+      trigger: "item",
+      formatter: tooltipFormatter || "{b}: {c} ({d}%)",
+    },
+    legend: showLegend
+      ? {
+          orient:
+            legendPosition === "left" || legendPosition === "right"
+              ? "vertical"
+              : "horizontal",
+          [legendPosition]:
+            legendPosition === "left" || legendPosition === "right"
+              ? 10
+              : "center",
+          type: "scroll",
+          textStyle: {
+            width:
+              legendPosition === "left" || legendPosition === "right"
+                ? 140
+                : undefined,
+            overflow: "break",
+            lineHeight: 14,
+            fontSize: 11,
+          },
+          backgroundColor: "rgba(0,0,0,0.03)",
+          padding: [10, 10, 10, 10],
+          borderRadius: 5,
+        }
+      : undefined,
+    series: [
+      {
+        type: "pie",
+        radius,
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: "#fff",
+          borderWidth: 2,
+          color: customColors ? undefined : undefined,
+        },
+        label: {
+          show: false,
+          position: "center",
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: "18",
+            fontWeight: "bold",
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: processedData,
+      },
+    ],
+  };
+
+  return <BaseGraph option={option} />;
+};

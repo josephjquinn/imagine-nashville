@@ -106,11 +106,7 @@ const SurveyDashboard: React.FC = () => {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <GrowthPerceptionChart
-              data={surveyData}
-              title="Is Nashville's Growth Making Things Better or Worse?"
-              subtitle="Residents' perceptions of Nashville's rapid growth"
-            />
+            <GrowthPerceptionChart data={surveyData} />
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">

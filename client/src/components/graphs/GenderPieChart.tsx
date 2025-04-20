@@ -1,6 +1,5 @@
 import React from "react";
-import { BaseGraph } from "./BaseGraph";
-import type { EChartsOption } from "echarts";
+import { BasePieChart } from "./BasePieChart";
 import { SurveyResponse } from "../../api/survey";
 import { getAnswerText } from "../../utils/surveyDecoder";
 
@@ -11,80 +10,15 @@ interface GenderPieChartProps {
 
 export const GenderPieChart: React.FC<GenderPieChartProps> = ({
   data,
-  title,
+  title = "Gender Distribution",
 }) => {
-  const field = "Q105";
-
-  // Process data to get distribution with null checking
-  const distribution = data.reduce((acc, response) => {
-    const value = response[field];
-    if (value !== undefined && value !== null && value !== "") {
-      const decodedValue = getAnswerText(field, String(value));
-      acc[decodedValue] = (acc[decodedValue] || 0) + 1;
-    }
-    return acc;
-  }, {} as Record<string, number>);
-
-  const pieData = Object.entries(distribution)
-    .map(([name, value]) => ({
-      name,
-      value,
-    }))
-    .sort((a, b) => b.value - a.value); // Sort by value descending
-
-  // If no valid data, show empty state
-  if (pieData.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">
-          No valid data available for Gender Distribution
-        </p>
-      </div>
-    );
-  }
-
-  const option: EChartsOption = {
-    title: {
-      text: title || "Gender Distribution",
-      left: "center",
-    },
-    tooltip: {
-      trigger: "item",
-      formatter: "{b}: {c} ({d}%)",
-    },
-    legend: {
-      orient: "vertical",
-      left: "left",
-      type: "scroll",
-    },
-    series: [
-      {
-        type: "pie",
-        radius: ["40%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 10,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: "18",
-            fontWeight: "bold",
-          },
-        },
-        labelLine: {
-          show: false,
-        },
-        data: pieData,
-      },
-    ],
-  };
-
-  return <BaseGraph option={option} />;
+  return (
+    <BasePieChart
+      data={data}
+      field="Q105"
+      title={title}
+      getAnswerText={getAnswerText}
+      emptyStateMessage="No valid data available for Gender Distribution"
+    />
+  );
 };

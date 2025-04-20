@@ -73,30 +73,11 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
     );
   }
 
-  // Calculate percentages for the subtitle display
-  const positivePercent = (
-    ((processedData.chartData[3].value + processedData.chartData[4].value) /
-      processedData.total) *
-    100
-  ).toFixed(1);
-
-  const negativePercent = (
-    ((processedData.chartData[0].value + processedData.chartData[1].value) /
-      processedData.total) *
-    100
-  ).toFixed(1);
-
-  const neutralPercent = (
-    (processedData.chartData[2].value / processedData.total) *
-    100
-  ).toFixed(1);
-
   // Create the chart configuration
   const option: EChartsOption = {
     title: {
       text: title,
       left: "center",
-      top: 0,
       textStyle: {
         fontSize: 16,
         fontWeight: "bold",
@@ -119,31 +100,37 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
         return `<div>
           <strong>${params.name}</strong><br/>
           Count: ${count}<br/>
-          Percentage: ${percentage}%
+          Percentage: ${percentage}%<br/>
+          Total Responses: ${processedData.total}
         </div>`;
       },
     },
     legend: {
+      type: "plain",
       orient: "vertical",
       left: 10,
       top: "center",
-      itemWidth: 25,
-      itemHeight: 14,
+      itemWidth: 15,
+      itemHeight: 10,
       textStyle: {
-        width: 170,
+        width: 140,
         overflow: "break",
-        lineHeight: 16,
+        lineHeight: 14,
+        fontSize: 11,
       },
+      backgroundColor: "rgba(0,0,0,0.03)",
+      padding: [10, 10, 10, 10],
+      borderRadius: 5,
     },
     series: [
       {
         name: "Growth Perception",
         type: "pie",
         radius: ["30%", "70%"],
-        center: ["60%", "50%"],
+        center: ["60%", "55%"],
         roseType: "radius",
         itemStyle: {
-          borderRadius: 5,
+          borderRadius: 10,
           borderColor: "#fff",
           borderWidth: 2,
         },
