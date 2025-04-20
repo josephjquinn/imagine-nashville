@@ -9,6 +9,7 @@ import { PriorityQuadrantChart } from "../components/graphs/PriorityQuadrantChar
 import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
+import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
@@ -124,6 +125,14 @@ const SurveyDashboard: React.FC = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <EthnicityPieChart data={surveyData} />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <GrowthPerceptionChart
+              data={surveyData}
+              title="Is Nashville's Growth Making Things Better or Worse?"
+              subtitle="Residents' perceptions of Nashville's rapid growth"
+            />
           </div>
         </div>
       </div>
