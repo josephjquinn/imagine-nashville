@@ -5,6 +5,7 @@ import { GenderPieChart } from "../components/graphs/GenderPieChart";
 import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
 import { PriorityPerformanceChart } from "../components/graphs/PriorityPerformanceChart";
+import { PriorityQuadrantChart } from "../components/graphs/PriorityQuadrantChart";
 import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
 
@@ -81,7 +82,14 @@ const SurveyDashboard: React.FC = () => {
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <InclusionRatingsChart
             data={surveyData}
-            title="Nashville Inclusion Ratings by Group (1-10 Scale)"
+            title="Who is Outside Looking In?"
+          />
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <PriorityQuadrantChart
+            data={surveyData}
+            title="Top Learnings...And Biggest Issues Going Unaddressed"
           />
         </div>
 
