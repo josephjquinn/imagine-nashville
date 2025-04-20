@@ -8,6 +8,7 @@ import { PriorityPerformanceChart } from "../components/graphs/PriorityPerforman
 import { PriorityQuadrantChart } from "../components/graphs/PriorityQuadrantChart";
 import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
+import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
@@ -79,6 +80,14 @@ const SurveyDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-8">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <NegativeImpactsChart
+            data={surveyData}
+            title="Most Significant Negative Impacts on Quality of Life"
+            subtitle="What residents dislike most about living and working in Nashville"
+          />
+        </div>
+
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <InclusionRatingsChart
             data={surveyData}
