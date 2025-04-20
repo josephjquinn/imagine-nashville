@@ -60,6 +60,8 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
     );
   }
 
+  const total = processedData.reduce((sum, item) => sum + item.value, 0);
+
   const option: EChartsOption = {
     title: {
       text: title,
@@ -67,7 +69,19 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
     },
     tooltip: {
       trigger: "item",
-      formatter: tooltipFormatter || "{b}: {c} ({d}%)",
+      formatter:
+        tooltipFormatter ||
+        function (params: any) {
+          const count = params.value;
+          const percentage =
+            total > 0 ? ((count / total) * 100).toFixed(1) : "0.0";
+          return `<div>
+          <strong>${params.name}</strong><br/>
+          Count: ${count}<br/>
+          Percentage: ${percentage}%<br/>
+          Total Responses: ${total}
+        </div>`;
+        },
     },
     legend: showLegend
       ? {
@@ -98,6 +112,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
       {
         type: "pie",
         radius,
+        center: ["50%", "55%"],
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 10,
@@ -106,18 +121,26 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
           color: customColors ? undefined : undefined,
         },
         label: {
-          show: false,
-          position: "center",
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: "18",
-            fontWeight: "bold",
+          show: true,
+          formatter: function (params: any) {
+            const percentage =
+              total > 0 ? ((params.value / total) * 100).toFixed(1) : "0.0";
+            return `${percentage}%`;
           },
+          fontSize: 14,
+          fontWeight: "bold",
         },
         labelLine: {
-          show: false,
+          show: true,
+          length: 15,
+          length2: 10,
+        },
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
         },
         data: processedData,
       },

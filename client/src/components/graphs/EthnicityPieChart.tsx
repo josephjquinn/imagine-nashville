@@ -1,7 +1,17 @@
 import React from "react";
 import { BasePieChart } from "./BasePieChart";
 import { SurveyResponse } from "../../api/survey";
-import { getAnswerText } from "../../utils/surveyDecoder";
+
+const ETHNICITY_MAPPINGS = {
+  "1": "White",
+  "2": "Black or African American",
+  "3": "Hispanic or Latino",
+  "4": "Asian",
+  "5": "Native American or Alaska Native",
+  "6": "Native Hawaiian or Pacific Islander",
+  "7": "Other",
+  "8": "Prefer not to say",
+};
 
 interface EthnicityPieChartProps {
   data: SurveyResponse[];
@@ -12,6 +22,12 @@ export const EthnicityPieChart: React.FC<EthnicityPieChartProps> = ({
   data,
   title = "Ethnicity Distribution",
 }) => {
+  const getAnswerText = (field: string, value: string): string => {
+    return (
+      ETHNICITY_MAPPINGS[value as keyof typeof ETHNICITY_MAPPINGS] || value
+    );
+  };
+
   return (
     <BasePieChart
       data={data}
