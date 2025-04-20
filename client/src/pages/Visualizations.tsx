@@ -6,6 +6,7 @@ import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
 import { PriorityPerformanceChart } from "../components/graphs/PriorityPerformanceChart";
 import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
+import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
 
 const SurveyDashboard: React.FC = () => {
   const [surveyData, setSurveyData] = useState<SurveyResponse[]>([]);
@@ -77,6 +78,13 @@ const SurveyDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-8">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <InclusionRatingsChart
+            data={surveyData}
+            title="Nashville Inclusion Ratings by Group (1-10 Scale)"
+          />
+        </div>
+
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <PriorityPerformanceChart
             data={surveyData}
