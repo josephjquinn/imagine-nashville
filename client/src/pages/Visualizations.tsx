@@ -13,7 +13,7 @@ import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderCh
 import { useSurveyData } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
-  const { data: surveyData, isLoading: loading, error } = useSurveyData();
+  const { data: surveyData, isLoading, error } = useSurveyData();
   const [dataCount, setDataCount] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -22,7 +22,7 @@ const SurveyDashboard: React.FC = () => {
     }
   }, [surveyData]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="text-center">

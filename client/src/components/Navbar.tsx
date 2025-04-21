@@ -16,11 +16,10 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { path: "/", label: "HOME" },
-    { path: "/about", label: "ABOUT" },
-    { path: "/contact", label: "CONTACT" },
     { path: "/visualizations", label: "VISUALIZATIONS" },
     { path: "/neighborhood-breakdown", label: "NEIGHBORHOOD BREAKDOWN" },
+    { path: "/about", label: "ABOUT" },
+    { path: "/contact", label: "CONTACT" },
   ];
 
   const isActivePath = (path: string) => location.pathname === path;
@@ -36,7 +35,7 @@ export function Navbar() {
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
               <span className="text-2xl font-bold text-black">
-                Imagine Nashville
+                Imagine Nashville Survey Report
               </span>
             </Link>
           </div>

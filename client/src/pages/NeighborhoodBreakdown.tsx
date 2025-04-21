@@ -15,10 +15,10 @@ export const NeighborhoodBreakdown: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div className="flex justify-center items-center h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading insights...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading survey data...</p>
         </div>
       </div>
     );
@@ -192,6 +192,32 @@ export const NeighborhoodBreakdown: React.FC = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-gray-100 pb-4">
                       <div>
                         <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                          Education Priorities by Neighborhood
+                        </h2>
+                        <p className="text-gray-600">
+                          Mean scores across different areas of Nashville
+                        </p>
+                      </div>
+                      <div className="mt-4 sm:mt-0">
+                        <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
+                          <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                          Highest scoring regions
+                        </div>
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <EducationPrioritiesTable data={data} />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-gray-100 pb-4">
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
                           Education Goals Distribution
                         </h2>
                         <p className="text-gray-600">
@@ -211,32 +237,6 @@ export const NeighborhoodBreakdown: React.FC = () => {
                         title="Neighborhood Education Goals"
                         subtitle="Distribution of primary education goals by neighborhood"
                       />
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-gray-100 pb-4">
-                      <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                          Education Priorities by Neighborhood
-                        </h2>
-                        <p className="text-gray-600">
-                          Mean scores across different areas of Nashville
-                        </p>
-                      </div>
-                      <div className="mt-4 sm:mt-0">
-                        <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
-                          <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                          Highest scoring regions
-                        </div>
-                      </div>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <EducationPrioritiesTable data={data} />
                     </div>
                   </div>
                 </div>
