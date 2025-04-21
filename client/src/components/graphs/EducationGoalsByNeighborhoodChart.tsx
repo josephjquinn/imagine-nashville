@@ -78,35 +78,102 @@ export const EducationGoalsByNeighborhoodChart: React.FC<
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    // Initialize data structures for counting responses
-    const totalResponses: Record<string, number> = {};
-    Object.keys(EDUCATION_GOALS).forEach((goal) => {
-      totalResponses[goal] = 0;
+    // Initialize data structures
+    const firstChoiceData: Record<string, Record<string, number>> = {};
+    const secondChoiceData: Record<string, Record<string, number>> = {};
+    const firstPriorityTotals: Record<string, number> = {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+    };
+    const secondPriorityTotals: Record<string, number> = {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+    };
+    let totalFirstPriorityResponses = 0;
+    let totalSecondPriorityResponses = 0;
+
+    // Process each neighborhood
+    NEIGHBORHOODS.forEach((neighborhood) => {
+      firstChoiceData[neighborhood] = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+      };
+      secondChoiceData[neighborhood] = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+      };
+
+      // Find the code for this neighborhood
+      const neighborhoodCode = Object.entries(NEIGHBORHOOD_CODE_MAP).find(
+        ([_, name]) => name === neighborhood
+      )?.[0];
+
+      if (!neighborhoodCode) return;
+
+      // Filter data for this neighborhood using the code
+      const neighborhoodData = data.filter(
+        (response) => response.Area_NEW === neighborhoodCode
+      );
+
+      // Count responses
+      neighborhoodData.forEach((response) => {
+        const firstPriority = String(response.Q650);
+        const secondPriority = String(response.Q655);
+
+        if (
+          firstPriority &&
+          Object.keys(EDUCATION_GOALS).includes(firstPriority)
+        ) {
+          firstChoiceData[neighborhood][firstPriority]++;
+          firstPriorityTotals[firstPriority]++;
+          totalFirstPriorityResponses++;
+        }
+
+        if (
+          secondPriority &&
+          Object.keys(EDUCATION_GOALS).includes(secondPriority)
+        ) {
+          secondChoiceData[neighborhood][secondPriority]++;
+          secondPriorityTotals[secondPriority]++;
+          totalSecondPriorityResponses++;
+        }
+      });
     });
 
-    let totalValidResponses = 0;
+    // Calculate percentages for first and second priorities separately
+    const firstPriorityPercentages: Record<string, string> = {};
+    const secondPriorityPercentages: Record<string, string> = {};
+    const goalValues: Record<string, number> = {};
 
-    // Count total responses for each goal
-    data.forEach((response) => {
-      const firstChoice = String(response.Q260_D);
-      if (firstChoice && Object.keys(EDUCATION_GOALS).includes(firstChoice)) {
-        totalResponses[firstChoice]++;
-        totalValidResponses++;
-      }
+    Object.keys(EDUCATION_GOALS).forEach((goalId) => {
+      const firstPercentage =
+        totalFirstPriorityResponses > 0
+          ? (firstPriorityTotals[goalId] / totalFirstPriorityResponses) * 100
+          : 0;
+      const secondPercentage =
+        totalSecondPriorityResponses > 0
+          ? (secondPriorityTotals[goalId] / totalSecondPriorityResponses) * 100
+          : 0;
+
+      firstPriorityPercentages[goalId] = `${Math.round(firstPercentage)}%`;
+      secondPriorityPercentages[goalId] = `${Math.round(secondPercentage)}%`;
+      goalValues[goalId] = firstPercentage;
     });
 
-    // Calculate percentages and find top choices
-    const percentages: Record<string, string> = {};
-    const values: Record<string, number> = {};
-
-    Object.keys(EDUCATION_GOALS).forEach((goal) => {
-      const percentage = (totalResponses[goal] / totalValidResponses) * 100;
-      percentages[goal] = `${Math.round(percentage)}%`;
-      values[goal] = percentage;
-    });
-
-    // Sort goals by percentage to find top choices
-    const sortedGoals = Object.entries(values)
+    // Find top two goals based on first priority
+    const sortedGoals = Object.entries(goalValues)
       .sort(([, a], [, b]) => b - a)
       .map(([id]) => id);
 
@@ -119,7 +186,7 @@ export const EducationGoalsByNeighborhoodChart: React.FC<
       ...Object.keys(EDUCATION_GOALS).map((goalId) => (
         <div key={goalId} className="flex flex-col items-center space-y-2">
           <div className="text-2xl font-bold text-red-600">
-            {percentages[goalId]}
+            {firstPriorityPercentages[goalId]}
           </div>
           <div className="text-sm font-medium text-gray-700 max-w-[200px]">
             {GOAL_LABELS[goalId]}
@@ -129,84 +196,38 @@ export const EducationGoalsByNeighborhoodChart: React.FC<
     ];
 
     // Prepare table rows
-    const rows = NEIGHBORHOODS.map((neighborhood) => {
-      // Find the code for this neighborhood
-      const neighborhoodCode = Object.entries(NEIGHBORHOOD_CODE_MAP).find(
-        ([_, name]) => name === neighborhood
-      )?.[0];
+    const rows = NEIGHBORHOODS.map((neighborhood) => [
+      <div className="font-medium text-sm text-gray-700">{neighborhood}</div>,
+      ...Object.keys(EDUCATION_GOALS).map((goalId) => {
+        const isTopChoice = goalId === topChoice;
+        const isSecondChoice = goalId === secondChoice;
 
-      if (!neighborhoodCode) return [];
-
-      // Filter data for this neighborhood
-      const neighborhoodData = data.filter(
-        (response) => response.Area_NEW === neighborhoodCode
-      );
-
-      // Count responses for this neighborhood
-      const neighborhoodResponses: Record<string, number> = {};
-      Object.keys(EDUCATION_GOALS).forEach((goal) => {
-        neighborhoodResponses[goal] = 0;
-      });
-
-      let neighborhoodTotal = 0;
-
-      neighborhoodData.forEach((response) => {
-        const firstChoice = String(response.Q260_D);
-        if (firstChoice && Object.keys(EDUCATION_GOALS).includes(firstChoice)) {
-          neighborhoodResponses[firstChoice]++;
-          neighborhoodTotal++;
-        }
-      });
-
-      // Find top choices for this neighborhood
-      const neighborhoodValues: Record<string, number> = {};
-      Object.keys(EDUCATION_GOALS).forEach((goal) => {
-        neighborhoodValues[goal] =
-          neighborhoodTotal > 0
-            ? (neighborhoodResponses[goal] / neighborhoodTotal) * 100
-            : 0;
-      });
-
-      const sortedNeighborhoodGoals = Object.entries(neighborhoodValues)
-        .sort(([, a], [, b]) => b - a)
-        .map(([id]) => id);
-
-      const neighborhoodTopChoice = sortedNeighborhoodGoals[0];
-      const neighborhoodSecondChoice = sortedNeighborhoodGoals[1];
-
-      return [
-        <div className="font-medium text-sm text-gray-700">{neighborhood}</div>,
-        ...Object.keys(EDUCATION_GOALS).map((goalId) => {
-          const isTopChoice = goalId === neighborhoodTopChoice;
-          const isSecondChoice = goalId === neighborhoodSecondChoice;
-
-          return (
-            <div className="flex justify-center space-x-4">
-              {isTopChoice && (
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">1</span>
-                  </div>
+        return (
+          <div className="flex justify-center space-x-4">
+            {isTopChoice && (
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">1</span>
                 </div>
-              )}
-              {isSecondChoice && (
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">2</span>
-                  </div>
+              </div>
+            )}
+            {isSecondChoice && (
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">2</span>
                 </div>
-              )}
-              {!isTopChoice && !isSecondChoice && <div className="w-8 h-8" />}
-            </div>
-          );
-        }),
-      ];
-    });
+              </div>
+            )}
+            {!isTopChoice && !isSecondChoice && <div className="w-8 h-8" />}
+          </div>
+        );
+      }),
+    ]);
 
     setTableData({
       headers,
       rows,
-      goalPercentages: percentages,
+      goalPercentages: firstPriorityPercentages,
       topChoice,
       secondChoice,
     });
