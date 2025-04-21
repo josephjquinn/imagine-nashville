@@ -243,31 +243,6 @@ export const NeighborhoodBreakdown: React.FC = () => {
               </section>
             </>
           )}
-
-          <section className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 max-w-4xl mx-auto">
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Understanding the Data
-              </h3>
-              <div className="space-y-4 text-gray-600">
-                <p>
-                  This analysis combines mean priority scores and goal
-                  distributions to provide a comprehensive view of{" "}
-                  {selectedType === "mobility"
-                    ? "mobility"
-                    : selectedType === "housing"
-                    ? "housing"
-                    : "education"}
-                  preferences across Nashville's neighborhoods.
-                </p>
-                <p>
-                  The scores (1-10) indicate the importance residents place on
-                  each aspect, while the distribution shows which goals are
-                  selected as top priorities.
-                </p>
-              </div>
-            </div>
-          </section>
         </div>
       </div>
     </div>
