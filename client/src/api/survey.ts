@@ -60,7 +60,6 @@ export const surveyService = {
   async getAllSurveyResponses(batchSize: number = 1000, orderBy: string = 'date', ascending: boolean = false) {
     try {
       let allData: SurveyResponse[] = [];
-      let hasMore = true;
       let currentPage = 0;
       
       // First get the total count
@@ -89,7 +88,6 @@ export const surveyService = {
           allData = [...allData, ...(data as SurveyResponse[])];
           currentPage++;
         } else {
-          hasMore = false;
           break;
         }
       }
