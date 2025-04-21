@@ -116,11 +116,7 @@ export const NeighborhoodBreakdown: React.FC = () => {
                       </div>
                     </div>
                     <div className="overflow-x-auto">
-                      <MobilityGoalsByNeighborhoodChart
-                        data={data}
-                        title="Neighborhood Mobility Goals"
-                        subtitle="Distribution of primary mobility goals by neighborhood"
-                      />
+                      <MobilityGoalsByNeighborhoodChart data={data} />
                     </div>
                   </div>
                 </div>
@@ -174,11 +170,7 @@ export const NeighborhoodBreakdown: React.FC = () => {
                       </div>
                     </div>
                     <div className="overflow-x-auto">
-                      <HousingGoalsByNeighborhoodChart
-                        data={data}
-                        title="Neighborhood Housing Goals"
-                        subtitle="Distribution of primary housing goals by neighborhood"
-                      />
+                      <HousingGoalsByNeighborhoodChart data={data} />
                     </div>
                   </div>
                 </div>
@@ -232,11 +224,7 @@ export const NeighborhoodBreakdown: React.FC = () => {
                       </div>
                     </div>
                     <div className="overflow-x-auto">
-                      <EducationGoalsByNeighborhoodChart
-                        data={data}
-                        title="Neighborhood Education Goals"
-                        subtitle="Distribution of primary education goals by neighborhood"
-                      />
+                      <EducationGoalsByNeighborhoodChart data={data} />
                     </div>
                   </div>
                 </div>
