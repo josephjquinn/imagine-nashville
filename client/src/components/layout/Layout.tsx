@@ -3,9 +3,9 @@ import { Outlet } from "react-router-dom";
 
 export function Layout() {
   return (
-    <div className="flex flex-col min-h-screen w-full bg-gray-50">
+    <div className="flex flex-col h-screen w-full bg-gray-50 overflow-hidden">
       <Navbar />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full pt-16 overflow-auto">
         <Outlet />
       </main>
       <footer className="w-full bg-white border-t border-gray-200">
