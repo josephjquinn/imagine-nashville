@@ -67,23 +67,14 @@ export const TransportationPriorityChart: React.FC<
       }
     });
 
-    // Prepare pie chart data format
-    const pieData = AGREEMENT_SCALE.map((item, index) => ({
-      name: item.label,
-      value: counts[index],
-      itemStyle: {
-        color: item.color,
-      },
-    }));
-
     return {
-      pieData,
       total,
+      hasData: total > 0,
     };
   }, [data]);
 
   // If no valid data, show empty state
-  if (processedData.total === 0) {
+  if (!processedData.hasData) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-500">

@@ -22,7 +22,7 @@ export const EthnicityPieChart: React.FC<EthnicityPieChartProps> = ({
   data,
   title = "Ethnicity Distribution",
 }) => {
-  const getAnswerText = (field: string, value: string): string => {
+  const getAnswerText = (value: string): string => {
     return (
       ETHNICITY_MAPPINGS[value as keyof typeof ETHNICITY_MAPPINGS] || value
     );

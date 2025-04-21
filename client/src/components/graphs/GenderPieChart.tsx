@@ -18,7 +18,7 @@ export const GenderPieChart: React.FC<GenderPieChartProps> = ({
   data,
   title = "Gender Distribution",
 }) => {
-  const getAnswerText = (field: string, value: string): string => {
+  const getAnswerText = (value: string): string => {
     return GENDER_MAPPINGS[value as keyof typeof GENDER_MAPPINGS] || value;
   };
 

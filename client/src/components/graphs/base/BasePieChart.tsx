@@ -14,7 +14,7 @@ export interface BasePieChartProps {
   field: string;
   title: string;
   emptyStateMessage?: string;
-  getAnswerText: (field: string, value: string) => string;
+  getAnswerText: (value: string) => string;
   customColors?: string[];
   radius?: [string, string];
   showLegend?: boolean;
@@ -38,7 +38,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
     const distribution = data.reduce((acc, response) => {
       const value = response[field];
       if (value !== undefined && value !== null && value !== "") {
-        const decodedValue = getAnswerText(field, String(value));
+        const decodedValue = getAnswerText(String(value));
         acc[decodedValue] = (acc[decodedValue] || 0) + 1;
       }
       return acc;
