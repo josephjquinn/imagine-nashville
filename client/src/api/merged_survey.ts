@@ -2,16 +2,10 @@ import { supabase } from "../lib/supabase";
 
 export interface SurveyResponse {
   XID: number;
-  date: string;
-  GENDER_GROUP: string;
-  ETHNICITY: string;
-  Region_NEW: string;
-  Area_NEW: string;
-  Neighborhood_New: string;
   [key: string]: any;
 }
 
-export const surveyService = {
+export const MergedSurveyService = {
   /**
    * Fetches all survey responses with pagination
    * @param page The page number (1-based)
@@ -24,10 +18,9 @@ export const surveyService = {
       const end = start + pageSize - 1;
 
       const { data, error, count } = await supabase
-        .from('survey_responses')
+        .from('merged_survey')
         .select('*', { count: 'exact' })
         .range(start, end)
-        .order('date', { ascending: false });
 
       if (error) {
         if (error.code === 'PGRST301') {
@@ -53,18 +46,16 @@ export const surveyService = {
   /**
    * Fetches all survey responses (useful for larger datasets)
    * @param batchSize Size of each batch to fetch (default: 1000)
-   * @param orderBy Field to order by (default: 'date')
-   * @param ascending Sort order (default: false = descending)
    * @returns Promise containing all survey responses
    */
-  async getAllSurveyResponses(batchSize: number = 1000, orderBy: string = 'date', ascending: boolean = false) {
+  async getAllSurveyResponses(batchSize: number = 1000) {
     try {
       let allData: SurveyResponse[] = [];
       let currentPage = 0;
       
       // First get the total count
       const { count } = await supabase
-        .from('survey_responses')
+        .from('merged_survey')
         .select('*', { count: 'exact', head: true });
       
       const totalRows = count || 0;
@@ -75,10 +66,9 @@ export const surveyService = {
         const end = start + batchSize - 1;
         
         const { data, error } = await supabase
-          .from('survey_responses')
+          .from('merged_survey')
           .select('*')
           .range(start, end)
-          .order(orderBy, { ascending });
           
         if (error) {
           throw new Error(`Error fetching survey responses: ${error.message}`);
@@ -107,7 +97,7 @@ export const surveyService = {
   async getSurveyResponseById(id: string) {
     try {
       const { data, error } = await supabase
-        .from('survey_responses')
+        .from('merged_survey')
         .select('*')
         .eq('XID', id)
         .single();
@@ -143,15 +133,13 @@ export const surveyService = {
     filters: Record<string, any> = {}, 
     page: number = 1, 
     pageSize: number = 100,
-    orderBy: string = 'date',
-    ascending: boolean = false
   ) {
     try {
       const start = (page - 1) * pageSize;
       const end = start + pageSize - 1;
       
       let query = supabase
-        .from('survey_responses')
+        .from('merged_survey')
         .select('*', { count: 'exact' });
 
       // Apply filters
@@ -164,7 +152,6 @@ export const surveyService = {
       // Apply pagination and ordering
       const { data, error, count } = await query
         .range(start, end)
-        .order(orderBy, { ascending });
 
       if (error) {
         if (error.code === 'PGRST301') {

@@ -10,10 +10,16 @@ import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart"
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
 import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
 import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
-import { useSurveyData } from "../hooks/useSurveyData";
+import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
-  const { data: surveyData, isLoading, error } = useSurveyData();
+  const [selectedSurveyType, setSelectedSurveyType] =
+    React.useState<SurveyType>("public");
+  const {
+    data: surveyData,
+    isLoading,
+    error,
+  } = useSurveyData(selectedSurveyType);
   const [dataCount, setDataCount] = React.useState<number>(0);
 
   React.useEffect(() => {
@@ -21,6 +27,12 @@ const SurveyDashboard: React.FC = () => {
       setDataCount(surveyData.length);
     }
   }, [surveyData]);
+
+  const handleSurveyTypeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedSurveyType(event.target.value as SurveyType);
+  };
 
   if (isLoading) {
     return (
@@ -49,12 +61,27 @@ const SurveyDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        Survey Analytics Dashboard
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Survey Analytics Dashboard</h1>
+        <div className="flex items-center space-x-4">
+          <label htmlFor="surveyType" className="text-gray-700">
+            Survey Type:
+          </label>
+          <select
+            id="surveyType"
+            value={selectedSurveyType}
+            onChange={handleSurveyTypeChange}
+            className="block w-48 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="public">Public Survey</option>
+            <option value="merged">Merged Survey</option>
+            <option value="formal">Formal Survey</option>
+          </select>
+        </div>
+      </div>
 
       <div className="mb-6 text-center text-gray-600">
-        Displaying data from {dataCount} survey responses
+        Displaying data from {dataCount} {selectedSurveyType} survey responses
       </div>
 
       <div className="grid grid-cols-1 gap-8">
