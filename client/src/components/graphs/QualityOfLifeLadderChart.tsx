@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "@/api/merged_survey";
 
 interface QualityOfLifeLadderChartProps {
   data: SurveyResponse[];

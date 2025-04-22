@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "./base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import type { CallbackDataParams } from "echarts/types/dist/shared";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "@/api/merged_survey";
 
 // Inclusion categories
 const INCLUSION_CATEGORIES = {

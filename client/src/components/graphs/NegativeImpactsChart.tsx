@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "./base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "@/api/public_survey";
 
 // Fields from the image provided (Q405)
 const Q405_FIELDS = [
