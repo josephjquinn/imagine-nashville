@@ -12,8 +12,21 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
   const barChartRef = useRef<HTMLDivElement>(null);
   const pieChartRef = useRef<HTMLDivElement>(null);
 
+  // Check if we have valid data for either chart
+  const hasValidData = data.some(
+    (response) =>
+      (response.Q200 !== undefined && response.Q200 !== null) ||
+      (response.HQ211 !== undefined && response.HQ211 !== null)
+  );
+
   useEffect(() => {
-    if (!barChartRef.current || !pieChartRef.current || !data.length) return;
+    if (
+      !barChartRef.current ||
+      !pieChartRef.current ||
+      !data.length ||
+      !hasValidData
+    )
+      return;
 
     const barChart = echarts.init(barChartRef.current);
     const pieChart = echarts.init(pieChartRef.current);
@@ -230,22 +243,32 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
-      <div
-        ref={barChartRef}
-        className="flex-1"
-        style={{
-          height: "400px",
-          minHeight: "300px",
-        }}
-      />
-      <div
-        ref={pieChartRef}
-        className="flex-1"
-        style={{
-          height: "400px",
-          minHeight: "300px",
-        }}
-      />
+      {!hasValidData ? (
+        <div className="flex-1 flex items-center justify-center h-[400px] bg-gray-50 rounded-lg">
+          <p className="text-gray-500 text-lg font-medium">
+            No valid equitable quality of life data available
+          </p>
+        </div>
+      ) : (
+        <>
+          <div
+            ref={barChartRef}
+            className="flex-1"
+            style={{
+              height: "400px",
+              minHeight: "300px",
+            }}
+          />
+          <div
+            ref={pieChartRef}
+            className="flex-1"
+            style={{
+              height: "400px",
+              minHeight: "300px",
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };
