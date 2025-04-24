@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import { SurveyResponse } from "@/api/merged_survey";
+import { BasePieChart } from "./base/BasePieChart";
 
 interface QualityOfLifeLadderChartProps {
   data: SurveyResponse[];
@@ -10,7 +11,6 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
   data,
 }) => {
   const barChartRef = useRef<HTMLDivElement>(null);
-  const pieChartRef = useRef<HTMLDivElement>(null);
 
   // Check if we have valid data for either chart
   const hasValidData = data.some(
@@ -20,16 +20,9 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
   );
 
   useEffect(() => {
-    if (
-      !barChartRef.current ||
-      !pieChartRef.current ||
-      !data.length ||
-      !hasValidData
-    )
-      return;
+    if (!barChartRef.current || !data.length || !hasValidData) return;
 
     const barChart = echarts.init(barChartRef.current);
-    const pieChart = echarts.init(pieChartRef.current);
 
     // Process the data for the bar chart
     const processBarData = () => {
@@ -63,38 +56,7 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
       };
     };
 
-    // Process the data for the pie chart
-    const processPieData = () => {
-      const validResponses = data.filter(
-        (response) => response.HQ211 !== undefined && response.HQ211 !== null
-      );
-
-      const counts = {
-        decreased: 0,
-        same: 0,
-        improved: 0,
-      };
-
-      validResponses.forEach((response) => {
-        const value = Number(response.HQ211);
-        if (value === 1) counts.decreased++;
-        else if (value === 2) counts.same++;
-        else if (value === 3) counts.improved++;
-      });
-
-      const total = validResponses.length;
-      return [
-        { value: counts.decreased, name: "Decreased" },
-        { value: counts.same, name: "Same" },
-        { value: counts.improved, name: "Improved" },
-      ].map((item) => ({
-        ...item,
-        percent: total > 0 ? ((item.value / total) * 100).toFixed(1) : "0.0",
-      }));
-    };
-
     const { timePoints, averages, yAxisRange } = processBarData();
-    const pieData = processPieData();
 
     // Bar chart options
     const barOption: echarts.EChartsOption = {
@@ -180,56 +142,10 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
       ],
     };
 
-    // Pie chart options
-    const pieOption: echarts.EChartsOption = {
-      title: {
-        text: "Perceived Change in Quality of Life",
-        subtext: "Past vs Today",
-        left: "center",
-      },
-      tooltip: {
-        trigger: "item",
-        formatter: (params: any) => {
-          return `${params.name}: ${params.data.percent}% (${params.value} responses)`;
-        },
-      },
-      legend: {
-        orient: "vertical",
-        left: "left",
-      },
-      series: [
-        {
-          name: "Perceived Change",
-          type: "pie",
-          radius: ["40%", "70%"],
-          avoidLabelOverlap: false,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: "#fff",
-            borderWidth: 2,
-          },
-          label: {
-            show: true,
-            formatter: "{b}: {d}%",
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 16,
-              fontWeight: "bold",
-            },
-          },
-          data: pieData,
-        },
-      ],
-    };
-
     barChart.setOption(barOption);
-    pieChart.setOption(pieOption);
 
     const handleResize = () => {
       barChart.resize();
-      pieChart.resize();
     };
 
     window.addEventListener("resize", handleResize);
@@ -237,9 +153,21 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
     return () => {
       window.removeEventListener("resize", handleResize);
       barChart.dispose();
-      pieChart.dispose();
     };
   }, [data]);
+
+  const getAnswerText = (value: string) => {
+    switch (value) {
+      case "1":
+        return "Decreasing";
+      case "2":
+        return "Stable";
+      case "3":
+        return "Improving";
+      default:
+        return "Unknown";
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-4">
@@ -259,14 +187,18 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
               minHeight: "300px",
             }}
           />
-          <div
-            ref={pieChartRef}
-            className="flex-1"
-            style={{
-              height: "400px",
-              minHeight: "300px",
-            }}
-          />
+          <div className="flex-1">
+            <BasePieChart
+              data={data}
+              field="HQ211"
+              title="Perceived Change in Quality of Life"
+              getAnswerText={getAnswerText}
+              customColors={["#ff4d4f", "#faad14", "#52c41a"]}
+              radius={["40%", "70%"]}
+              showLegend={true}
+              legendPosition="left"
+            />
+          </div>
         </>
       )}
     </div>
