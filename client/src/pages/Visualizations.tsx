@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { GenderPieChart } from "../components/graphs/GenderPieChart";
 import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
@@ -15,9 +15,40 @@ import { InclusiveServicesChart } from "../components/graphs/InclusiveServicesCh
 import { NashvillePositivesPieChart } from "../components/graphs/NashvillePositivesPieChart";
 import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 
+interface Section {
+  id: string;
+  title: string;
+  description: string;
+}
+
+const sections: Section[] = [
+  {
+    id: "overview",
+    title: "Overview",
+    description: "Key metrics and overall survey results",
+  },
+  {
+    id: "quality",
+    title: "Quality of Life",
+    description:
+      "Insights into Nashville residents' quality of life and equity",
+  },
+  {
+    id: "priorities",
+    title: "City Priorities",
+    description: "Analysis of city priorities and performance ratings",
+  },
+  {
+    id: "demographics",
+    title: "Demographics",
+    description: "Demographic breakdown of survey respondents",
+  },
+];
+
 const SurveyDashboard: React.FC = () => {
   const [selectedSurveyType, setSelectedSurveyType] =
     React.useState<SurveyType>("formal");
+  const [activeSection, setActiveSection] = useState<string>("overview");
   const {
     data: surveyData,
     isLoading,
@@ -62,102 +93,140 @@ const SurveyDashboard: React.FC = () => {
     );
   }
 
+  const renderSection = (sectionId: string) => {
+    switch (sectionId) {
+      case "overview":
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <NashvillePositivesPieChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <BelongingBarChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <GrowthPerceptionChart data={surveyData} />
+            </div>
+          </div>
+        );
+      case "quality":
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <QualityOfLifeLadderChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <EquitableQualityOfLifeChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <InclusiveServicesChart data={surveyData} />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <NegativeImpactsChart
+                data={surveyData}
+                title="Most Significant Negative Impacts on Quality of Life"
+                subtitle="What residents dislike most about living and working in Nashville"
+              />
+            </div>
+          </div>
+        );
+      case "priorities":
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <PriorityQuadrantChart
+                data={surveyData}
+                title="Top Learnings...And Biggest Issues Going Unaddressed"
+              />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <PriorityPerformanceChart
+                data={surveyData}
+                title="Nashville Priority Performance Ratings (1-10 Scale)"
+              />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <TransportationPriorityChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <InclusionRatingsChart
+                data={surveyData}
+                title="Who is Outside Looking In?"
+              />
+            </div>
+          </div>
+        );
+      case "demographics":
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <AgeHistogramChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <GenderPieChart data={surveyData} />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <EthnicityPieChart data={surveyData} />
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Survey Analytics Dashboard</h1>
-        <div className="flex items-center space-x-4">
-          <label htmlFor="surveyType" className="text-gray-700">
-            Survey Type:
-          </label>
-          <select
-            id="surveyType"
-            value={selectedSurveyType}
-            onChange={handleSurveyTypeChange}
-            className="block w-48 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="formal">Formal Survey</option>
-            <option value="public">Public Survey</option>
-            <option value="merged">Merged Survey</option>
-          </select>
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <h1 className="text-2xl font-bold text-gray-900">
+              Nashville Survey Analytics
+            </h1>
+            <div className="flex items-center gap-4">
+              <select
+                id="surveyType"
+                value={selectedSurveyType}
+                onChange={handleSurveyTypeChange}
+                className="block px-3 py-2 text-sm border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="formal">Formal Survey</option>
+                <option value="public">Public Survey</option>
+                <option value="merged">Merged Survey</option>
+              </select>
+              <div className="text-sm text-gray-600">{dataCount} responses</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="mb-6 text-center text-gray-600">
-        Displaying data from {dataCount} {selectedSurveyType} survey responses
-      </div>
-
-      <div className="grid grid-cols-1 gap-8">
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <QualityOfLifeLadderChart data={surveyData} />
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setActiveSection(section.id)}
+              className={`p-4 rounded-lg text-left transition-all ${
+                activeSection === section.id
+                  ? "bg-blue-50 border-blue-200 shadow-sm"
+                  : "bg-white border-gray-100 hover:bg-gray-50"
+              } border`}
+            >
+              <h3
+                className={`font-medium mb-1 ${
+                  activeSection === section.id
+                    ? "text-blue-700"
+                    : "text-gray-900"
+                }`}
+              >
+                {section.title}
+              </h3>
+              <p className="text-sm text-gray-500">{section.description}</p>
+            </button>
+          ))}
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <EquitableQualityOfLifeChart data={surveyData} />
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <InclusiveServicesChart data={surveyData} />
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <NegativeImpactsChart
-            data={surveyData}
-            title="Most Significant Negative Impacts on Quality of Life"
-            subtitle="What residents dislike most about living and working in Nashville"
-          />
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <InclusionRatingsChart
-            data={surveyData}
-            title="Who is Outside Looking In?"
-          />
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <PriorityQuadrantChart
-            data={surveyData}
-            title="Top Learnings...And Biggest Issues Going Unaddressed"
-          />
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <PriorityPerformanceChart
-            data={surveyData}
-            title="Nashville Priority Performance Ratings (1-10 Scale)"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <AgeHistogramChart data={surveyData} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <BelongingBarChart data={surveyData} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <GenderPieChart data={surveyData} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <EthnicityPieChart data={surveyData} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <GrowthPerceptionChart data={surveyData} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <TransportationPriorityChart data={surveyData} />
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <NashvillePositivesPieChart data={surveyData} />
-          </div>
-        </div>
+        <div className="mb-8">{renderSection(activeSection)}</div>
       </div>
     </div>
   );
