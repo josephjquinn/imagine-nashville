@@ -12,6 +12,7 @@ import { TransportationPriorityChart } from "../components/graphs/Transportation
 import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
 import { EquitableQualityOfLifeChart } from "../components/graphs/EquitableQualityOfLifeChart";
 import { InclusiveServicesChart } from "../components/graphs/InclusiveServicesChart";
+import { NashvillePositivesPieChart } from "../components/graphs/NashvillePositivesPieChart";
 import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
@@ -151,6 +152,10 @@ const SurveyDashboard: React.FC = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <TransportationPriorityChart data={surveyData} />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <NashvillePositivesPieChart data={surveyData} />
           </div>
         </div>
       </div>
