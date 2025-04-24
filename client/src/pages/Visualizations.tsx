@@ -16,7 +16,7 @@ import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 
 const SurveyDashboard: React.FC = () => {
   const [selectedSurveyType, setSelectedSurveyType] =
-    React.useState<SurveyType>("public");
+    React.useState<SurveyType>("formal");
   const {
     data: surveyData,
     isLoading,
@@ -75,9 +75,9 @@ const SurveyDashboard: React.FC = () => {
             onChange={handleSurveyTypeChange}
             className="block w-48 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           >
+            <option value="formal">Formal Survey</option>
             <option value="public">Public Survey</option>
             <option value="merged">Merged Survey</option>
-            <option value="formal">Formal Survey</option>
           </select>
         </div>
       </div>
