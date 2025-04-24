@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "./base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "@/api/merged_survey";
 
 // Define the growth perception categories and their labels
 const GROWTH_PERCEPTION_CATEGORIES = [
