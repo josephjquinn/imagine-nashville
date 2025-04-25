@@ -9,7 +9,7 @@ import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChar
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
 import { GrowthProblemsChart } from "../components/graphs/GrowthProblemsChart";
-import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
+import { GrowthBenefitsChart } from "../components/graphs/GrowthBenefitsChart";
 import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
 import { EquitableQualityOfLifeChart } from "../components/graphs/EquitableQualityOfLifeChart";
 import { InclusiveServicesChart } from "../components/graphs/InclusiveServicesChart";
@@ -17,6 +17,7 @@ import { NashvillePositivesPieChart } from "../components/graphs/NashvillePositi
 import CommunityPerceptionChart from "../components/graphs/CommunityPerceptionChart";
 import TourismPerceptionChart from "../components/graphs/TourismPerceptionChart";
 import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
+import { TransportationPriorityChart } from "@/components/graphs/TransportationPriorityChart";
 
 interface Section {
   id: string;
@@ -112,6 +113,9 @@ const SurveyDashboard: React.FC = () => {
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <GrowthProblemsChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <GrowthBenefitsChart data={surveyData} />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <CommunityPerceptionChart
