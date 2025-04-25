@@ -8,6 +8,7 @@ import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
 import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
 import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
+import { GrowthProblemsChart } from "../components/graphs/GrowthProblemsChart";
 import { TransportationPriorityChart } from "../components/graphs/TransportationPriorityChart";
 import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
 import { EquitableQualityOfLifeChart } from "../components/graphs/EquitableQualityOfLifeChart";
@@ -108,6 +109,9 @@ const SurveyDashboard: React.FC = () => {
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <GrowthPerceptionChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <GrowthProblemsChart data={surveyData} />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <CommunityPerceptionChart
