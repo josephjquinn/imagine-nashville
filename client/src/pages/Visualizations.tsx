@@ -14,6 +14,7 @@ import { EquitableQualityOfLifeChart } from "../components/graphs/EquitableQuali
 import { InclusiveServicesChart } from "../components/graphs/InclusiveServicesChart";
 import { NashvillePositivesPieChart } from "../components/graphs/NashvillePositivesPieChart";
 import CommunityPerceptionChart from "../components/graphs/CommunityPerceptionChart";
+import TourismPerceptionChart from "../components/graphs/TourismPerceptionChart";
 import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 
 interface Section {
@@ -113,6 +114,13 @@ const SurveyDashboard: React.FC = () => {
                 data={surveyData}
                 title="Community Perception"
                 subtitle="Residents' views on economic divides and leadership priorities"
+              />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <TourismPerceptionChart
+                data={surveyData}
+                title="Tourism Impact"
+                subtitle="How residents perceive tourism's impact on Nashville"
               />
             </div>
           </div>
