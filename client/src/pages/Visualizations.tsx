@@ -19,6 +19,7 @@ import TourismPerceptionChart from "../components/graphs/TourismPerceptionChart"
 import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 import { TransportationPriorityChart } from "@/components/graphs/TransportationPriorityChart";
 import { TransportationGoalsChart } from "../components/graphs/TransportationGoalsChart";
+import { TransportationPrioritiesChart } from "../components/graphs/TransportationPrioritiesChart";
 
 interface Section {
   id: string;
@@ -160,6 +161,9 @@ const SurveyDashboard: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <TransportationGoalsChart data={surveyData} />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <TransportationPrioritiesChart data={surveyData} />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <PriorityQuadrantChart
