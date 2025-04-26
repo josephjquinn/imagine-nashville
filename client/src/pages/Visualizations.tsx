@@ -28,6 +28,7 @@ import { EducationPrioritiesChart } from "../components/graphs/EducationPrioriti
 import { EducationPriorityPieChart } from "../components/graphs/EducationPriorityPieChart";
 import { BigIdeasChart } from "../components/graphs/BigIdeasChart";
 import { IdealNeighborhoodAssetsChart } from "../components/graphs/IdealNeighborhoodAssetsChart";
+import { NeighborhoodSatisfactionGraph } from "../components/graphs/NeighborhoodSatisfactionGraph";
 
 interface Section {
   id: string;
@@ -154,6 +155,9 @@ const SurveyDashboard: React.FC = () => {
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <InclusiveServicesChart data={surveyData} />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <NeighborhoodSatisfactionGraph data={surveyData} />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <NegativeImpactsChart
