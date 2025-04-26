@@ -22,6 +22,8 @@ import { TransportationGoalsChart } from "../components/graphs/TransportationGoa
 import { TransportationPrioritiesChart } from "../components/graphs/TransportationPrioritiesChart";
 import { HousingGoalsChart } from "../components/graphs/HousingGoalsChart";
 import { HousingPrioritiesChart } from "../components/graphs/HousingPrioritiesChart";
+import { EducationGoalsChart } from "../components/graphs/EducationGoalsChart";
+import { EducationPrioritiesChart } from "../components/graphs/EducationPrioritiesChart";
 
 interface Section {
   id: string;
@@ -172,6 +174,12 @@ const SurveyDashboard: React.FC = () => {
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <HousingPrioritiesChart data={surveyData} />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <EducationGoalsChart data={surveyData} />
+            </div>
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <EducationPrioritiesChart data={surveyData} />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <PriorityQuadrantChart
