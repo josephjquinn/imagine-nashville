@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import type { EChartsOption } from "echarts";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 interface BaseGraphProps {
   option: EChartsOption;
@@ -32,11 +34,38 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
     }
   }, [option]);
 
+  const handleDownload = () => {
+    if (chartInstance.current) {
+      const dataUrl = chartInstance.current.getDataURL({
+        type: 'png',
+        pixelRatio: 2,
+        backgroundColor: '#fff'
+      });
+      
+      const link = document.createElement('a');
+      link.download = 'graph.png';
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
-    <div
-      ref={chartRef}
-      style={{ width: "100%", height: "400px", ...style }}
-      className={className}
-    />
+    <div style={{ position: 'relative' }}>
+      <div
+        ref={chartRef}
+        style={{ width: "100%", height: "400px", ...style }}
+        className={className}
+      />
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={handleDownload}
+        className="absolute top-2 right-2 bg-background/80 hover:bg-background"
+      >
+        <Download className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };
