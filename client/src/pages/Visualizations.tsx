@@ -29,6 +29,19 @@ import { EducationPriorityPieChart } from "../components/graphs/EducationPriorit
 import { BigIdeasChart } from "../components/graphs/BigIdeasChart";
 import { IdealNeighborhoodAssetsChart } from "../components/graphs/IdealNeighborhoodAssetsChart";
 import { NeighborhoodSatisfactionGraph } from "../components/graphs/NeighborhoodSatisfactionGraph";
+import { NashvilleTenureChart } from "../components/graphs/NashvilleTenureChart";
+import { LivingAreaChart } from "../components/graphs/LivingAreaChart";
+import { HousingStatusChart } from "../components/graphs/HousingStatusChart";
+import { PublicTransportationChart } from "../components/graphs/PublicTransportationChart";
+import { ChildrenInHouseholdChart } from "../components/graphs/ChildrenInHouseholdChart";
+import { MaritalStatusChart } from "../components/graphs/MaritalStatusChart";
+import { EducationLevelChart } from "../components/graphs/EducationLevelChart";
+import { EmploymentStatusChart } from "../components/graphs/EmploymentStatusChart";
+import { HouseholdIncomeChart } from "../components/graphs/HouseholdIncomeChart";
+import { PoliticalAffiliationChart } from "../components/graphs/PoliticalAffiliationChart";
+import { PoliticalIdeologyChart } from "../components/graphs/PoliticalIdeologyChart";
+import { SexualOrientationChart } from "../components/graphs/SexualOrientationChart";
+import { ReligiousAffiliationChart } from "../components/graphs/ReligiousAffiliationChart";
 
 interface Section {
   id: string;
@@ -235,6 +248,45 @@ const SurveyDashboard: React.FC = () => {
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <EthnicityPieChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <NashvilleTenureChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <LivingAreaChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <HousingStatusChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <PublicTransportationChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <ChildrenInHouseholdChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <MaritalStatusChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <EducationLevelChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <EmploymentStatusChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <HouseholdIncomeChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <PoliticalAffiliationChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <PoliticalIdeologyChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <SexualOrientationChart data={surveyData} />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <ReligiousAffiliationChart data={surveyData} />
             </div>
           </div>
         );
