@@ -49,7 +49,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
   title = "What's part of an Ideal Neighborhood:",
   subtitle = "% Selected as Important, Very Important, or Absolutely Essential",
 }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     let validResponses = data.length;
     const results = ASSETS.map((asset) => {
       let counts = [0, 0, 0]; // [Important, Very Important, Absolutely Essential]
