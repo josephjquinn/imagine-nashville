@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/merged_survey";
+import { SurveyResponse } from "@/types/survey";
 
 // Define the agreement categories and their colors
 const AGREEMENT_CATEGORIES = [
@@ -12,32 +12,34 @@ const AGREEMENT_CATEGORIES = [
   { value: 1, label: "Strongly Disagree", color: "#424242" },
 ];
 
-interface TourismPerceptionChartProps {
+interface CommunityPerceptionChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
+  graphId: string;
 }
 
-const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
+const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
   data,
-  title = "Tourism Impact",
-  subtitle = "How residents perceive tourism's impact on Nashville",
+  graphId,
 }) => {
   // Process the survey data
   const processedData = useMemo(() => {
     // Define the questions and their fields
     const questions = [
       {
-        field: "Q530_A",
-        text: "There is too much focus on taking care of the tourists that visit here rather than the people that live here",
+        field: "Q530_B",
+        text: "There is a growing divide between the rich and the poor in Nashville",
       },
       {
-        field: "Q530_D",
-        text: "Downtown Nashville and Lower Broadway are getting out of control no longer reflect the values or people of Nashville",
+        field: "Q530_E",
+        text: "We are losing the sense of community or 'soul of the city' that made the city great.",
       },
       {
-        field: "Q530_G",
-        text: "There are simply too many tourists visiting Nashville and it is hurting the city",
+        field: "Q530_I",
+        text: "Nashville cares more about getting new people to move here than taking care of those that have lived here a long time",
+      },
+      {
+        field: "Q530_J",
+        text: "Leaders in Nashville are investing too much money in the wrong things—things that really don't help the average person that lives here",
       },
     ];
 
@@ -102,7 +104,7 @@ const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-500">
-          No valid tourism perception data available
+          No valid community perception data available
         </p>
       </div>
     );
@@ -111,13 +113,13 @@ const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
   // Create the chart configuration
   const option: EChartsOption = {
     title: {
-      text: title,
+      text: "Community Perception",
       left: "center",
       textStyle: {
         fontSize: 16,
         fontWeight: "bold",
       },
-      subtext: subtitle,
+      subtext: "Residents' views on economic divides and leadership priorities",
       subtextStyle: {
         fontSize: 12,
         color: "#666",
@@ -231,7 +233,9 @@ const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
     },
   };
 
-  return <BaseGraph option={option} style={{ height: "400px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+  );
 };
 
-export default TourismPerceptionChart;
+export default CommunityPerceptionChart;

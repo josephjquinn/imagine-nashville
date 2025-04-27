@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const GROWTH_BENEFITS = [
   { value: "1", label: "More jobs/economic opportunity" },
@@ -51,12 +51,14 @@ interface GrowthBenefitsChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
   data,
   title,
   subtitle,
+  graphId,
 }) => {
   // Process data to count selections for each growth benefit
   const { growthBenefitsData, totalValidResponses } = useMemo(() => {
@@ -249,5 +251,7 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "800px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "800px" }} graphId={graphId} />
+  );
 };

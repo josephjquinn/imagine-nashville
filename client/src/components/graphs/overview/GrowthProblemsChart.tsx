@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 // Fields from the survey data about growth problems with their corresponding values
 const GROWTH_PROBLEMS = [
@@ -37,12 +37,14 @@ interface GrowthProblemsChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
   data,
   title,
   subtitle,
+  graphId,
 }) => {
   // Process data to count selections for each growth problem
   const { growthProblemsData, totalValidResponses } = useMemo(() => {
@@ -61,7 +63,10 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
         const value = response[field];
         if (value && value !== "" && value !== "0" && value !== "15") {
           // Exclude "None of the above"
-          problemCounts.set(value, (problemCounts.get(value) || 0) + 1);
+          problemCounts.set(
+            String(value),
+            (problemCounts.get(String(value)) || 0) + 1
+          );
           hasValidResponse = true;
         }
       });
@@ -233,5 +238,7 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "800px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "800px" }} graphId={graphId} />
+  );
 };

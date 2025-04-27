@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "../../../api/survey";
 
 // Belonging scale definitions with colors
 const BELONGING_SCALE = [
@@ -63,10 +63,12 @@ const TITLE = "Sense of Belonging in Nashville";
 
 interface BelongingBarChartProps {
   data: SurveyResponse[];
+  graphId?: string;
 }
 
 export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
   data,
+  graphId,
 }) => {
   // Process the belonging sentiment data
   const processedData = useMemo(() => {
@@ -309,5 +311,11 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "600px" }} />;
+  return (
+    <BaseGraph
+      option={option}
+      style={{ height: "600px" }}
+      graphId={graphId || "belonging-pie"}
+    />
+  );
 };

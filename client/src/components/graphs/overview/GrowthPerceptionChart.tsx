@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/merged_survey";
+import { SurveyResponse } from "@/types/survey";
 
 // Define the growth perception categories and their labels
 const GROWTH_PERCEPTION_CATEGORIES = [
@@ -16,12 +16,14 @@ interface GrowthPerceptionChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
   data,
   title = "Perceptions of Nashville's Growth",
   subtitle = "Is Nashville's rapid growth making things better or worse?",
+  graphId,
 }) => {
   // The field we're analyzing
   const FIELD = "Q500";
@@ -163,5 +165,7 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "450px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "450px" }} graphId={graphId} />
+  );
 };

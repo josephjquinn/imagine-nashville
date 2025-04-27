@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 
 // TODO: Update with correct type import once available
@@ -9,12 +9,13 @@ interface SurveyResponse {
 
 interface NashvillePositivesPieChartProps {
   data: SurveyResponse[];
+  graphId: string;
   title?: string;
 }
 
 export const NashvillePositivesPieChart: React.FC<
   NashvillePositivesPieChartProps
-> = ({ data, title = "Positive Sentiment in Nashville" }) => {
+> = ({ data, graphId, title = "Positive Sentiment in Nashville" }) => {
   const processedData = useMemo(() => {
     let total = 0;
     let count = 0;
@@ -118,5 +119,5 @@ export const NashvillePositivesPieChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };
