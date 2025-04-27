@@ -135,7 +135,7 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
     };
   }, [data]);
 
-  // If no valid data, show empty state
+  // If no valid data at all, show empty state
   if (processedData.belongingTotal === 0 && processedData.locationTotal === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -153,7 +153,11 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
         fontSize: 16,
       },
       subtext:
-        "Inner: General feeling of belonging, Outer: Where people feel greatest sense of belonging",
+        processedData.belongingTotal > 0 && processedData.locationTotal > 0
+          ? "Inner: Where people feel greatest sense of belonging, Outer: General feeling of belonging"
+          : processedData.belongingTotal > 0
+          ? "General feeling of belonging"
+          : "Where people feel greatest sense of belonging",
       subtextStyle: {
         fontSize: 12,
         color: "#666",
@@ -162,7 +166,6 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
-        // Determine if this is from the inner or outer ring
         const series = params.seriesName;
         const count = params.value;
         const total =
@@ -182,132 +185,169 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
       },
     },
     legend: [
-      {
-        type: "plain",
-        orient: "vertical",
-        left: 10,
-        top: 90,
-        itemWidth: 15,
-        itemHeight: 10,
-        textStyle: {
-          width: 140,
-          overflow: "break",
-          lineHeight: 14,
-          fontSize: 11,
-        },
-        backgroundColor: "rgba(0,0,0,0.03)",
-        padding: [10, 10, 10, 10],
-        borderRadius: 5,
-        data: BELONGING_SCALE.map((item) => item.label),
-      },
-      {
-        type: "plain",
-        orient: "vertical",
-        left: 10,
-        top: 320,
-        itemWidth: 15,
-        itemHeight: 10,
-        textStyle: {
-          width: 140,
-          overflow: "break",
-          lineHeight: 14,
-          fontSize: 11,
-        },
-        backgroundColor: "rgba(0,0,0,0.03)",
-        padding: [10, 10, 10, 10],
-        borderRadius: 5,
-        data: BELONGING_LOCATION_SCALE.map((item) => item.label),
-      },
+      ...(processedData.belongingTotal > 0
+        ? [
+            {
+              type: "plain" as const,
+              orient: "vertical" as const,
+              left: 10,
+              top: 90,
+              itemWidth: 15,
+              itemHeight: 10,
+              textStyle: {
+                width: 140,
+                overflow: "break" as const,
+                lineHeight: 14,
+                fontSize: 11,
+              },
+              backgroundColor: "rgba(0,0,0,0.03)",
+              padding: [10, 10, 10, 10],
+              borderRadius: 5,
+              data: BELONGING_SCALE.map((item) => item.label),
+            },
+          ]
+        : []),
+      ...(processedData.locationTotal > 0
+        ? [
+            {
+              type: "plain" as const,
+              orient: "vertical" as const,
+              left: 10,
+              top: processedData.belongingTotal > 0 ? 320 : 90,
+              itemWidth: 15,
+              itemHeight: 10,
+              textStyle: {
+                width: 140,
+                overflow: "break" as const,
+                lineHeight: 14,
+                fontSize: 11,
+              },
+              backgroundColor: "rgba(0,0,0,0.03)",
+              padding: [10, 10, 10, 10],
+              borderRadius: 5,
+              data: BELONGING_LOCATION_SCALE.map((item) => item.label),
+            },
+          ]
+        : []),
     ],
     graphic: [
-      {
-        type: "text",
-        left: 10,
-        top: 70,
-        style: {
-          text: "Feeling of Belonging:",
-          align: "left",
-          fontSize: 10,
-          fontWeight: "normal",
-          fill: "#666",
-        },
-      },
-      {
-        type: "text",
-        left: 10,
-        top: 300,
-        style: {
-          text: "Where People Feel Belonging:",
-          align: "left",
-          fontSize: 10,
-          fontWeight: "normal",
-          fill: "#666",
-        },
-      },
+      ...(processedData.belongingTotal > 0
+        ? [
+            {
+              type: "text" as const,
+              left: 10,
+              top: 70,
+              style: {
+                text: "Feeling of Belonging:",
+                align: "left" as const,
+                fontSize: 10,
+                fontWeight: "normal" as const,
+                fill: "#666",
+              },
+            },
+          ]
+        : []),
+      ...(processedData.locationTotal > 0
+        ? [
+            {
+              type: "text" as const,
+              left: 10,
+              top: processedData.belongingTotal > 0 ? 300 : 70,
+              style: {
+                text: "Where People Feel Belonging:",
+                align: "left" as const,
+                fontSize: 10,
+                fontWeight: "normal" as const,
+                fill: "#666",
+              },
+            },
+          ]
+        : []),
     ],
     series: [
-      {
-        name: "Belonging Sentiment",
-        type: "pie",
-        radius: ["0%", "45%"],
-        center: ["65%", "55%"],
-        avoidLabelOverlap: true,
-        itemStyle: {
-          borderRadius: 5,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: true,
-          position: "inner",
-          formatter: function (params: any) {
-            const percentage =
-              processedData.belongingTotal > 0
-                ? ((params.value / processedData.belongingTotal) * 100).toFixed(
-                    1
-                  )
-                : "0.0";
-            return `${percentage}%`;
-          },
-          fontSize: 12,
-          color: "#fff",
-        },
-        labelLine: {
-          show: false,
-        },
-        data: processedData.belongingPieData,
-        z: 2,
-      },
-      {
-        name: "Belonging Location",
-        type: "pie",
-        radius: ["55%", "75%"],
-        center: ["65%", "55%"],
-        avoidLabelOverlap: true,
-        itemStyle: {
-          borderRadius: 5,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: true,
-          formatter: function (params: any) {
-            const percentage =
-              processedData.locationTotal > 0
-                ? ((params.value / processedData.locationTotal) * 100).toFixed(
-                    1
-                  )
-                : "0.0";
-            return `${percentage}%`;
-          },
-        },
-        labelLine: {
-          length: 15,
-          length2: 10,
-        },
-        data: processedData.locationPieData,
-        z: 1,
-      },
+      ...(processedData.locationTotal > 0
+        ? [
+            {
+              name: "Belonging Location",
+              type: "pie" as const,
+              radius:
+                processedData.belongingTotal > 0
+                  ? ["0%", "45%"]
+                  : ["0%", "75%"],
+              center: ["65%", "55%"],
+              avoidLabelOverlap: true,
+              itemStyle: {
+                borderRadius: 5,
+                borderColor: "#fff",
+                borderWidth: 2,
+              },
+              label: {
+                show: true,
+                position:
+                  processedData.belongingTotal > 0
+                    ? ("inner" as const)
+                    : ("outer" as const),
+                formatter: function (params: any) {
+                  const percentage =
+                    processedData.locationTotal > 0
+                      ? (
+                          (params.value / processedData.locationTotal) *
+                          100
+                        ).toFixed(1)
+                      : "0.0";
+                  return `${percentage}%`;
+                },
+                fontSize: 12,
+                color: "#fff",
+              },
+              labelLine: {
+                show: !processedData.belongingTotal,
+                length: 15,
+                length2: 10,
+              },
+              data: processedData.locationPieData,
+              z: 2,
+            },
+          ]
+        : []),
+      ...(processedData.belongingTotal > 0
+        ? [
+            {
+              name: "Belonging Sentiment",
+              type: "pie" as const,
+              radius:
+                processedData.locationTotal > 0
+                  ? ["55%", "75%"]
+                  : ["0%", "75%"],
+              center: ["65%", "55%"],
+              avoidLabelOverlap: true,
+              itemStyle: {
+                borderRadius: 5,
+                borderColor: "#fff",
+                borderWidth: 2,
+              },
+              label: {
+                show: true,
+                formatter: function (params: any) {
+                  const percentage =
+                    processedData.belongingTotal > 0
+                      ? (
+                          (params.value / processedData.belongingTotal) *
+                          100
+                        ).toFixed(1)
+                      : "0.0";
+                  return `${percentage}%`;
+                },
+              },
+              labelLine: {
+                length: 15,
+                length2: 10,
+              },
+              data: processedData.belongingPieData,
+              z: 1,
+            },
+          ]
+        : []),
     ],
   };
 
