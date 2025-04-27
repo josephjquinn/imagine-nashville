@@ -1,6 +1,6 @@
 import React from "react";
-import { BasePieChart } from "./base/BasePieChart";
-import { SurveyResponse } from "@/api/public_survey";
+import { BasePieChart } from "../base/BasePieChart";
+import { SurveyResponse } from "@/types/survey";
 
 const Q665_LABELS: Record<string, string> = {
   "1": "Strongly disagree",
@@ -13,6 +13,7 @@ interface EducationPriorityPieChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const EducationPriorityPieChart: React.FC<
@@ -21,20 +22,21 @@ export const EducationPriorityPieChart: React.FC<
   data,
   title = "Agreement: Investing in Public Education is a Priority",
   subtitle = "Q665",
+  graphId,
 }) => {
   return (
     <BasePieChart
       data={data}
       field="Q665"
       title={title}
-      getAnswerText={(value) => Q665_LABELS[value] || "Other"}
+      getAnswerText={(value) => Q665_LABELS[value] || value}
       showLegend={true}
       legendPosition="right"
-      tooltipFormatter={(params: any) => {
-        const count = params.value;
-        const percentage = params.percent.toFixed(1);
-        return `<div><strong>${params.name}</strong><br/>Count: ${count}<br/>Percentage: ${percentage}%</div>`;
+      tooltipFormatter={(params) => {
+        const value = params.value as number;
+        return `${params.name}: ${value}%`;
       }}
+      graphId={graphId}
     />
   );
 };

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "../../../api/survey";
 
 // Rating scale definitions
 const RATING_SCALE = {
@@ -59,18 +59,18 @@ const DEFAULT_PRIORITY_FIELDS = [
 
 interface PriorityPerformanceChartProps {
   data: SurveyResponse[];
-  title?: string;
   priorityFields?: Array<{ field: string; label: string }>;
   subtitle?: string;
+  graphId: string;
 }
 
 export const PriorityPerformanceChart: React.FC<
   PriorityPerformanceChartProps
 > = ({
   data,
-  title,
   priorityFields = DEFAULT_PRIORITY_FIELDS,
   subtitle = "1 = Not performing well at all — 10 = Performing extremely well",
+  graphId,
 }) => {
   // Process data to get average ratings for each priority
   const priorityRatings = useMemo(() => {
@@ -131,7 +131,7 @@ export const PriorityPerformanceChart: React.FC<
   const option: EChartsOption = {
     title: [
       {
-        text: title || "Priority Performance Ratings",
+        text: "Nashville Priority Performance Ratings (1-10 Scale)",
         left: "center",
         top: 0,
         textStyle: {
@@ -245,7 +245,9 @@ export const PriorityPerformanceChart: React.FC<
       },
     ],
   };
-  return <BaseGraph option={option} style={{ height: "600px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "600px" }} graphId={graphId} />
+  );
 };
 
 // Helper function to generate color based on rating

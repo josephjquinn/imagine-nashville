@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "../../../api/survey";
 
 // Default priority fields for Nashville performance ratings - same as PriorityPerformanceChart
 const DEFAULT_PRIORITY_FIELDS = [
@@ -66,16 +66,16 @@ const PRIORITY_IMPACT = {
 
 interface PriorityQuadrantChartProps {
   data: SurveyResponse[];
-  title?: string;
   priorityFields?: Array<{ field: string; label: string }>;
   subtitle?: string;
+  graphId: string;
 }
 
 export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
   data,
-  title,
   priorityFields = DEFAULT_PRIORITY_FIELDS,
   subtitle,
+  graphId,
 }) => {
   // Process data to get average ratings for each priority
   const priorityData = useMemo(() => {
@@ -158,7 +158,7 @@ export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
 
   const option: EChartsOption = {
     title: {
-      text: title || "Top Learnings...And Biggest Issues Going Unaddressed",
+      text: "Top Learnings...And Biggest Issues Going Unaddressed",
       left: "center",
       top: 0,
       textStyle: {
@@ -382,7 +382,9 @@ export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "700px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "700px" }} graphId={graphId} />
+  );
 };
 
 // Helper function to determine color based on which quadrant the point is in

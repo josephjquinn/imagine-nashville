@@ -1,45 +1,53 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
-const TRANSPORTATION_GOALS = [
+const HOUSING_GOALS = [
   {
     value: "1",
-    label:
-      "Make it easier to get around inside the neighborhoods and communities where people live",
+    label: "Eliminate homelessness",
   },
   {
     value: "2",
     label:
-      "Make it easier to get around Nashville—to and from downtown and from one place to another in the region (connecting different parts of the City and Downtown better)",
+      "Ensure we are building a variety of housing options in all our neighborhoods to reduce housing shortages and lower housing costs",
   },
   {
     value: "3",
     label:
-      "Ensure everyone has good access to downtown and the important parts of the region—make transportation options equally accessible to all across Nashville/Davidson Co.",
+      "Ensure people can afford to stay in their homes and are not being forced out",
   },
   {
     value: "4",
     label:
-      "Improve transportation safety and reduce crashes and personal injuries",
+      "Ensure low-cost housing options are equally available to people of all walks of life",
+  },
+  {
+    value: "5",
+    label:
+      "Make sure there is plenty of affordable housing in the communities of Nashville for people who keep the city going (musicians, artists, teachers, firefighters, police officers, etc.)",
   },
 ];
 
-interface TransportationGoalsChartProps {
+interface HousingGoalsChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
-export const TransportationGoalsChart: React.FC<
-  TransportationGoalsChartProps
-> = ({ data, title, subtitle }) => {
+export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
+  data,
+  title,
+  subtitle,
+  graphId,
+}) => {
   const { processedData, totalResponses } = useMemo(() => {
     const goalCounts = new Map<string, { top: number; second: number }>();
 
     // Initialize counts
-    TRANSPORTATION_GOALS.forEach((goal) => {
+    HOUSING_GOALS.forEach((goal) => {
       goalCounts.set(goal.value, { top: 0, second: 0 });
     });
 
@@ -47,8 +55,8 @@ export const TransportationGoalsChart: React.FC<
 
     // Count responses
     data.forEach((response) => {
-      const topChoice = response["Q630"];
-      const secondChoice = response["Q635"];
+      const topChoice = response["Q600"];
+      const secondChoice = response["Q605"];
 
       if (topChoice || secondChoice) {
         validResponses++;
@@ -69,7 +77,7 @@ export const TransportationGoalsChart: React.FC<
     });
 
     // Process data for chart
-    const results = TRANSPORTATION_GOALS.map((goal) => {
+    const results = HOUSING_GOALS.map((goal) => {
       const counts = goalCounts.get(goal.value) || { top: 0, second: 0 };
       return {
         name: goal.label,
@@ -82,7 +90,7 @@ export const TransportationGoalsChart: React.FC<
       };
     });
 
-    // Sort by total percentage descending
+    // Sort by total percentage ascending (biggest bars on top)
     return {
       processedData: results.sort(
         (a, b) => a.totalPercentage - b.totalPercentage
@@ -93,12 +101,17 @@ export const TransportationGoalsChart: React.FC<
 
   const option: EChartsOption = {
     title: {
-      text: title || "Inter-City Transportation Top Goal",
+      text: title || "Housing Goals: Top Priorities",
       left: "center",
       top: 0,
       textStyle: {
         fontSize: 20,
         fontWeight: "bold",
+      },
+      subtext: subtitle || "% Selected as Top 2 Goals",
+      subtextStyle: {
+        fontSize: 14,
+        color: "#666",
       },
     },
     tooltip: {
@@ -161,7 +174,7 @@ export const TransportationGoalsChart: React.FC<
         type: "bar",
         stack: "total",
         itemStyle: {
-          color: "#f59e0b", // amber-500
+          color: "#059669", // emerald-600
         },
         label: {
           show: true,
@@ -189,7 +202,7 @@ export const TransportationGoalsChart: React.FC<
         type: "bar",
         stack: "total",
         itemStyle: {
-          color: "#fcd34d", // amber-300
+          color: "#34d399", // emerald-400
         },
         label: {
           show: true,
@@ -243,5 +256,7 @@ export const TransportationGoalsChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "400px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+  );
 };

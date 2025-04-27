@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const Q620_OPTIONS = [
   { value: "1", label: "Everyone treated the same" },
@@ -26,11 +26,12 @@ interface HousingSupportComboChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const HousingSupportComboChart: React.FC<
   HousingSupportComboChartProps
-> = ({ data, title, subtitle }) => {
+> = ({ data, title, subtitle, graphId }) => {
   // Pie chart data for Q620
   const q620PieData = useMemo(() => {
     const counts: Record<"1" | "2", number> = { "1": 0, "2": 0 };
@@ -185,12 +186,14 @@ export const HousingSupportComboChart: React.FC<
         <BaseGraph
           option={pieOption}
           style={{ height: "350px", width: "100%" }}
+          graphId={graphId}
         />
       </div>
       <div className="w-full lg:w-2/3 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <BaseGraph
           option={barOption}
           style={{ height: "500px", width: "100%" }}
+          graphId={graphId}
         />
       </div>
     </div>

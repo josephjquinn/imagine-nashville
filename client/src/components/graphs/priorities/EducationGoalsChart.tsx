@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const EDUCATION_GOALS = [
   {
@@ -33,12 +33,14 @@ interface EducationGoalsChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
   data,
   title,
   subtitle,
+  graphId,
 }) => {
   const { processedData, totalResponses } = useMemo(() => {
     const goalCounts = new Map<string, { top: number; second: number }>();
@@ -253,5 +255,7 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "500px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+  );
 };

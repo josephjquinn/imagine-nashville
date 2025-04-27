@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import { BasePieChart } from "./base/BasePieChart";
-import { SurveyResponse } from "../../api/survey";
+import { BasePieChart } from "../base/BasePieChart";
+import { SurveyResponse } from "../../../api/survey";
 
 // Define the agreement scale with colors and mappings
 const AGREEMENT_SCALE = [
@@ -37,11 +37,12 @@ interface TransportationPriorityChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const TransportationPriorityChart: React.FC<
   TransportationPriorityChartProps
-> = ({ data, title = "Public Transportation Priority" }) => {
+> = ({ data, title = "Public Transportation Priority", graphId }) => {
   const getAnswerText = (value: string): string => {
     return (
       TRANSPORTATION_MAPPINGS[value as keyof typeof TRANSPORTATION_MAPPINGS] ||
@@ -109,6 +110,7 @@ export const TransportationPriorityChart: React.FC<
           Total Responses: ${processedData.total}
         </div>`;
       }}
+      graphId={graphId}
     />
   );
 };

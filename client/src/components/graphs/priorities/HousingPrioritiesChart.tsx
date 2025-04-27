@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const HOUSING_PRIORITIES = [
   {
@@ -35,12 +35,14 @@ interface HousingPrioritiesChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
   data,
   title,
   subtitle,
+  graphId,
 }) => {
   const { processedData, totalResponses } = useMemo(() => {
     const results = HOUSING_PRIORITIES.map((priority) => {
@@ -179,5 +181,7 @@ export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "500px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+  );
 };

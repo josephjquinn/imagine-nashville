@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import type { CallbackDataParams } from "echarts/types/dist/shared";
-import { SurveyResponse } from "@/api/merged_survey";
-
+import { SurveyResponse } from "@/types/survey";
 // Inclusion categories
 const INCLUSION_CATEGORIES = {
   EXCLUDED: "Excluded (1-4)",
@@ -32,6 +31,7 @@ interface InclusionRatingsChartProps {
   title?: string;
   inclusionFields?: Array<{ field: string; label: string }>;
   subtitle?: string;
+  graphId: string;
 }
 
 // Type for our processed inclusion data
@@ -48,6 +48,7 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
   title,
   inclusionFields = DEFAULT_INCLUSION_FIELDS,
   subtitle,
+  graphId,
 }) => {
   // Process data to get percentage distributions for each inclusion category
   const inclusionData = useMemo<InclusionData[]>(() => {
@@ -253,5 +254,7 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "600px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "600px" }} graphId={graphId} />
+  );
 };

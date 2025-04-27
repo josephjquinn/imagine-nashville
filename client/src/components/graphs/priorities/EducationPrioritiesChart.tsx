@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/api/public_survey";
 
@@ -54,11 +54,12 @@ interface EducationPrioritiesChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const EducationPrioritiesChart: React.FC<
   EducationPrioritiesChartProps
-> = ({ data, title, subtitle }) => {
+> = ({ data, title, subtitle, graphId }) => {
   const { processedData, totalResponses } = useMemo(() => {
     const results = EDUCATION_PRIORITIES.map((priority) => {
       let sum = 0;
@@ -196,5 +197,7 @@ export const EducationPrioritiesChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "800px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+  );
 };

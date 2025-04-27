@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const ASSETS = [
   { key: "A", label: "Police/fire stations" },
@@ -40,6 +40,7 @@ interface IdealNeighborhoodAssetsChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const IdealNeighborhoodAssetsChart: React.FC<
@@ -48,6 +49,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
   data,
   title = "What's part of an Ideal Neighborhood:",
   subtitle = "% Selected as Important, Very Important, or Absolutely Essential",
+  graphId,
 }) => {
   const { processedData } = useMemo(() => {
     let validResponses = data.length;
@@ -263,5 +265,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "800px" }} />;
+  return (
+    <BaseGraph graphId={graphId} option={option} style={{ height: "800px" }} />
+  );
 };
