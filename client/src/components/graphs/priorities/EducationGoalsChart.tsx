@@ -42,7 +42,7 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
   subtitle,
   graphId,
 }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     const goalCounts = new Map<string, { top: number; second: number }>();
 
     // Initialize counts

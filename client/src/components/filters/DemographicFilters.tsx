@@ -45,7 +45,6 @@ export interface DemographicFiltersState {
 
 export function DemographicFilters({
   onFilterChange,
-  totalResponses,
   surveyType,
   onSurveyTypeChange,
 }: DemographicFiltersProps) {
@@ -53,7 +52,6 @@ export function DemographicFilters({
     React.useState<DemographicFiltersState>({});
   const [activeFilters, setActiveFilters] =
     React.useState<DemographicFiltersState>({});
-  const hasActiveFilters = Object.keys(activeFilters).length > 0;
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (

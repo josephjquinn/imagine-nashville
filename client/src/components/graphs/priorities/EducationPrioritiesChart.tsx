@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const EDUCATION_PRIORITIES = [
   {
@@ -60,7 +60,7 @@ interface EducationPrioritiesChartProps {
 export const EducationPrioritiesChart: React.FC<
   EducationPrioritiesChartProps
 > = ({ data, title, subtitle, graphId }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     const results = EDUCATION_PRIORITIES.map((priority) => {
       let sum = 0;
       let count = 0;

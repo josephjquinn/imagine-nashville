@@ -43,7 +43,7 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
   subtitle,
   graphId,
 }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     const goalCounts = new Map<string, { top: number; second: number }>();
 
     // Initialize counts
