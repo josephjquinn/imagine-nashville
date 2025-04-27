@@ -136,13 +136,15 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "10%",
+      bottom: "15%",
       top: 80,
       containLabel: true,
     },
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
+      nameLocation: "middle",
+      nameGap: 30,
       axisLabel: {
         formatter: "{value}%",
       },
@@ -170,25 +172,8 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
         },
         zlevel: 1,
         data: growthProblemsData.map((item, index, array) => {
-          const colorStops = [
-            "#ef4444", // red-500
-            "#f97316", // orange-500
-            "#f59e0b", // amber-500
-            "#eab308", // yellow-500
-            "#84cc16", // lime-500
-            "#22c55e", // green-500
-            "#10b981", // emerald-500
-            "#14b8a6", // teal-500
-            "#06b6d4", // cyan-500
-            "#0ea5e9", // sky-500
-            "#3b82f6", // blue-500
-            "#6366f1", // indigo-500
-            "#8b5cf6", // violet-500
-            "#a855f7", // purple-500
-          ];
+          const color = "#991b1b"; // red-800 - A rich, dark red
 
-          const color =
-            index < colorStops.length ? colorStops[index] : colorStops[0];
           const isTop3 = index >= array.length - 3;
 
           return {

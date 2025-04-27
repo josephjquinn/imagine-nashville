@@ -146,13 +146,15 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "10%",
+      bottom: "15%",
       top: 80,
       containLabel: true,
     },
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
+      nameLocation: "middle",
+      nameGap: 30,
       axisLabel: {
         formatter: "{value}%",
       },
@@ -180,28 +182,8 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
         },
         zlevel: 1,
         data: growthBenefitsData.map((item, index, array) => {
-          const colorStops = [
-            "#22c55e", // green-500
-            "#10b981", // emerald-500
-            "#14b8a6", // teal-500
-            "#06b6d4", // cyan-500
-            "#0ea5e9", // sky-500
-            "#3b82f6", // blue-500
-            "#6366f1", // indigo-500
-            "#8b5cf6", // violet-500
-            "#a855f7", // purple-500
-            "#d946ef", // fuchsia-500
-            "#ec4899", // pink-500
-            "#f43f5e", // rose-500
-            "#84cc16", // lime-500
-            "#65a30d", // lime-600
-            "#4d7c0f", // lime-700
-            "#3f6212", // lime-800
-            "#365314", // lime-900
-          ];
+          const color = "#166534"; // green-800 - A rich, dark green
 
-          const color =
-            index < colorStops.length ? colorStops[index] : colorStops[0];
           const isTop3 = index >= array.length - 3;
 
           return {
