@@ -1,6 +1,6 @@
 import React from "react";
-import { BasePieChart } from "./base/BasePieChart";
-import { SurveyResponse } from "../../api/survey";
+import { BasePieChart } from "../base/BasePieChart";
+import { SurveyResponse } from "@/types/survey";
 
 const GENDER_MAPPINGS = {
   "1": "Male",
@@ -12,11 +12,13 @@ const GENDER_MAPPINGS = {
 interface GenderPieChartProps {
   data: SurveyResponse[];
   title?: string;
+  graphId: string;
 }
 
 export const GenderPieChart: React.FC<GenderPieChartProps> = ({
   data,
   title = "Gender Distribution",
+  graphId,
 }) => {
   const getAnswerText = (value: string): string => {
     return GENDER_MAPPINGS[value as keyof typeof GENDER_MAPPINGS] || value;
@@ -29,6 +31,7 @@ export const GenderPieChart: React.FC<GenderPieChartProps> = ({
       title={title}
       getAnswerText={getAnswerText}
       emptyStateMessage="No valid data available for Gender Distribution"
+      graphId={graphId}
     />
   );
 };

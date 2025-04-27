@@ -1,33 +1,39 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
-  Q975?: string;
+  Q987?: string;
   [key: string]: any;
 }
 
-interface PoliticalIdeologyChartProps {
+interface HouseholdIncomeChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
-export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
+export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
   data,
+  graphId,
 }) => {
   const processedData = useMemo(() => {
     const categories = {
-      "1": "Conservative",
-      "2": "Moderate",
-      "3": "Liberal",
-      "4": "Not Sure",
-      "5": "Prefer Not to Answer",
+      "1": "Under $15,000",
+      "2": "$15,000-$24,999",
+      "3": "$25,000-$49,999",
+      "4": "$50,000-$99,999",
+      "5": "$100,000-$149,999",
+      "6": "$150,000-$199,999",
+      "7": "$200,000+",
+      "8": "Prefer Not to Answer",
     };
 
     const counts: { [key: string]: number } = {};
     Object.keys(categories).forEach((key) => (counts[key] = 0));
 
     data.forEach((item) => {
-      const category = item.Q975;
+      const category = item.Q987;
       if (category && counts[category] !== undefined) {
         counts[category]++;
       }
@@ -41,7 +47,7 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
 
   const option: EChartsOption = {
     title: {
-      text: "Political Ideology",
+      text: "Household Income",
       left: "center",
     },
     tooltip: {
@@ -53,7 +59,7 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     xAxis: {
       type: "category",
       data: processedData.labels,
-      name: "Political Ideology",
+      name: "Income Range",
       nameLocation: "middle",
       nameGap: 30,
       axisLabel: {
@@ -86,5 +92,5 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     },
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

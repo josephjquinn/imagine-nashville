@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
   Q900?: string;
@@ -10,10 +11,12 @@ interface SurveyData {
 
 interface NashvilleTenureChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
 export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
   data,
+  graphId,
 }) => {
   const computedTenureData = useMemo(() => {
     const categories = {
@@ -150,8 +153,8 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <BaseGraph option={computedOption} />
-      <BaseGraph option={rawOption} />
+      <BaseGraph option={computedOption} graphId={graphId} />
+      <BaseGraph option={rawOption} graphId={graphId} />
     </div>
   );
 };

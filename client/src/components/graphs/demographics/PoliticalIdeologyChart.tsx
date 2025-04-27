@@ -1,32 +1,36 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
-  Q918?: string;
+  Q975?: string;
   [key: string]: any;
 }
 
-interface PublicTransportationChartProps {
+interface PoliticalIdeologyChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
-export const PublicTransportationChart: React.FC<
-  PublicTransportationChartProps
-> = ({ data }) => {
+export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
+  data,
+  graphId,
+}) => {
   const processedData = useMemo(() => {
     const categories = {
-      "1": "Don't Use",
-      "2": "Few Times/Year",
-      "3": "Once/Month",
-      "4": "Once/Week+",
+      "1": "Conservative",
+      "2": "Moderate",
+      "3": "Liberal",
+      "4": "Not Sure",
+      "5": "Prefer Not to Answer",
     };
 
     const counts: { [key: string]: number } = {};
     Object.keys(categories).forEach((key) => (counts[key] = 0));
 
     data.forEach((item) => {
-      const category = item.Q918;
+      const category = item.Q975;
       if (category && counts[category] !== undefined) {
         counts[category]++;
       }
@@ -40,7 +44,7 @@ export const PublicTransportationChart: React.FC<
 
   const option: EChartsOption = {
     title: {
-      text: "Public Transportation Usage",
+      text: "Political Ideology",
       left: "center",
     },
     tooltip: {
@@ -52,7 +56,7 @@ export const PublicTransportationChart: React.FC<
     xAxis: {
       type: "category",
       data: processedData.labels,
-      name: "Usage Frequency",
+      name: "Political Ideology",
       nameLocation: "middle",
       nameGap: 30,
       axisLabel: {
@@ -85,5 +89,5 @@ export const PublicTransportationChart: React.FC<
     },
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

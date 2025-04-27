@@ -1,30 +1,39 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
-  Q905?: string;
+  Q930?: string;
   [key: string]: any;
 }
 
-interface LivingAreaChartProps {
+interface MaritalStatusChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
-export const LivingAreaChart: React.FC<LivingAreaChartProps> = ({ data }) => {
+export const MaritalStatusChart: React.FC<MaritalStatusChartProps> = ({
+  data,
+  graphId,
+}) => {
   const processedData = useMemo(() => {
     const categories = {
-      "1": "Urban/City Area",
-      "2": "Suburban Area",
-      "3": "Small Town/City",
-      "4": "Rural Area",
+      "1": "Married",
+      "2": "Separated",
+      "3": "Divorced",
+      "4": "Single",
+      "5": "Widowed",
+      "6": "Engaged",
+      "7": "Living Together",
+      "8": "Prefer Not to Answer",
     };
 
     const counts: { [key: string]: number } = {};
     Object.keys(categories).forEach((key) => (counts[key] = 0));
 
     data.forEach((item) => {
-      const category = item.Q905;
+      const category = item.Q930;
       if (category && counts[category] !== undefined) {
         counts[category]++;
       }
@@ -38,7 +47,7 @@ export const LivingAreaChart: React.FC<LivingAreaChartProps> = ({ data }) => {
 
   const option: EChartsOption = {
     title: {
-      text: "Living Area Type",
+      text: "Marital Status",
       left: "center",
     },
     tooltip: {
@@ -76,5 +85,5 @@ export const LivingAreaChart: React.FC<LivingAreaChartProps> = ({ data }) => {
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

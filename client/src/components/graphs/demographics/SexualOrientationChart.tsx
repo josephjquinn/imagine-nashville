@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
   Q980?: string;
@@ -9,10 +10,12 @@ interface SurveyData {
 
 interface SexualOrientationChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
 export const SexualOrientationChart: React.FC<SexualOrientationChartProps> = ({
   data,
+  graphId,
 }) => {
   const processedData = useMemo(() => {
     const categories = {
@@ -80,5 +83,5 @@ export const SexualOrientationChart: React.FC<SexualOrientationChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

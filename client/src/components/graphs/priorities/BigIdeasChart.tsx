@@ -40,12 +40,14 @@ interface BigIdeasChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
   data,
   title = "Nashville's Big Ideas for the Future",
   subtitle = "% Selected as Top or Second Choice",
+  graphId,
 }) => {
   const { processedData, totalResponses } = useMemo(() => {
     const ideaCounts = new Map<string, { top: number; second: number }>();
@@ -253,5 +255,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "700px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "700px" }} graphId={graphId} />
+  );
 };

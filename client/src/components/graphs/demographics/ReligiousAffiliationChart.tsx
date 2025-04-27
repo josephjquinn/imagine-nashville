@@ -1,36 +1,40 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
-  Q930?: string;
+  Q990?: string;
   [key: string]: any;
 }
 
-interface MaritalStatusChartProps {
+interface ReligiousAffiliationChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
-export const MaritalStatusChart: React.FC<MaritalStatusChartProps> = ({
-  data,
-}) => {
+export const ReligiousAffiliationChart: React.FC<
+  ReligiousAffiliationChartProps
+> = ({ data, graphId }) => {
   const processedData = useMemo(() => {
     const categories = {
-      "1": "Married",
-      "2": "Separated",
-      "3": "Divorced",
-      "4": "Single",
-      "5": "Widowed",
-      "6": "Engaged",
-      "7": "Living Together",
-      "8": "Prefer Not to Answer",
+      "1": "Protestant",
+      "2": "Catholic",
+      "3": "Jewish",
+      "4": "Muslim",
+      "5": "Hindu",
+      "6": "Buddhist",
+      "7": "Other",
+      "8": "None",
+      "9": "Not Sure",
+      "10": "Prefer Not to Answer",
     };
 
     const counts: { [key: string]: number } = {};
     Object.keys(categories).forEach((key) => (counts[key] = 0));
 
     data.forEach((item) => {
-      const category = item.Q930;
+      const category = item.Q990;
       if (category && counts[category] !== undefined) {
         counts[category]++;
       }
@@ -44,7 +48,7 @@ export const MaritalStatusChart: React.FC<MaritalStatusChartProps> = ({
 
   const option: EChartsOption = {
     title: {
-      text: "Marital Status",
+      text: "Religious Affiliation",
       left: "center",
     },
     tooltip: {
@@ -82,5 +86,5 @@ export const MaritalStatusChart: React.FC<MaritalStatusChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

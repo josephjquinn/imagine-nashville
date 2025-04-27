@@ -1,31 +1,35 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
-  Q915?: string;
+  Q955?: string;
   [key: string]: any;
 }
 
-interface HousingStatusChartProps {
+interface PoliticalAffiliationChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
-export const HousingStatusChart: React.FC<HousingStatusChartProps> = ({
-  data,
-}) => {
+export const PoliticalAffiliationChart: React.FC<
+  PoliticalAffiliationChartProps
+> = ({ data, graphId }) => {
   const processedData = useMemo(() => {
     const categories = {
-      "1": "Own",
-      "2": "Rent",
-      "3": "Other",
+      "1": "Republican",
+      "2": "Democrat",
+      "3": "Independent",
+      "4": "Something Else",
+      "5": "Prefer Not to Answer",
     };
 
     const counts: { [key: string]: number } = {};
     Object.keys(categories).forEach((key) => (counts[key] = 0));
 
     data.forEach((item) => {
-      const category = item.Q915;
+      const category = item.Q955;
       if (category && counts[category] !== undefined) {
         counts[category]++;
       }
@@ -39,7 +43,7 @@ export const HousingStatusChart: React.FC<HousingStatusChartProps> = ({
 
   const option: EChartsOption = {
     title: {
-      text: "Housing Status",
+      text: "Political Affiliation",
       left: "center",
     },
     tooltip: {
@@ -77,5 +81,5 @@ export const HousingStatusChart: React.FC<HousingStatusChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

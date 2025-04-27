@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 
 interface SurveyData {
@@ -9,10 +9,12 @@ interface SurveyData {
 
 interface EducationLevelChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
 export const EducationLevelChart: React.FC<EducationLevelChartProps> = ({
   data,
+  graphId,
 }) => {
   const processedData = useMemo(() => {
     const categories = {
@@ -87,5 +89,5 @@ export const EducationLevelChart: React.FC<EducationLevelChartProps> = ({
     },
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

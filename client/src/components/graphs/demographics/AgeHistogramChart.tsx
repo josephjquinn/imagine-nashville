@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../api/formal_survey";
+import { SurveyResponse } from "@/types/survey";
 
 interface AgeHistogramChartProps {
   data: SurveyResponse[];
   title?: string;
+  graphId: string;
 }
 
 // Age range definitions
@@ -23,6 +24,7 @@ const AGE_RANGES = [
 export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
   data,
   title,
+  graphId,
 }) => {
   const field = "Q100";
 
@@ -115,5 +117,5 @@ export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

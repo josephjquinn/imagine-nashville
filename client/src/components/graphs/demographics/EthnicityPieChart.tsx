@@ -1,6 +1,6 @@
 import React from "react";
-import { BasePieChart } from "./base/BasePieChart";
-import { SurveyResponse } from "../../api/survey";
+import { BasePieChart } from "../base/BasePieChart";
+import { SurveyResponse } from "@/types/survey";
 
 const ETHNICITY_MAPPINGS = {
   "1": "White",
@@ -16,11 +16,13 @@ const ETHNICITY_MAPPINGS = {
 interface EthnicityPieChartProps {
   data: SurveyResponse[];
   title?: string;
+  graphId: string;
 }
 
 export const EthnicityPieChart: React.FC<EthnicityPieChartProps> = ({
   data,
   title = "Ethnicity Distribution",
+  graphId,
 }) => {
   const getAnswerText = (value: string): string => {
     return (
@@ -35,6 +37,7 @@ export const EthnicityPieChart: React.FC<EthnicityPieChartProps> = ({
       title={title}
       getAnswerText={getAnswerText}
       emptyStateMessage="No valid data available for Ethnicity Distribution"
+      graphId={graphId}
     />
   );
 };

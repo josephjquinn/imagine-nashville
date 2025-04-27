@@ -1,30 +1,34 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
-  Q920?: string;
+  Q915?: string;
   [key: string]: any;
 }
 
-interface ChildrenInHouseholdChartProps {
+interface HousingStatusChartProps {
   data: SurveyData[];
+  graphId: string;
 }
 
-export const ChildrenInHouseholdChart: React.FC<
-  ChildrenInHouseholdChartProps
-> = ({ data }) => {
+export const HousingStatusChart: React.FC<HousingStatusChartProps> = ({
+  data,
+  graphId,
+}) => {
   const processedData = useMemo(() => {
     const categories = {
-      "1": "No Children",
-      "2": "Has Children",
+      "1": "Own",
+      "2": "Rent",
+      "3": "Other",
     };
 
     const counts: { [key: string]: number } = {};
     Object.keys(categories).forEach((key) => (counts[key] = 0));
 
     data.forEach((item) => {
-      const category = item.Q920;
+      const category = item.Q915;
       if (category && counts[category] !== undefined) {
         counts[category]++;
       }
@@ -38,7 +42,7 @@ export const ChildrenInHouseholdChart: React.FC<
 
   const option: EChartsOption = {
     title: {
-      text: "Children in Household",
+      text: "Housing Status",
       left: "center",
     },
     tooltip: {
@@ -76,5 +80,5 @@ export const ChildrenInHouseholdChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };
