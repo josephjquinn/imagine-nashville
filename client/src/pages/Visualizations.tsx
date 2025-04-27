@@ -275,18 +275,6 @@ const SurveyDashboard: React.FC = () => {
             <h1 className="text-2xl font-bold text-gray-900">
               Nashville Survey Analytics
             </h1>
-            <div className="flex items-center gap-4">
-              <select
-                id="surveyType"
-                value={surveyType}
-                onChange={(e) => setSurveyType(e.target.value as SurveyType)}
-                className="block px-3 py-2 text-sm border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="formal">Formal Survey</option>
-                <option value="public">Public Survey</option>
-                <option value="merged">Merged Survey</option>
-              </select>
-            </div>
           </div>
         </div>
       </div>
@@ -322,6 +310,8 @@ const SurveyDashboard: React.FC = () => {
             <DemographicFilters
               onFilterChange={handleFilterChange}
               totalResponses={surveyData.length}
+              surveyType={surveyType}
+              onSurveyTypeChange={setSurveyType}
             />
           </div>
 
