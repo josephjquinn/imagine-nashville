@@ -35,8 +35,8 @@ interface TransportationGoalsChartProps {
 
 export const TransportationGoalsChart: React.FC<
   TransportationGoalsChartProps
-> = ({ data, title, subtitle, graphId }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+> = ({ data, title, graphId }) => {
+  const { processedData } = useMemo(() => {
     const goalCounts = new Map<string, { top: number; second: number }>();
 
     // Initialize counts

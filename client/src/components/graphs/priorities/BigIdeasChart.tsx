@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const BIG_IDEAS = [
   {
@@ -49,7 +49,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
   subtitle = "% Selected as Top or Second Choice",
   graphId,
 }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     const ideaCounts = new Map<string, { top: number; second: number }>();
     BIG_IDEAS.forEach((idea) => {
       ideaCounts.set(idea.value, { top: 0, second: 0 });

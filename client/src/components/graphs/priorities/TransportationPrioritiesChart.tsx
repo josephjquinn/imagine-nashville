@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 const TRANSPORTATION_PRIORITIES = [
   {
@@ -44,7 +44,7 @@ interface TransportationPrioritiesChartProps {
 export const TransportationPrioritiesChart: React.FC<
   TransportationPrioritiesChartProps
 > = ({ data, title, subtitle, graphId }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     const results = TRANSPORTATION_PRIORITIES.map((priority) => {
       let sum = 0;
       let count = 0;

@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/types/survey";
 
 interface SurveyData {
   Q975?: string;

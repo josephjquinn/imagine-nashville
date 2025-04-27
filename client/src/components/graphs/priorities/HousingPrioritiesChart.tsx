@@ -44,7 +44,7 @@ export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
   subtitle,
   graphId,
 }) => {
-  const { processedData, totalResponses } = useMemo(() => {
+  const { processedData } = useMemo(() => {
     const results = HOUSING_PRIORITIES.map((priority) => {
       let sum = 0;
       let count = 0;

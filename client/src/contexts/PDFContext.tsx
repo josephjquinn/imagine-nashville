@@ -11,63 +11,6 @@ interface PDFContextType {
 
 const PDFContext = createContext<PDFContextType | undefined>(undefined);
 
-// Properties that might contain color values
-const colorProperties = [
-  "backgroundColor",
-  "color",
-  "borderColor",
-  "borderTopColor",
-  "borderRightColor",
-  "borderBottomColor",
-  "borderLeftColor",
-  "outlineColor",
-  "textDecorationColor",
-  "columnRuleColor",
-];
-
-// Function to convert oklch to rgb
-const convertOklchToRgb = (element: HTMLElement) => {
-  const originalStyles = new Map<HTMLElement, Map<string, string>>();
-
-  const processElement = (el: HTMLElement) => {
-    const computedStyle = window.getComputedStyle(el);
-    const elementStyles = new Map<string, string>();
-
-    colorProperties.forEach((prop) => {
-      const value = computedStyle.getPropertyValue(prop);
-      if (value.includes("oklch")) {
-        // Store original value
-        elementStyles.set(prop, value);
-        // Set temporary RGB value
-        (el as any).style[prop] = "rgb(255, 255, 255)";
-      }
-    });
-
-    if (elementStyles.size > 0) {
-      originalStyles.set(el, elementStyles);
-    }
-  };
-
-  // Process the element and all its children
-  processElement(element);
-  element
-    .querySelectorAll("*")
-    .forEach((el) => processElement(el as HTMLElement));
-
-  return originalStyles;
-};
-
-// Function to restore original colors
-const restoreOriginalColors = (
-  originalStyles: Map<HTMLElement, Map<string, string>>
-) => {
-  originalStyles.forEach((styles, element) => {
-    styles.forEach((value, prop) => {
-      (element as any).style[prop] = value;
-    });
-  });
-};
-
 export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -99,7 +42,6 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
     const pageHeight = pdf.internal.pageSize.getHeight();
     const margin = 10;
     const contentWidth = pageWidth - 2 * margin;
-    const contentHeight = pageHeight - 2 * margin;
 
     let currentPage = 1;
     let currentY = margin;

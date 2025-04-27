@@ -21,7 +21,6 @@ export const EducationPriorityPieChart: React.FC<
 > = ({
   data,
   title = "Agreement: Investing in Public Education is a Priority",
-  subtitle = "Q665",
   graphId,
 }) => {
   return (
