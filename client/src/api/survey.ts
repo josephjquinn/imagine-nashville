@@ -5,7 +5,31 @@ export interface SurveyResponse {
   [key: string]: any;
 }
 
-export const MergedSurveyService = {
+export type SurveyType = 'formal' | 'public' | 'merged';
+
+const getTableName = (type: SurveyType): string => {
+  switch (type) {
+    case 'formal':
+      return 'formal_survey';
+    case 'public':
+      return 'public_survey';
+    case 'merged':
+      return 'merged_survey';
+    default:
+      throw new Error(`Invalid survey type: ${type}`);
+  }
+};
+
+/**
+ * Base survey service that implements common functionality for all survey types
+ */
+class BaseSurveyService {
+  protected tableName: string;
+
+  constructor(type: SurveyType) {
+    this.tableName = getTableName(type);
+  }
+
   /**
    * Fetches all survey responses with pagination
    * @param page The page number (1-based)
@@ -18,9 +42,10 @@ export const MergedSurveyService = {
       const end = start + pageSize - 1;
 
       const { data, error, count } = await supabase
-        .from('merged_survey')
+        .from(this.tableName)
         .select('*', { count: 'exact' })
         .range(start, end)
+        .order('date', { ascending: false });
 
       if (error) {
         if (error.code === 'PGRST301') {
@@ -41,21 +66,23 @@ export const MergedSurveyService = {
       console.error('Error in getSurveyResponses:', error);
       throw error;
     }
-  },
+  }
 
   /**
    * Fetches all survey responses (useful for larger datasets)
    * @param batchSize Size of each batch to fetch (default: 1000)
+   * @param orderBy Field to order by (default: 'date')
+   * @param ascending Sort order (default: false = descending)
    * @returns Promise containing all survey responses
    */
-  async getAllSurveyResponses(batchSize: number = 1000) {
+  async getAllSurveyResponses(batchSize: number = 1000, orderBy: string = 'date', ascending: boolean = false) {
     try {
       let allData: SurveyResponse[] = [];
       let currentPage = 0;
       
       // First get the total count
       const { count } = await supabase
-        .from('merged_survey')
+        .from(this.tableName)
         .select('*', { count: 'exact', head: true });
       
       const totalRows = count || 0;
@@ -66,9 +93,10 @@ export const MergedSurveyService = {
         const end = start + batchSize - 1;
         
         const { data, error } = await supabase
-          .from('merged_survey')
+          .from(this.tableName)
           .select('*')
           .range(start, end)
+          .order(orderBy, { ascending });
           
         if (error) {
           throw new Error(`Error fetching survey responses: ${error.message}`);
@@ -87,7 +115,7 @@ export const MergedSurveyService = {
       console.error('Error in getAllSurveyResponses:', error);
       throw error;
     }
-  },
+  }
 
   /**
    * Fetches a single survey response by ID
@@ -97,7 +125,7 @@ export const MergedSurveyService = {
   async getSurveyResponseById(id: string) {
     try {
       const { data, error } = await supabase
-        .from('merged_survey')
+        .from(this.tableName)
         .select('*')
         .eq('XID', id)
         .single();
@@ -118,7 +146,7 @@ export const MergedSurveyService = {
       console.error('Error in getSurveyResponseById:', error);
       throw error;
     }
-  },
+  }
 
   /**
    * Fetches survey responses with optional filters and pagination
@@ -136,7 +164,7 @@ export const MergedSurveyService = {
       
       // First get the total count with filters
       let countQuery = supabase
-        .from('merged_survey')
+        .from(this.tableName)
         .select('*', { count: 'exact', head: true });
 
       // Apply filters to count query
@@ -160,7 +188,7 @@ export const MergedSurveyService = {
         const end = start + batchSize - 1;
         
         let query = supabase
-          .from('merged_survey')
+          .from(this.tableName)
           .select('*')
           .range(start, end);
 
@@ -197,5 +225,19 @@ export const MergedSurveyService = {
       console.error('Error in getFilteredSurveyResponses:', error);
       throw error;
     }
-  },
-}; 
+  }
+}
+
+/**
+ * Factory function to create survey services
+ * @param type The type of survey service to create
+ * @returns A new instance of the survey service
+ */
+export const createSurveyService = (type: SurveyType) => {
+  return new BaseSurveyService(type);
+};
+
+// For backward compatibility
+export const FormalSurveyService = createSurveyService('formal');
+export const PublicSurveyService = createSurveyService('public');
+export const MergedSurveyService = createSurveyService('merged'); 

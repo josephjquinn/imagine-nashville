@@ -1,25 +1,16 @@
 import { useState, useEffect } from "react";
-import { SurveyResponse, FormalSurveyService } from "../api/formal_survey";
-import { PublicSurveyService } from "../api/public_survey";
-import { MergedSurveyService } from "../api/merged_survey";
+import { SurveyResponse, SurveyType, createSurveyService } from "../api/survey";
 import { DemographicFiltersState } from "../components/filters/DemographicFilters";
 
-export type SurveyType = 'formal' | 'public' | 'merged';
+// Re-export SurveyType for backward compatibility
+export type { SurveyType };
 
-const getSurveyService = (type: SurveyType) => {
-  switch (type) {
-    case 'formal':
-      return FormalSurveyService;
-    case 'public':
-      return PublicSurveyService;
-    case 'merged':
-      return MergedSurveyService;
-    default:
-      throw new Error(`Invalid survey type: ${type}`);
-  }
-};
-
-const mapFiltersToQuery = (filters: DemographicFiltersState) => {
+/**
+ * Maps demographic filter values to their corresponding database query values
+ * @param filters The demographic filters to map
+ * @returns A record of query parameters for the survey service
+ */
+const mapFiltersToQuery = (filters: DemographicFiltersState): Record<string, any> => {
   const queryFilters: Record<string, any> = {};
 
   if (filters.ageMin !== undefined && filters.ageMax !== undefined) {
@@ -148,6 +139,12 @@ const mapFiltersToQuery = (filters: DemographicFiltersState) => {
   return queryFilters;
 };
 
+/**
+ * Custom hook for fetching and managing survey data
+ * @param type The type of survey to fetch (formal, public, or merged)
+ * @param filters Optional demographic filters to apply to the survey data
+ * @returns An object containing the survey data, loading state, and any errors
+ */
 export const useSurveyData = (type: SurveyType = 'merged', filters?: DemographicFiltersState) => {
   const [data, setData] = useState<SurveyResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -157,13 +154,15 @@ export const useSurveyData = (type: SurveyType = 'merged', filters?: Demographic
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const service = getSurveyService(type);
+        const service = createSurveyService(type);
         const queryFilters = filters ? mapFiltersToQuery(filters) : {};
         const response = await service.getFilteredSurveyResponses(queryFilters);
         setData(response.data);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error("Failed to fetch survey data"));
+        const error = err instanceof Error ? err : new Error("Failed to fetch survey data");
+        console.error('Error fetching survey data:', error);
+        setError(error);
       } finally {
         setIsLoading(false);
       }
