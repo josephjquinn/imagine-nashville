@@ -1,14 +1,16 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
-import { SurveyResponse } from "@/api/merged_survey";
-import { BasePieChart } from "./base/BasePieChart";
+import { SurveyResponse } from "@/types/survey";
+import { BasePieChart } from "../base/BasePieChart";
 
 interface QualityOfLifeLadderChartProps {
   data: SurveyResponse[];
+  graphId: string;
 }
 
 const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
   data,
+  graphId,
 }) => {
   const barChartRef = useRef<HTMLDivElement>(null);
 
@@ -197,6 +199,7 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
               radius={["40%", "70%"]}
               showLegend={true}
               legendPosition="left"
+              graphId={graphId}
             />
           </div>
         </>

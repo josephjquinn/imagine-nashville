@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 
 interface SurveyData {
@@ -9,11 +9,12 @@ interface SurveyData {
 
 interface NeighborhoodSatisfactionGraphProps {
   data: SurveyData[];
+  graphId: string;
 }
 
 export const NeighborhoodSatisfactionGraph: React.FC<
   NeighborhoodSatisfactionGraphProps
-> = ({ data }) => {
+> = ({ data, graphId }) => {
   const processedData = useMemo(() => {
     // Initialize counts for all possible ratings (1-10)
     const ratingCounts: { [key: number]: number } = {};
@@ -80,5 +81,5 @@ export const NeighborhoodSatisfactionGraph: React.FC<
     },
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };

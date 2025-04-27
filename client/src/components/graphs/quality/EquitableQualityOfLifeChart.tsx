@@ -1,35 +1,34 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/merged_survey";
+import { SurveyResponse } from "@/types/survey";
 
 // Define the agreement categories and their colors
 const AGREEMENT_CATEGORIES = [
-  { value: 5, label: "Strongly Agree", color: "#f4511e", percentage: 12 },
-  { value: 4, label: "Somewhat Agree", color: "#ff9800", percentage: 34 },
-  {
-    value: 3,
-    label: "Neither Agree nor Disagree",
-    color: "#e0e0e0",
-    percentage: 25,
-  },
-  { value: 2, label: "Somewhat Disagree", color: "#9e9e9e", percentage: 20 },
-  { value: 1, label: "Strongly Disagree", color: "#616161", percentage: 9 },
+  { value: 5, label: "Strongly Agree", color: "#f4511e" },
+  { value: 4, label: "Somewhat Agree", color: "#ff9800" },
+  { value: 3, label: "Neither Agree nor Disagree", color: "#9e9e9e" },
+  { value: 2, label: "Somewhat Disagree", color: "#616161" },
+  { value: 1, label: "Strongly Disagree", color: "#424242" },
 ];
 
 // Define the survey field
-const SURVEY_FIELD = "Q530_C"; // Field for inclusion question
+const SURVEY_FIELD = "Q530_F";
 
-interface InclusiveServicesChartProps {
+interface EquitableQualityOfLifeChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
-export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
+export const EquitableQualityOfLifeChart: React.FC<
+  EquitableQualityOfLifeChartProps
+> = ({
   data,
-  title = "Nashville is a very inclusive place where city services / opportunities are equally provided and available to all",
-  subtitle,
+  title = "Equitable Quality of Life",
+  subtitle = "The benefits of Nashville's success are being equally shared across all age, race, and income groups",
+  graphId,
 }) => {
   // Process the survey data
   const processedData = useMemo(() => {
@@ -54,24 +53,13 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
     // Calculate percentages and prepare chart data
     const chartData = AGREEMENT_CATEGORIES.map((category) => ({
       name: category.label,
-      value: total > 0 ? Math.round((counts[category.value] / total) * 100) : 0,
+      value:
+        total > 0 ? ((counts[category.value] / total) * 100).toFixed(1) : 0,
       count: counts[category.value],
       itemStyle: {
         color: category.color,
       },
     }));
-
-    // Ensure percentages add up to 100%
-    if (total > 0) {
-      let sum = chartData.reduce((acc, item) => acc + Number(item.value), 0);
-      if (sum !== 100 && sum > 0) {
-        // Adjust the largest value to make sum exactly 100
-        const largest = chartData.reduce((prev, current) =>
-          Number(current.value) > Number(prev.value) ? current : prev
-        );
-        largest.value = Number(largest.value) - (sum - 100);
-      }
-    }
 
     return {
       chartData,
@@ -83,7 +71,9 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
   if (processedData.total === 0) {
     return (
       <div className="flex items-center justify-center h-full">
-        <p className="text-gray-500">No valid inclusion data available</p>
+        <p className="text-gray-500">
+          No valid equitable quality of life data available
+        </p>
       </div>
     );
   }
@@ -97,6 +87,7 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
         fontSize: 16,
         fontWeight: "bold",
       },
+      subtext: subtitle,
       subtextStyle: {
         fontSize: 12,
         color: "#666",
@@ -111,7 +102,7 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
         return `
           <div style="padding: 4px;">
             <div style="display: flex; align-items: center; margin-bottom: 8px;">
-              <span style="display: inline-block; width: 10px; height: 10px; background-color: ${data?.itemStyle.color}; margin-right: 8px;"></span>
+              <span style="display: inline-block; width: 10px; height: 10px; background-color: ${data?.itemStyle?.color}; margin-right: 8px;"></span>
               <span style="font-weight: bold;">${params.seriesName}</span>
             </div>
             <div style="margin-left: 18px; line-height: 1.5;">
@@ -177,5 +168,7 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
     },
   };
 
-  return <BaseGraph option={option} style={{ height: "200px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "200px" }} graphId={graphId} />
+  );
 };

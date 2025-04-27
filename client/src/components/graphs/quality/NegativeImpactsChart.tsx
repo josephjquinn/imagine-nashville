@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
-import { BaseGraph } from "./base/BaseGraph";
+import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "@/api/public_survey";
+import { SurveyResponse } from "@/types/survey";
 
 // Fields from the image provided (Q405)
 const Q405_FIELDS = [
@@ -42,12 +42,14 @@ interface NegativeImpactsChartProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
+  graphId: string;
 }
 
 export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
   data,
   title,
   subtitle,
+  graphId,
 }) => {
   // Process data to count mentions of each negative impact
   const negativeImpactsData = useMemo(() => {
@@ -229,5 +231,7 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} style={{ height: "800px" }} />;
+  return (
+    <BaseGraph option={option} style={{ height: "800px" }} graphId={graphId} />
+  );
 };
