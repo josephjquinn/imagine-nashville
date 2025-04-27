@@ -119,5 +119,13 @@ export const NashvillePositivesPieChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph
+      option={option}
+      style={{ height: "400px" }}
+      graphId={graphId}
+      title="What Makes Nashville Great"
+      subtitle="Top positive aspects of living in Nashville"
+    />
+  );
 };

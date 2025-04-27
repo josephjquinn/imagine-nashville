@@ -239,6 +239,12 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "800px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "800px" }}
+      graphId={graphId}
+      title="Problems Caused by Growth: How to Talk about Growth"
+      subtitle="% Selected as Top 3 Reason"
+    />
   );
 };

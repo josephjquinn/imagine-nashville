@@ -166,6 +166,12 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "450px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "400px" }}
+      graphId={graphId}
+      title="Perceptions of Nashville's Growth"
+      subtitle="Is Nashville's rapid growth making things better or worse?"
+    />
   );
 };

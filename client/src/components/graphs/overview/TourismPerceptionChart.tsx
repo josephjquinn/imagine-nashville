@@ -108,19 +108,6 @@ const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
 
   // Create the chart configuration
   const option: EChartsOption = {
-    title: {
-      text: "Tourism Impact",
-      left: "center",
-      textStyle: {
-        fontSize: 16,
-        fontWeight: "bold",
-      },
-      subtext: "How residents perceive tourism's impact on Nashville",
-      subtextStyle: {
-        fontSize: 12,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -150,7 +137,7 @@ const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
       left: "15%",
       right: "4%",
       bottom: "3%",
-      top: "25%",
+      top: "15%",
       containLabel: true,
     },
     xAxis: {
@@ -230,7 +217,13 @@ const TourismPerceptionChart: React.FC<TourismPerceptionChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "400px" }}
+      graphId={graphId}
+      title="Tourism Impact"
+      subtitle="How residents perceive tourism's impact on Nashville"
+    />
   );
 };
 

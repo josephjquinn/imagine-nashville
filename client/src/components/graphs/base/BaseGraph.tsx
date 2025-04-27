@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import * as echarts from "echarts";
 import type { EChartsOption } from "echarts";
 import { Button } from "@/components/ui/button";
@@ -16,17 +16,68 @@ interface BaseGraphProps {
   style?: React.CSSProperties;
   className?: string;
   graphId: string;
+  title?: string;
+  subtitle?: string;
 }
+
+// Standardized title and subtitle styles
+const TITLE_STYLE = {
+  fontSize: 18,
+  fontWeight: "bold" as const,
+};
+
+const SUBTITLE_STYLE = {
+  fontSize: 14,
+  color: "#666",
+};
 
 export const BaseGraph: React.FC<BaseGraphProps> = ({
   option,
   style,
   className,
   graphId,
+  title,
+  subtitle,
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const { addGraph, removeGraph } = usePDF();
+
+  // Merge the provided options with standardized title and subtitle
+  const mergedOption = useMemo(() => {
+    if (!title && !subtitle) return option;
+
+    const newOption = { ...option };
+    
+    // Handle both single title and array of titles
+    if (Array.isArray(newOption.title)) {
+      newOption.title = [
+        {
+          text: title || newOption.title[0]?.text || "",
+          left: "center",
+          top: 0,
+          textStyle: TITLE_STYLE,
+        },
+        {
+          text: subtitle || newOption.title[1]?.text || "",
+          left: "center",
+          top: 25,
+          textStyle: SUBTITLE_STYLE,
+        },
+      ];
+    } else {
+      newOption.title = {
+        text: title || newOption.title?.text || "",
+        left: "center",
+        top: 0,
+        textStyle: TITLE_STYLE,
+        subtext: subtitle || newOption.title?.subtext || "",
+        subtextStyle: SUBTITLE_STYLE,
+      };
+    }
+
+    return newOption;
+  }, [option, title, subtitle]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -42,9 +93,9 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
 
   useEffect(() => {
     if (chartInstance.current) {
-      chartInstance.current.setOption(option);
+      chartInstance.current.setOption(mergedOption);
     }
-  }, [option]);
+  }, [mergedOption]);
 
   const handleDownload = (backgroundColor: string = "transparent") => {
     if (chartInstance.current) {

@@ -252,6 +252,12 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "800px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "800px" }}
+      graphId={graphId}
+      title="Benefits of Growth: Key Positive Impacts"
+      subtitle="% Selected as Top 3 Reason"
+    />
   );
 };

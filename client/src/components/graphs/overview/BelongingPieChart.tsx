@@ -356,6 +356,8 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
       option={option}
       style={{ height: "600px" }}
       graphId={graphId || "belonging-pie"}
+      title="Sense of Belonging in Nashville"
+      subtitle="How residents feel about their connection to the city"
     />
   );
 };

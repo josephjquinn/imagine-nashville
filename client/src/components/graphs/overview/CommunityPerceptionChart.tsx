@@ -112,19 +112,6 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
 
   // Create the chart configuration
   const option: EChartsOption = {
-    title: {
-      text: "Community Perception",
-      left: "center",
-      textStyle: {
-        fontSize: 16,
-        fontWeight: "bold",
-      },
-      subtext: "Residents' views on economic divides and leadership priorities",
-      subtextStyle: {
-        fontSize: 12,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -154,7 +141,7 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
       left: "15%",
       right: "4%",
       bottom: "3%",
-      top: "25%",
+      top: "15%",
       containLabel: true,
     },
     xAxis: {
@@ -234,7 +221,13 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "400px" }}
+      graphId={graphId}
+      title="Community Perception"
+      subtitle="Residents' views on economic divides and leadership priorities"
+    />
   );
 };
 
