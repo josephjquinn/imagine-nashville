@@ -272,8 +272,8 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
               type: "pie" as const,
               radius:
                 processedData.belongingTotal > 0
-                  ? ["0%", "45%"]
-                  : ["0%", "75%"],
+                  ? ["0%", "35%"]
+                  : ["0%", "65%"],
               center: ["65%", "55%"],
               avoidLabelOverlap: true,
               itemStyle: {
@@ -317,8 +317,8 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
               type: "pie" as const,
               radius:
                 processedData.locationTotal > 0
-                  ? ["55%", "75%"]
-                  : ["0%", "75%"],
+                  ? ["45%", "65%"]
+                  : ["0%", "65%"],
               center: ["65%", "55%"],
               avoidLabelOverlap: true,
               itemStyle: {
@@ -354,7 +354,7 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
   return (
     <BaseGraph
       option={option}
-      style={{ height: "600px" }}
+      style={{ height: "550px" }}
       graphId={graphId || "belonging-pie"}
       title="Sense of Belonging in Nashville"
       subtitle="How residents feel about their connection to the city"
