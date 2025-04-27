@@ -1,47 +1,47 @@
 import React, { useState } from "react";
-import { GenderPieChart } from "../components/graphs/GenderPieChart";
-import { EthnicityPieChart } from "../components/graphs/EthnicityPieChart";
-import { AgeHistogramChart } from "../components/graphs/AgeHistogramChart";
-import { PriorityPerformanceChart } from "../components/graphs/PriorityPerformanceChart";
-import { PriorityQuadrantChart } from "../components/graphs/PriorityQuadrantChart";
-import { BelongingBarChart } from "../components/graphs/BelongingPieChart";
-import { InclusionRatingsChart } from "../components/graphs/InclusionRatingsChart";
-import { NegativeImpactsChart } from "../components/graphs/NegativeImpactsChart";
-import { GrowthPerceptionChart } from "../components/graphs/GrowthPerceptionChart";
-import { GrowthProblemsChart } from "../components/graphs/GrowthProblemsChart";
-import { GrowthBenefitsChart } from "../components/graphs/GrowthBenefitsChart";
-import QualityOfLifeLadderChart from "../components/graphs/QualityOfLifeLadderChart";
-import { EquitableQualityOfLifeChart } from "../components/graphs/EquitableQualityOfLifeChart";
-import { InclusiveServicesChart } from "../components/graphs/InclusiveServicesChart";
-import { NashvillePositivesPieChart } from "../components/graphs/NashvillePositivesPieChart";
-import CommunityPerceptionChart from "../components/graphs/CommunityPerceptionChart";
-import TourismPerceptionChart from "../components/graphs/TourismPerceptionChart";
+import { GenderPieChart } from "../components/graphs/demographics/GenderPieChart";
+import { EthnicityPieChart } from "../components/graphs/demographics/EthnicityPieChart";
+import { AgeHistogramChart } from "../components/graphs/demographics/AgeHistogramChart";
+import { PriorityPerformanceChart } from "../components/graphs/priorities/PriorityPerformanceChart";
+import { PriorityQuadrantChart } from "../components/graphs/priorities/PriorityQuadrantChart";
+import { BelongingBarChart } from "../components/graphs/overview/BelongingPieChart";
+import { InclusionRatingsChart } from "../components/graphs/priorities/InclusionRatingsChart";
+import { NegativeImpactsChart } from "../components/graphs/quality/NegativeImpactsChart";
+import { GrowthPerceptionChart } from "../components/graphs/overview/GrowthPerceptionChart";
+import { GrowthProblemsChart } from "../components/graphs/overview/GrowthProblemsChart";
+import { GrowthBenefitsChart } from "../components/graphs/overview/GrowthBenefitsChart";
+import QualityOfLifeLadderChart from "../components/graphs/quality/QualityOfLifeLadderChart";
+import { EquitableQualityOfLifeChart } from "../components/graphs/quality/EquitableQualityOfLifeChart";
+import { InclusiveServicesChart } from "../components/graphs/quality/InclusiveServicesChart";
+import { NashvillePositivesPieChart } from "../components/graphs/overview/NashvillePositivesPieChart";
+import CommunityPerceptionChart from "../components/graphs/overview/CommunityPerceptionChart";
+import TourismPerceptionChart from "../components/graphs/overview/TourismPerceptionChart";
 import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
-import { TransportationPriorityChart } from "@/components/graphs/TransportationPriorityChart";
-import { TransportationGoalsChart } from "../components/graphs/TransportationGoalsChart";
-import { TransportationPrioritiesChart } from "../components/graphs/TransportationPrioritiesChart";
-import { HousingGoalsChart } from "../components/graphs/HousingGoalsChart";
-import { HousingPrioritiesChart } from "../components/graphs/HousingPrioritiesChart";
-import { HousingSupportComboChart } from "../components/graphs/HousingSupportComboChart";
-import { EducationGoalsChart } from "../components/graphs/EducationGoalsChart";
-import { EducationPrioritiesChart } from "../components/graphs/EducationPrioritiesChart";
-import { EducationPriorityPieChart } from "../components/graphs/EducationPriorityPieChart";
-import { BigIdeasChart } from "../components/graphs/BigIdeasChart";
-import { IdealNeighborhoodAssetsChart } from "../components/graphs/IdealNeighborhoodAssetsChart";
-import { NeighborhoodSatisfactionGraph } from "../components/graphs/NeighborhoodSatisfactionGraph";
-import { NashvilleTenureChart } from "../components/graphs/NashvilleTenureChart";
-import { LivingAreaChart } from "../components/graphs/LivingAreaChart";
-import { HousingStatusChart } from "../components/graphs/HousingStatusChart";
-import { PublicTransportationChart } from "../components/graphs/PublicTransportationChart";
-import { ChildrenInHouseholdChart } from "../components/graphs/ChildrenInHouseholdChart";
-import { MaritalStatusChart } from "../components/graphs/MaritalStatusChart";
-import { EducationLevelChart } from "../components/graphs/EducationLevelChart";
-import { EmploymentStatusChart } from "../components/graphs/EmploymentStatusChart";
-import { HouseholdIncomeChart } from "../components/graphs/HouseholdIncomeChart";
-import { PoliticalAffiliationChart } from "../components/graphs/PoliticalAffiliationChart";
-import { PoliticalIdeologyChart } from "../components/graphs/PoliticalIdeologyChart";
-import { SexualOrientationChart } from "../components/graphs/SexualOrientationChart";
-import { ReligiousAffiliationChart } from "../components/graphs/ReligiousAffiliationChart";
+import { TransportationPriorityChart } from "@/components/graphs/priorities/TransportationPriorityChart";
+import { TransportationGoalsChart } from "../components/graphs/priorities/TransportationGoalsChart";
+import { TransportationPrioritiesChart } from "../components/graphs/priorities/TransportationPrioritiesChart";
+import { HousingGoalsChart } from "../components/graphs/priorities/HousingGoalsChart";
+import { HousingPrioritiesChart } from "../components/graphs/priorities/HousingPrioritiesChart";
+import { HousingSupportComboChart } from "../components/graphs/priorities/HousingSupportComboChart";
+import { EducationGoalsChart } from "../components/graphs/priorities/EducationGoalsChart";
+import { EducationPrioritiesChart } from "../components/graphs/priorities/EducationPrioritiesChart";
+import { EducationPriorityPieChart } from "../components/graphs/priorities/EducationPriorityPieChart";
+import { BigIdeasChart } from "../components/graphs/priorities/BigIdeasChart";
+import { IdealNeighborhoodAssetsChart } from "../components/graphs/priorities/IdealNeighborhoodAssetsChart";
+import { NeighborhoodSatisfactionGraph } from "../components/graphs/quality/NeighborhoodSatisfactionGraph";
+import { NashvilleTenureChart } from "../components/graphs/demographics/NashvilleTenureChart";
+import { LivingAreaChart } from "../components/graphs/demographics/LivingAreaChart";
+import { HousingStatusChart } from "../components/graphs/demographics/HousingStatusChart";
+import { PublicTransportationChart } from "../components/graphs/demographics/PublicTransportationChart";
+import { ChildrenInHouseholdChart } from "../components/graphs/demographics/ChildrenInHouseholdChart";
+import { MaritalStatusChart } from "../components/graphs/demographics/MaritalStatusChart";
+import { EducationLevelChart } from "../components/graphs/demographics/EducationLevelChart";
+import { EmploymentStatusChart } from "../components/graphs/demographics/EmploymentStatusChart";
+import { HouseholdIncomeChart } from "../components/graphs/demographics/HouseholdIncomeChart";
+import { PoliticalAffiliationChart } from "../components/graphs/demographics/PoliticalAffiliationChart";
+import { PoliticalIdeologyChart } from "../components/graphs/demographics/PoliticalIdeologyChart";
+import { SexualOrientationChart } from "../components/graphs/demographics/SexualOrientationChart";
+import { ReligiousAffiliationChart } from "../components/graphs/demographics/ReligiousAffiliationChart";
 import {
   DemographicFilters,
   DemographicFiltersState,
@@ -79,7 +79,7 @@ const sections: Section[] = [
 
 const SurveyDashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>("overview");
-  const [surveyType, setSurveyType] = useState<SurveyType>("merged");
+  const [surveyType, setSurveyType] = useState<SurveyType>("formal");
   const [filters, setFilters] = useState<DemographicFiltersState>({});
   const { data: surveyData, isLoading } = useSurveyData(surveyType, filters);
 
@@ -126,16 +126,12 @@ const SurveyDashboard: React.FC = () => {
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <CommunityPerceptionChart
                 data={surveyData}
-                title="Community Perception"
-                subtitle="Residents' views on economic divides and leadership priorities"
                 graphId="community-perception"
               />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <TourismPerceptionChart
                 data={surveyData}
-                title="Tourism Impact"
-                subtitle="How residents perceive tourism's impact on Nashville"
                 graphId="tourism-perception"
               />
             </div>
@@ -145,22 +141,35 @@ const SurveyDashboard: React.FC = () => {
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <QualityOfLifeLadderChart data={surveyData} />
+              <QualityOfLifeLadderChart
+                data={surveyData}
+                graphId="quality-of-life-ladder"
+              />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EquitableQualityOfLifeChart data={surveyData} />
+              <EquitableQualityOfLifeChart
+                data={surveyData}
+                graphId="equitable-quality-of-life"
+              />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <InclusiveServicesChart data={surveyData} />
+              <InclusiveServicesChart
+                data={surveyData}
+                graphId="inclusive-services"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <NeighborhoodSatisfactionGraph data={surveyData} />
+              <NeighborhoodSatisfactionGraph
+                data={surveyData}
+                graphId="neighborhood-satisfaction"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <NegativeImpactsChart
                 data={surveyData}
                 title="Most Significant Negative Impacts on Quality of Life"
                 subtitle="What residents dislike most about living and working in Nashville"
+                graphId="negative-impacts"
               />
             </div>
           </div>
@@ -169,54 +178,82 @@ const SurveyDashboard: React.FC = () => {
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <TransportationGoalsChart data={surveyData} />
+              <TransportationGoalsChart
+                data={surveyData}
+                graphId="transportation-goals"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <TransportationPrioritiesChart data={surveyData} />
+              <TransportationPrioritiesChart
+                data={surveyData}
+                graphId="transportation-priorities"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <HousingGoalsChart data={surveyData} />
+              <HousingGoalsChart data={surveyData} graphId="housing-goals" />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <HousingPrioritiesChart data={surveyData} />
+              <HousingPrioritiesChart
+                data={surveyData}
+                graphId="housing-priorities"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <HousingSupportComboChart data={surveyData} />
+              <HousingSupportComboChart
+                data={surveyData}
+                graphId="housing-support"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EducationGoalsChart data={surveyData} />
+              <EducationGoalsChart
+                data={surveyData}
+                graphId="education-goals"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EducationPrioritiesChart data={surveyData} />
+              <EducationPrioritiesChart
+                data={surveyData}
+                graphId="education-priorities"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EducationPriorityPieChart data={surveyData} />
+              <EducationPriorityPieChart
+                data={surveyData}
+                graphId="education-priority-pie"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <BigIdeasChart data={surveyData} />
+              <BigIdeasChart data={surveyData} graphId="big-ideas" />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <IdealNeighborhoodAssetsChart data={surveyData} />
+              <IdealNeighborhoodAssetsChart
+                data={surveyData}
+                graphId="ideal-neighborhood-assets"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <PriorityQuadrantChart
                 data={surveyData}
-                title="Top Learnings...And Biggest Issues Going Unaddressed"
+                graphId="priority-quadrant"
               />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <PriorityPerformanceChart
                 data={surveyData}
-                title="Nashville Priority Performance Ratings (1-10 Scale)"
+                graphId="priority-performance"
               />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <TransportationPriorityChart data={surveyData} />
+              <TransportationPriorityChart
+                data={surveyData}
+                graphId="transportation-priority"
+              />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <InclusionRatingsChart
                 data={surveyData}
                 title="Who is Outside Looking In?"
+                graphId="inclusion-ratings"
               />
             </div>
           </div>
@@ -226,52 +263,88 @@ const SurveyDashboard: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <AgeHistogramChart data={surveyData} />
+                <AgeHistogramChart data={surveyData} graphId="age-histogram" />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <GenderPieChart data={surveyData} />
+                <GenderPieChart data={surveyData} graphId="gender-pie" />
               </div>
               <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <EthnicityPieChart data={surveyData} />
+                <EthnicityPieChart data={surveyData} graphId="ethnicity-pie" />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <NashvilleTenureChart data={surveyData} />
+                <NashvilleTenureChart
+                  data={surveyData}
+                  graphId="nashville-tenure"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <LivingAreaChart data={surveyData} />
+                <LivingAreaChart data={surveyData} graphId="living-area" />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <HousingStatusChart data={surveyData} />
+                <HousingStatusChart
+                  data={surveyData}
+                  graphId="housing-status"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <PublicTransportationChart data={surveyData} />
+                <PublicTransportationChart
+                  data={surveyData}
+                  graphId="public-transportation"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <ChildrenInHouseholdChart data={surveyData} />
+                <ChildrenInHouseholdChart
+                  data={surveyData}
+                  graphId="children-in-household"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <MaritalStatusChart data={surveyData} />
+                <MaritalStatusChart
+                  data={surveyData}
+                  graphId="marital-status"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <EducationLevelChart data={surveyData} />
+                <EducationLevelChart
+                  data={surveyData}
+                  graphId="education-level"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <EmploymentStatusChart data={surveyData} />
+                <EmploymentStatusChart
+                  data={surveyData}
+                  graphId="employment-status"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <HouseholdIncomeChart data={surveyData} />
+                <HouseholdIncomeChart
+                  data={surveyData}
+                  graphId="household-income"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <PoliticalAffiliationChart data={surveyData} />
+                <PoliticalAffiliationChart
+                  data={surveyData}
+                  graphId="political-affiliation"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <PoliticalIdeologyChart data={surveyData} />
+                <PoliticalIdeologyChart
+                  data={surveyData}
+                  graphId="political-ideology"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <SexualOrientationChart data={surveyData} />
+                <SexualOrientationChart
+                  data={surveyData}
+                  graphId="sexual-orientation"
+                />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <ReligiousAffiliationChart data={surveyData} />
+                <ReligiousAffiliationChart
+                  data={surveyData}
+                  graphId="religious-affiliation"
+                />
               </div>
             </div>
           </div>

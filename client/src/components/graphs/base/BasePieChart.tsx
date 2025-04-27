@@ -41,7 +41,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
       const value = response[field];
       if (value !== undefined && value !== null && value !== "") {
         const decodedValue = getAnswerText(String(value));
-        acc[decodedValue] = (acc[decodedValue] || 0) + 1;
+        acc[decodedValue] = (Number(acc[decodedValue]) || 0) + 1;
       }
       return acc;
     }, {} as Record<string, number>);
@@ -149,5 +149,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "400px" }} />
+  );
 };

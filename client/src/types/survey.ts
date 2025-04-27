@@ -1,3 +1,4 @@
-export interface SurveyResponse {
-  [key: string]: string | number | null | undefined;
-} 
+  export interface SurveyResponse {
+    XID: number;
+    [key: string]: any;
+  }

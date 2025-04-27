@@ -74,10 +74,12 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
   const [graphs, setGraphs] = useState<Map<string, HTMLElement>>(new Map());
 
   const addGraph = useCallback((graphId: string, element: HTMLElement) => {
+    console.log(`Adding graph: ${graphId}`);
     setGraphs((prev) => new Map(prev).set(graphId, element));
   }, []);
 
   const removeGraph = useCallback((graphId: string) => {
+    console.log(`Removing graph: ${graphId}`);
     setGraphs((prev) => {
       const newGraphs = new Map(prev);
       newGraphs.delete(graphId);
@@ -86,8 +88,12 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const downloadPDF = useCallback(async () => {
-    if (graphs.size === 0) return;
+    if (graphs.size === 0) {
+      console.warn("No graphs available for PDF generation");
+      return;
+    }
 
+    console.log(`Starting PDF generation with ${graphs.size} graphs`);
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
@@ -97,40 +103,71 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
 
     let currentPage = 1;
     let currentY = margin;
+    let successfulCaptures = 0;
 
     for (const [graphId, element] of graphs) {
-      // Get the ECharts instance
-      const chartInstance = echarts.getInstanceByDom(element);
-      if (!chartInstance) continue;
+      try {
+        console.log(`Processing graph: ${graphId}`);
 
-      // Get the canvas data URL directly from ECharts
-      const dataUrl = chartInstance.getDataURL({
-        type: "png",
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-      });
+        // Get the ECharts instance
+        const chartInstance = echarts.getInstanceByDom(element);
+        if (!chartInstance) {
+          console.error(`No ECharts instance found for graph: ${graphId}`);
+          continue;
+        }
 
-      // Create an image element to get the dimensions
-      const img = new Image();
-      await new Promise((resolve) => {
-        img.onload = resolve;
-        img.src = dataUrl;
-      });
+        // Ensure the chart is rendered
+        chartInstance.resize();
 
-      const imgWidth = contentWidth;
-      const imgHeight = (img.height * contentWidth) / img.width;
+        // Get the canvas data URL directly from ECharts
+        const dataUrl = chartInstance.getDataURL({
+          type: "png",
+          pixelRatio: 2,
+          backgroundColor: "#ffffff",
+        });
 
-      // Check if we need a new page
-      if (currentY + imgHeight > pageHeight - margin) {
-        pdf.addPage();
-        currentPage++;
-        currentY = margin;
+        if (!dataUrl) {
+          console.error(`Failed to get data URL for graph: ${graphId}`);
+          continue;
+        }
+
+        // Create an image element to get the dimensions
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = resolve;
+          img.onerror = () =>
+            reject(new Error(`Failed to load image for graph: ${graphId}`));
+          img.src = dataUrl;
+        });
+
+        const imgWidth = contentWidth;
+        const imgHeight = (img.height * contentWidth) / img.width;
+
+        // Check if we need a new page
+        if (currentY + imgHeight > pageHeight - margin) {
+          pdf.addPage();
+          currentPage++;
+          currentY = margin;
+        }
+
+        pdf.addImage(dataUrl, "PNG", margin, currentY, imgWidth, imgHeight);
+        currentY += imgHeight + 10; // Add some spacing between graphs
+        successfulCaptures++;
+
+        console.log(`Successfully added graph to PDF: ${graphId}`);
+      } catch (error) {
+        console.error(`Error processing graph ${graphId}:`, error);
       }
-
-      pdf.addImage(dataUrl, "PNG", margin, currentY, imgWidth, imgHeight);
-      currentY += imgHeight + 10; // Add some spacing between graphs
     }
 
+    if (successfulCaptures === 0) {
+      console.error("No graphs were successfully captured for the PDF");
+      return;
+    }
+
+    console.log(
+      `PDF generation complete. Successfully captured ${successfulCaptures} out of ${graphs.size} graphs`
+    );
     pdf.save("nashville-survey-graphs.pdf");
   }, [graphs]);
 

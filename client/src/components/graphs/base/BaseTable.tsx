@@ -163,7 +163,12 @@ export const BasePrioChart: React.FC<BasePrioChartProps> = ({
       {title && <h3 className="text-lg font-semibold">{title}</h3>}
       {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
 
-      <BaseGraph option={option} style={style} className={className} />
+      <BaseGraph
+        option={option}
+        style={style}
+        className={className}
+        graphId="base-table"
+      />
 
       {showLegend && legendItems.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-4">
