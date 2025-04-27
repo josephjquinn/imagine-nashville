@@ -5,23 +5,28 @@ import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
 import SurveyDashboard from "./pages/Visualizations";
 import { NeighborhoodBreakdown } from "./pages/NeighborhoodBreakdown";
+import { PDFProvider } from "./contexts/PDFContext";
+import { PDFDownloadButton } from "./components/PDFDownloadButton";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/visualizations" element={<SurveyDashboard />} />
-          <Route
-            path="/neighborhood-breakdown"
-            element={<NeighborhoodBreakdown />}
-          />
-        </Route>
-      </Routes>
-    </Router>
+    <PDFProvider>
+      <Router>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/visualizations" element={<SurveyDashboard />} />
+            <Route
+              path="/neighborhood-breakdown"
+              element={<NeighborhoodBreakdown />}
+            />
+          </Route>
+        </Routes>
+        <PDFDownloadButton />
+      </Router>
+    </PDFProvider>
   );
 }
 

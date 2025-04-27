@@ -97,25 +97,38 @@ const SurveyDashboard: React.FC = () => {
         return (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <NashvillePositivesPieChart data={surveyData} />
+              <NashvillePositivesPieChart
+                data={surveyData}
+                graphId="nashville-positives"
+              />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <BelongingBarChart data={surveyData} />
+              <BelongingBarChart data={surveyData} graphId="belonging" />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <GrowthPerceptionChart data={surveyData} />
+              <GrowthPerceptionChart
+                data={surveyData}
+                graphId="growth-perception"
+              />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <GrowthProblemsChart data={surveyData} />
+              <GrowthProblemsChart
+                data={surveyData}
+                graphId="growth-problems"
+              />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <GrowthBenefitsChart data={surveyData} />
+              <GrowthBenefitsChart
+                data={surveyData}
+                graphId="growth-benefits"
+              />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <CommunityPerceptionChart
                 data={surveyData}
                 title="Community Perception"
                 subtitle="Residents' views on economic divides and leadership priorities"
+                graphId="community-perception"
               />
             </div>
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -123,6 +136,7 @@ const SurveyDashboard: React.FC = () => {
                 data={surveyData}
                 title="Tourism Impact"
                 subtitle="How residents perceive tourism's impact on Nashville"
+                graphId="tourism-perception"
               />
             </div>
           </div>

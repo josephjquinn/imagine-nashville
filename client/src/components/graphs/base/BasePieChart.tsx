@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "./BaseGraph";
 import type { EChartsOption } from "echarts";
-import { SurveyResponse } from "../../../api/survey";
+import type { SurveyResponse } from "@/types/survey";
 
 export interface PieChartData {
   name: string;
@@ -9,10 +9,10 @@ export interface PieChartData {
   color?: string;
 }
 
-export interface BasePieChartProps {
+interface BasePieChartProps {
   data: SurveyResponse[];
   field: string;
-  title: string;
+  title?: string;
   emptyStateMessage?: string;
   getAnswerText: (value: string) => string;
   customColors?: string[];
@@ -20,6 +20,7 @@ export interface BasePieChartProps {
   showLegend?: boolean;
   legendPosition?: "left" | "right" | "top" | "bottom";
   tooltipFormatter?: (params: any) => string;
+  graphId: string;
 }
 
 export const BasePieChart: React.FC<BasePieChartProps> = ({
@@ -33,6 +34,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
   showLegend = true,
   legendPosition = "left",
   tooltipFormatter,
+  graphId,
 }) => {
   const processedData = useMemo(() => {
     const distribution = data.reduce((acc, response) => {
@@ -47,7 +49,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
     return Object.entries(distribution)
       .map(([name, value]) => ({
         name,
-        value,
+        value: value as number,
       }))
       .sort((a, b) => b.value - a.value);
   }, [data, field, getAnswerText]);
@@ -147,5 +149,5 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} />;
+  return <BaseGraph option={option} graphId={graphId} />;
 };
