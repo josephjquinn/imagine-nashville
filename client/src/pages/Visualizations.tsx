@@ -103,9 +103,6 @@ const SurveyDashboard: React.FC = () => {
               />
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <BelongingBarChart data={surveyData} graphId="belonging" />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <GrowthPerceptionChart
                 data={surveyData}
                 graphId="growth-perception"
@@ -134,6 +131,9 @@ const SurveyDashboard: React.FC = () => {
                 data={surveyData}
                 graphId="tourism-perception"
               />
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <BelongingBarChart data={surveyData} graphId="belonging" />
             </div>
           </div>
         );
