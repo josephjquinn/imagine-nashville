@@ -123,50 +123,75 @@ export const MergedSurveyService = {
   /**
    * Fetches survey responses with optional filters and pagination
    * @param filters Object containing filter criteria
-   * @param page The page number (1-based)
-   * @param pageSize Number of items per page
-   * @param orderBy Field to order by
-   * @param ascending Sort order
+   * @param batchSize Size of each batch to fetch (default: 1000)
    * @returns Promise containing filtered survey responses and total count
    */
   async getFilteredSurveyResponses(
     filters: Record<string, any> = {}, 
-    page: number = 1, 
-    pageSize: number = 100,
+    batchSize: number = 1000
   ) {
     try {
-      const start = (page - 1) * pageSize;
-      const end = start + pageSize - 1;
+      let allData: SurveyResponse[] = [];
+      let currentPage = 0;
       
-      let query = supabase
+      // First get the total count with filters
+      let countQuery = supabase
         .from('merged_survey')
-        .select('*', { count: 'exact' });
+        .select('*', { count: 'exact', head: true });
 
-      // Apply filters
+      // Apply filters to count query
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          query = query.eq(key, value);
+          if (typeof value === 'object' && 'gte' in value && 'lte' in value) {
+            countQuery = countQuery.gte(key, value.gte).lte(key, value.lte);
+          } else {
+            countQuery = countQuery.eq(key, value);
+          }
         }
       });
+
+      const { count } = await countQuery;
       
-      // Apply pagination and ordering
-      const { data, error, count } = await query
-        .range(start, end)
+      const totalRows = count || 0;
+      const totalBatches = Math.ceil(totalRows / batchSize);
+      
+      while (currentPage < totalBatches) {
+        const start = currentPage * batchSize;
+        const end = start + batchSize - 1;
+        
+        let query = supabase
+          .from('merged_survey')
+          .select('*')
+          .range(start, end);
 
-      if (error) {
-        if (error.code === 'PGRST301') {
-          throw new Error('Authentication error. Please check your Supabase credentials.');
+        // Apply filters to data query
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (typeof value === 'object' && 'gte' in value && 'lte' in value) {
+              query = query.gte(key, value.gte).lte(key, value.lte);
+            } else {
+              query = query.eq(key, value);
+            }
+          }
+        });
+        
+        const { data, error } = await query;
+          
+        if (error) {
+          throw new Error(`Error fetching filtered survey responses: ${error.message}`);
         }
-        throw new Error(`Error fetching filtered survey responses: ${error.message}`);
+        
+        if (data && data.length > 0) {
+          allData = [...allData, ...(data as SurveyResponse[])];
+          currentPage++;
+        } else {
+          break;
+        }
       }
-
-      if (!data) {
-        throw new Error('No data returned from the server');
-      }
-
+      
       return {
-        data: data as SurveyResponse[],
-        total: count || 0,
+        data: allData,
+        total: totalRows
       };
     } catch (error) {
       console.error('Error in getFilteredSurveyResponses:', error);

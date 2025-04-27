@@ -42,6 +42,10 @@ import { PoliticalAffiliationChart } from "../components/graphs/PoliticalAffilia
 import { PoliticalIdeologyChart } from "../components/graphs/PoliticalIdeologyChart";
 import { SexualOrientationChart } from "../components/graphs/SexualOrientationChart";
 import { ReligiousAffiliationChart } from "../components/graphs/ReligiousAffiliationChart";
+import {
+  DemographicFilters,
+  DemographicFiltersState,
+} from "../components/filters/DemographicFilters";
 
 interface Section {
   id: string;
@@ -74,54 +78,20 @@ const sections: Section[] = [
 ];
 
 const SurveyDashboard: React.FC = () => {
-  const [selectedSurveyType, setSelectedSurveyType] =
-    React.useState<SurveyType>("formal");
   const [activeSection, setActiveSection] = useState<string>("overview");
-  const {
-    data: surveyData,
-    isLoading,
-    error,
-  } = useSurveyData(selectedSurveyType);
-  const [dataCount, setDataCount] = React.useState<number>(0);
+  const [surveyType, setSurveyType] = useState<SurveyType>("merged");
+  const [filters, setFilters] = useState<DemographicFiltersState>({});
+  const { data: surveyData, isLoading } = useSurveyData(surveyType, filters);
 
-  React.useEffect(() => {
-    if (surveyData) {
-      setDataCount(surveyData.length);
-    }
-  }, [surveyData]);
-
-  const handleSurveyTypeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setSelectedSurveyType(event.target.value as SurveyType);
+  const handleFilterChange = (newFilters: DemographicFiltersState) => {
+    setFilters(newFilters);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading survey data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <div className="text-red-500 text-4xl mb-4">⚠️</div>
-          <p className="text-red-500 text-lg mb-2">{error.message}</p>
-          <p className="text-gray-600 text-sm">
-            If this issue persists, please contact support.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   const renderSection = (sectionId: string) => {
+    if (isLoading) {
+      return <div className="text-center py-8">Loading...</div>;
+    }
+
     switch (sectionId) {
       case "overview":
         return (
@@ -239,54 +209,56 @@ const SurveyDashboard: React.FC = () => {
         );
       case "demographics":
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <AgeHistogramChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <GenderPieChart data={surveyData} />
-            </div>
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EthnicityPieChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <NashvilleTenureChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <LivingAreaChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <HousingStatusChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <PublicTransportationChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <ChildrenInHouseholdChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <MaritalStatusChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EducationLevelChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <EmploymentStatusChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <HouseholdIncomeChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <PoliticalAffiliationChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <PoliticalIdeologyChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <SexualOrientationChart data={surveyData} />
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <ReligiousAffiliationChart data={surveyData} />
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <AgeHistogramChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <GenderPieChart data={surveyData} />
+              </div>
+              <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <EthnicityPieChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <NashvilleTenureChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <LivingAreaChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <HousingStatusChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <PublicTransportationChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <ChildrenInHouseholdChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <MaritalStatusChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <EducationLevelChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <EmploymentStatusChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <HouseholdIncomeChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <PoliticalAffiliationChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <PoliticalIdeologyChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <SexualOrientationChart data={surveyData} />
+              </div>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <ReligiousAffiliationChart data={surveyData} />
+              </div>
             </div>
           </div>
         );
@@ -306,47 +278,55 @@ const SurveyDashboard: React.FC = () => {
             <div className="flex items-center gap-4">
               <select
                 id="surveyType"
-                value={selectedSurveyType}
-                onChange={handleSurveyTypeChange}
+                value={surveyType}
+                onChange={(e) => setSurveyType(e.target.value as SurveyType)}
                 className="block px-3 py-2 text-sm border border-gray-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="formal">Formal Survey</option>
                 <option value="public">Public Survey</option>
                 <option value="merged">Merged Survey</option>
               </select>
-              <div className="text-sm text-gray-600">{dataCount} responses</div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => setActiveSection(section.id)}
-              className={`p-4 rounded-lg text-left transition-all ${
-                activeSection === section.id
-                  ? "bg-blue-50 border-blue-200 shadow-sm"
-                  : "bg-white border-gray-100 hover:bg-gray-50"
-              } border`}
-            >
-              <h3
-                className={`font-medium mb-1 ${
+        <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={`p-4 rounded-lg text-left transition-all ${
                   activeSection === section.id
-                    ? "text-blue-700"
-                    : "text-gray-900"
-                }`}
+                    ? "bg-blue-50 border-blue-200 shadow-sm"
+                    : "bg-white border-gray-100 hover:bg-gray-50"
+                } border`}
               >
-                {section.title}
-              </h3>
-              <p className="text-sm text-gray-500">{section.description}</p>
-            </button>
-          ))}
-        </div>
+                <h3
+                  className={`font-medium mb-1 ${
+                    activeSection === section.id
+                      ? "text-blue-700"
+                      : "text-gray-900"
+                  }`}
+                >
+                  {section.title}
+                </h3>
+                <p className="text-sm text-gray-500">{section.description}</p>
+              </button>
+            ))}
+          </div>
 
-        <div className="mb-8">{renderSection(activeSection)}</div>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            <DemographicFilters
+              onFilterChange={handleFilterChange}
+              totalResponses={surveyData.length}
+            />
+          </div>
+
+          <div className="mb-8">{renderSection(activeSection)}</div>
+        </div>
       </div>
     </div>
   );
