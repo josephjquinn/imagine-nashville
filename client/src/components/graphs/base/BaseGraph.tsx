@@ -48,14 +48,24 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
   // Check if there's any data to display
   const hasData = useMemo(() => {
     if (!option.series) return false;
+
     if (Array.isArray(option.series)) {
-      return option.series.some(series => {
-        if (Array.isArray(series.data)) {
-          return series.data.some(value => value > 0);
-        }
-        return false;
+      return option.series.some((series) => {
+        if (!series.data || !Array.isArray(series.data)) return false;
+
+        // Check if there's any non-zero data
+        return series.data.some((item) => {
+          if (typeof item === "number") {
+            return item !== 0;
+          }
+          if (typeof item === "object" && item !== null) {
+            return item.value !== 0;
+          }
+          return false;
+        });
       });
     }
+
     return false;
   }, [option]);
 
@@ -64,7 +74,7 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
     if (!title && !subtitle) return option;
 
     const newOption = { ...option };
-    
+
     // Handle both single title and array of titles
     if (Array.isArray(newOption.title)) {
       newOption.title = [
@@ -117,27 +127,28 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
     if (chartInstance.current) {
       // Get the chart canvas
       const canvas = chartInstance.current.getRenderedCanvas();
-      
+
       // Create a new canvas with top padding only
-      const paddedCanvas = document.createElement('canvas');
+      const paddedCanvas = document.createElement("canvas");
       const topPadding = 20;
       paddedCanvas.width = canvas.width;
       paddedCanvas.height = canvas.height + topPadding;
-      
+
       // Get the context and fill with background color
-      const ctx = paddedCanvas.getContext('2d');
+      const ctx = paddedCanvas.getContext("2d");
       if (ctx) {
         // Fill with background color
-        ctx.fillStyle = backgroundColor === 'transparent' ? 'rgba(0,0,0,0)' : backgroundColor;
+        ctx.fillStyle =
+          backgroundColor === "transparent" ? "rgba(0,0,0,0)" : backgroundColor;
         ctx.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
-        
+
         // Draw the original chart with top padding only
         ctx.drawImage(canvas, 0, topPadding);
       }
-      
+
       // Convert to data URL
-      const dataUrl = paddedCanvas.toDataURL('image/png');
-      
+      const dataUrl = paddedCanvas.toDataURL("image/png");
+
       const link = document.createElement("a");
       link.download = `${graphId}.png`;
       link.href = dataUrl;
