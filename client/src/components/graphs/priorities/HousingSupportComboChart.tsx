@@ -3,10 +3,10 @@ import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
 
-const Q620_OPTIONS = [
-  { value: "1", label: "Everyone treated the same" },
-  { value: "2", label: "Some groups need special support" },
-];
+const Q620_MAPPINGS = {
+  "1": "Everyone treated the same",
+  "2": "Some groups need special support",
+};
 
 const Q625_GROUPS = [
   { field: "Q625_A", label: "Seniors" },
@@ -24,14 +24,12 @@ const Q625_GROUPS = [
 
 interface HousingSupportComboChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const HousingSupportComboChart: React.FC<
   HousingSupportComboChartProps
-> = ({ data, title, subtitle, graphId }) => {
+> = ({ data, graphId }) => {
   // Pie chart data for Q620
   const q620PieData = useMemo(() => {
     const counts: Record<"1" | "2", number> = { "1": 0, "2": 0 };
@@ -42,17 +40,15 @@ export const HousingSupportComboChart: React.FC<
       }
     });
     const total = counts["1"] + counts["2"];
-    return Q620_OPTIONS.map((opt) => ({
-      name: opt.label,
-      value: counts[opt.value as "1" | "2"],
-      percentage:
-        total > 0 ? (counts[opt.value as "1" | "2"] / total) * 100 : 0,
+    return Object.entries(Q620_MAPPINGS).map(([value, label]) => ({
+      name: label,
+      value: counts[value as "1" | "2"],
+      percentage: total > 0 ? (counts[value as "1" | "2"] / total) * 100 : 0,
     }));
   }, [data]);
 
   // Bar chart data for Q625
   const q625BarData = useMemo(() => {
-    // Find respondents who selected at least one group
     const respondentsWithSelection = data.filter((response) =>
       Q625_GROUPS.some((group) => response[group.field] === "1")
     );
@@ -78,88 +74,87 @@ export const HousingSupportComboChart: React.FC<
       .sort((a, b) => a.percentage - b.percentage);
   }, [data]);
 
-  // Pie chart option
-  const pieOption: EChartsOption = {
-    title: {
-      text: "Should some groups get special support?",
-      left: "center",
-      top: 0,
-      textStyle: { fontSize: 18, fontWeight: "bold" },
-      subtext: "Q620",
-      subtextStyle: { fontSize: 13, color: "#666" },
-    },
+  const option: EChartsOption = {
+    title: [
+      {
+        text: "Should some groups get special support?",
+        left: "20%",
+        top: 0,
+        textAlign: "center",
+      },
+      {
+        text: "Who most deserves special support for housing?",
+        left: "70%",
+        top: 0,
+        textAlign: "center",
+      },
+    ],
     tooltip: {
       trigger: "item",
       formatter: (params: any) => {
-        return `<strong>${params.name}</strong><br/>Count: ${
-          params.value
-        }<br/>Percentage: ${params.percent.toFixed(1)}%`;
+        if (params.seriesIndex === 0) {
+          return `<strong>${params.name}</strong><br/>Count: ${
+            params.value
+          }<br/>Percentage: ${params.percent.toFixed(1)}%`;
+        } else {
+          const d = params.data;
+          return `<strong>${d.name}</strong><br/>Count: ${
+            d.value
+          }<br/>Percentage: ${d.percentage.toFixed(1)}%<br/>Denominator: ${
+            d.denominator
+          }`;
+        }
       },
     },
-    legend: {
-      orient: "horizontal",
-      bottom: 0,
-    },
+    legend: [
+      {
+        orient: "vertical",
+        left: "5%",
+        top: "10%",
+        data: q620PieData.map((item) => item.name),
+      },
+    ],
+    grid: [
+      {
+        left: "45%",
+        right: "5%",
+        top: "10%",
+        bottom: "15%",
+        containLabel: true,
+      },
+    ],
+    xAxis: [
+      {
+        type: "value",
+        name: "Percentage of Respondents",
+        max: 100,
+        axisLabel: { formatter: "{value}%" },
+        gridIndex: 0,
+      },
+    ],
+    yAxis: [
+      {
+        type: "category",
+        data: q625BarData.map((g) => g.name),
+        axisLabel: {
+          width: 300,
+          overflow: "break",
+          interval: 0,
+          align: "right",
+        },
+        gridIndex: 0,
+      },
+    ],
     series: [
       {
         type: "pie",
-        radius: ["40%", "70%"],
-        center: ["50%", "55%"],
+        radius: ["35%", "60%"],
+        center: ["20%", "55%"],
         data: q620PieData,
         label: {
-          formatter: "{b}: {d}%",
+          formatter: "{d}%",
         },
       },
-    ],
-  };
-
-  // Bar chart option
-  const barOption: EChartsOption = {
-    title: {
-      text: title || "Who most deserves special support for housing?",
-      left: "center",
-      top: 0,
-      textStyle: { fontSize: 18, fontWeight: "bold" },
-      subtext:
-        subtitle || "% selected as Top 3 (among those who made a selection)",
-      subtextStyle: { fontSize: 13, color: "#666" },
-    },
-    tooltip: {
-      trigger: "axis",
-      axisPointer: { type: "shadow" },
-      formatter: (params: any) => {
-        const d = params[0].data;
-        return `<strong>${d.name}</strong><br/>Count: ${
-          d.value
-        }<br/>Percentage: ${d.percentage.toFixed(1)}%<br/>Denominator: ${
-          d.denominator
-        }`;
-      },
-    },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "10%",
-      top: 60,
-      containLabel: true,
-    },
-    xAxis: {
-      type: "value",
-      name: "Percentage of Respondents",
-      max: 100,
-      axisLabel: { formatter: "{value}%" },
-    },
-    yAxis: {
-      type: "category",
-      data: q625BarData.map((g) => g.name),
-      axisLabel: {
-        width: 300,
-        overflow: "break",
-        interval: 0,
-        align: "right",
-      },
-    },
-    series: [
       {
         name: "Selected as Top 3",
         type: "bar",
@@ -176,26 +171,17 @@ export const HousingSupportComboChart: React.FC<
           distance: 5,
         },
         data: q625BarData,
+        xAxisIndex: 0,
+        yAxisIndex: 0,
       },
     ],
   };
 
   return (
-    <div className="w-full flex flex-col lg:flex-row gap-8 items-stretch">
-      <div className="w-full lg:w-1/3 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center justify-center">
-        <BaseGraph
-          option={pieOption}
-          style={{ height: "350px", width: "100%" }}
-          graphId={graphId}
-        />
-      </div>
-      <div className="w-full lg:w-2/3 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <BaseGraph
-          option={barOption}
-          style={{ height: "500px", width: "100%" }}
-          graphId={graphId}
-        />
-      </div>
-    </div>
+    <BaseGraph
+      option={option}
+      style={{ height: "500px", width: "100%" }}
+      graphId={graphId}
+    />
   );
 };

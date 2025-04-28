@@ -22,7 +22,6 @@ import { TransportationGoalsChart } from "../components/graphs/priorities/Transp
 import { TransportationPrioritiesChart } from "../components/graphs/priorities/TransportationPrioritiesChart";
 import { HousingGoalsChart } from "../components/graphs/priorities/HousingGoalsChart";
 import { HousingPrioritiesChart } from "../components/graphs/priorities/HousingPrioritiesChart";
-import { HousingSupportComboChart } from "../components/graphs/priorities/HousingSupportComboChart";
 import { EducationGoalsChart } from "../components/graphs/priorities/EducationGoalsChart";
 import { EducationPrioritiesChart } from "../components/graphs/priorities/EducationPrioritiesChart";
 import { EducationPriorityPieChart } from "../components/graphs/priorities/EducationPriorityPieChart";
@@ -46,6 +45,7 @@ import {
   DemographicFilters,
   DemographicFiltersState,
 } from "../components/filters/DemographicFilters";
+import { HousingSupportComboChart } from "../components/graphs/priorities/HousingSupportComboChart";
 
 interface Section {
   id: string;
