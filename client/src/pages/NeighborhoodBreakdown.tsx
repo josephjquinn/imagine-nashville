@@ -54,21 +54,21 @@ export const NeighborhoodBreakdown: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[95%] mx-auto px-2 sm:px-4 py-8">
-        <div className="max-w-4xl mx-auto text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+      <div className="max-w-[95%] mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <div className="max-w-4xl mx-auto text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 tracking-tight">
             Nashville Neighborhood Insights
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed mb-6">
+          <p className="text-lg sm:text-xl text-gray-600 leading-relaxed mb-4 sm:mb-6">
             Discover how priorities and goals vary across Nashville's diverse
             neighborhoods
           </p>
 
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-6 sm:mb-8">
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value as QuestionType)}
-              className="block w-64 px-4 py-3 text-base font-medium text-gray-700 bg-white border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-300 cursor-pointer"
+              className="block w-full sm:w-64 px-4 py-2 sm:py-3 text-base font-medium text-gray-700 bg-white border-2 border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:border-gray-300 cursor-pointer"
             >
               <option value="mobility">Mobility Questions</option>
               <option value="housing">Housing Questions</option>
@@ -77,9 +77,9 @@ export const NeighborhoodBreakdown: React.FC = () => {
           </div>
         </div>
 
-        <div className="py-4 border-b border-gray-200">
-          <div className="flex items-center gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="py-3 sm:py-4 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">
               Filter Results
             </h2>
             <DemographicFilters
@@ -91,24 +91,24 @@ export const NeighborhoodBreakdown: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-8 mt-8">
+        <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-8">
           {selectedType === "mobility" ? (
             <>
               <section>
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="p-4 sm:p-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 border-b border-gray-100 pb-4">
+                <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl overflow-hidden">
+                  <div className="p-3 sm:p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 border-b border-gray-100 pb-3 sm:pb-4">
                       <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">
                           Mobility Priorities by Neighborhood
                         </h2>
-                        <p className="text-gray-600">
+                        <p className="text-sm sm:text-base text-gray-600">
                           Mean scores across different areas of Nashville
                         </p>
                       </div>
-                      <div className="mt-4 sm:mt-0">
-                        <div className="inline-flex items-center px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-600">
-                          <span className="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                      <div className="mt-3 sm:mt-0">
+                        <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-50 rounded-lg text-xs sm:text-sm text-gray-600">
+                          <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full mr-1.5 sm:mr-2"></span>
                           Highest scoring regions
                         </div>
                       </div>

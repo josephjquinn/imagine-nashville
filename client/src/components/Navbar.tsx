@@ -83,7 +83,7 @@ export function Navbar() {
           <div className="md:hidden flex items-center justify-end flex-1">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-gray-600 hover:text-gray-900 focus:outline-none"
+              className="p-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 focus:outline-none transition-colors duration-200"
             >
               {isOpen ? (
                 <X className="h-6 w-6" />
@@ -98,19 +98,21 @@ export function Navbar() {
       {/* Mobile menu */}
       <div
         className={`md:hidden fixed top-16 left-0 right-0 transition-all duration-300 ease-in-out ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        } bg-white border-t border-gray-100`}
+          isOpen
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 -translate-y-2 pointer-events-none"
+        } bg-white border-t border-gray-100 shadow-lg`}
       >
-        <div className="px-4 py-2 space-y-1">
+        <div className="px-4 py-3 space-y-2">
           {navLinks.map((link) =>
             link.clickable ? (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block px-3 py-2 text-base tracking-wider font-bold ${
+                className={`block px-3 py-3 text-base tracking-wider font-bold rounded-lg transition-colors duration-200 ${
                   isActivePath(link.path)
-                    ? "text-[#00A7E1]"
-                    : "text-black hover:text-gray-600"
+                    ? "text-[#00A7E1] bg-blue-50"
+                    : "text-black hover:text-gray-600 hover:bg-gray-50"
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -119,16 +121,16 @@ export function Navbar() {
             ) : (
               <span
                 key={link.path}
-                className="block px-3 py-2 text-base tracking-wider font-bold text-gray-400 cursor-not-allowed"
+                className="block px-3 py-3 text-base tracking-wider font-bold text-gray-400 cursor-not-allowed rounded-lg"
               >
                 {link.label}
               </span>
             )
           )}
-          <div className="px-3 py-2">
+          <div className="px-3 py-3">
             <Button
               variant="default"
-              className="w-full bg-black hover:bg-gray-800 text-white tracking-wider font-bold"
+              className="w-full bg-black hover:bg-gray-800 text-white tracking-wider font-bold py-3 rounded-lg"
               onClick={() => {
                 window.open("https://imaginenashville.org/", "_blank");
                 setIsOpen(false);

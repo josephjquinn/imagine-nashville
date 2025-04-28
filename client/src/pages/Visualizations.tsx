@@ -356,14 +356,14 @@ const SurveyDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="w-full max-w-[75vw] mx-auto px-0 py-6">
-        <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="w-full max-w-[95vw] mx-auto px-2 sm:px-4 py-4 sm:py-6">
+        <div className="flex flex-col gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
             {sections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`p-4 rounded-lg text-left transition-all ${
+                className={`p-3 sm:p-4 rounded-lg text-left transition-all ${
                   activeSection === section.id
                     ? "bg-blue-50 border-blue-200 shadow-sm"
                     : "bg-white border-gray-100 hover:bg-gray-50"
@@ -378,14 +378,16 @@ const SurveyDashboard: React.FC = () => {
                 >
                   {section.title}
                 </h3>
-                <p className="text-sm text-gray-500">{section.description}</p>
+                <p className="text-xs sm:text-sm text-gray-500">
+                  {section.description}
+                </p>
               </button>
             ))}
           </div>
 
-          <div className="py-4 border-b border-gray-200">
-            <div className="flex items-center gap-4">
-              <h2 className="text-lg font-semibold text-gray-900">
+          <div className="py-3 sm:py-4 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">
                 Filter Results
               </h2>
               <DemographicFilters
@@ -397,7 +399,7 @@ const SurveyDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="mb-8">{renderSection(activeSection)}</div>
+          <div className="mb-6 sm:mb-8">{renderSection(activeSection)}</div>
         </div>
       </div>
     </div>
