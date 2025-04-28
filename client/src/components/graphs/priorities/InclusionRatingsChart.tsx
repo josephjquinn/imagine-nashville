@@ -152,15 +152,17 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
       orient: "horizontal",
     },
     grid: {
-      left: "45%",
+      left: "30%",
       right: "5%",
-      bottom: "10%",
+      bottom: "15%",
       top: "15%",
       containLabel: false,
     },
     xAxis: {
       type: "value",
       name: "Percentage",
+      nameLocation: "middle",
+      nameGap: 30,
       axisLabel: {
         formatter: "{value}%",
         fontSize: 12,
@@ -177,8 +179,10 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
         show: true,
       },
       axisLabel: {
-        overflow: "none",
-        margin: 440,
+        width: 260,
+        overflow: "break",
+        interval: 0,
+        margin: 300,
         align: "left",
         fontSize: 12,
         lineHeight: 16,

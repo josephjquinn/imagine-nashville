@@ -120,6 +120,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
     legend: {
       data: ["Top", "Second"],
       bottom: 0,
+      left: "42%",
     },
     grid: {
       left: "3%",
@@ -131,6 +132,8 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
+      nameLocation: "middle",
+      nameGap: 30,
       max: 100,
       axisLabel: {
         formatter: "{value}%",
@@ -152,7 +155,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
         type: "bar",
         stack: "total",
         itemStyle: {
-          color: "#6366f1", // indigo-500
+          color: "#dc2626", // red-600 for top choice
         },
         label: {
           show: true,
@@ -181,7 +184,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
         type: "bar",
         stack: "total",
         itemStyle: {
-          color: "#a5b4fc", // indigo-300
+          color: "#f87171", // red-400 for second choice
         },
         label: {
           show: true,
@@ -242,7 +245,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
       option={option}
       graphId={graphId}
       title="Nashville's Big Ideas for the Future"
-      subtitle="% Selected as Top or Second Choice"
+      subtitle="% Selected as Top 2 Ideas"
     />
   );
 };

@@ -21,10 +21,11 @@ export const EducationPriorityPieChart: React.FC<
     <BasePieChart
       data={data}
       field="Q665"
-      title="Agreement: Investing in Public Education is a Priority"
+      title="Investing in public education is a priority for Nashville?"
       getAnswerText={(value) => Q665_LABELS[value] || value}
       showLegend={true}
-      legendPosition="right"
+      legendPosition="left"
+      legendTop={35}
       tooltipFormatter={(params) => {
         const value = params.value as number;
         return `${params.name}: ${value}%`;

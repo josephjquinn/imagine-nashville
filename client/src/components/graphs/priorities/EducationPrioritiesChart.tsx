@@ -131,7 +131,7 @@ export const EducationPrioritiesChart: React.FC<
       left: "3%",
       right: "4%",
       bottom: "10%",
-      top: "15%",
+      top: "10%",
       containLabel: true,
     },
     xAxis: {

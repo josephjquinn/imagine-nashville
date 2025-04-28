@@ -131,13 +131,15 @@ export const IdealNeighborhoodAssetsChart: React.FC<
       left: "3%",
       right: "4%",
       bottom: "10%",
-      top: "15%",
+      top: "8%",
       containLabel: true,
     },
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
-      max: 100,
+      nameLocation: "middle",
+      nameGap: 30,
+      max: 45,
       axisLabel: { formatter: "{value}%" },
     },
     yAxis: {
@@ -155,7 +157,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
         name: "Important",
         type: "bar",
         stack: "total",
-        itemStyle: { color: "#a5b4fc" },
+        itemStyle: { color: "#93c5fd" },
         label: {
           show: true,
           position: "inside",
@@ -183,7 +185,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
         name: "Very Important",
         type: "bar",
         stack: "total",
-        itemStyle: { color: "#6366f1" },
+        itemStyle: { color: "#3b82f6" },
         label: {
           show: true,
           position: "inside",
@@ -211,7 +213,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
         name: "Absolutely Essential",
         type: "bar",
         stack: "total",
-        itemStyle: { color: "#f59e42" },
+        itemStyle: { color: "#1d4ed8" },
         label: {
           show: true,
           position: "inside",

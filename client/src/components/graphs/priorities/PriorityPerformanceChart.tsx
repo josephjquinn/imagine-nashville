@@ -108,7 +108,7 @@ export const PriorityPerformanceChart: React.FC<
           distribution,
         };
       })
-      .sort((a, b) => b.averageRating - a.averageRating); // Sort by highest rating first
+      .sort((a, b) => a.averageRating - b.averageRating); // Sort by lowest rating first (highest bars at top)
   }, [data, priorityFields]);
 
   // If no valid data, show empty state
@@ -164,7 +164,7 @@ export const PriorityPerformanceChart: React.FC<
       left: "45%", // Increase to give more room for labels
       right: "5%",
       bottom: 30,
-      top: 80,
+      top: 65,
       containLabel: false,
     },
     xAxis: {
@@ -224,22 +224,32 @@ export const PriorityPerformanceChart: React.FC<
       option={option}
       style={{ height: "600px" }}
       graphId={graphId}
-      title="Priority Performance"
-      subtitle="Average Rating (1-10 Scale)"
+      title="Nashville Priority Performance Ratings"
+      subtitle="1 = Not performing well at all, 10 = Performing extremely well"
     />
   );
 };
 
 // Helper function to generate color based on rating
 function getColorByRating(rating: number): string {
-  // Red (low) to Green (high)
-  if (rating <= 3) {
-    return "#f56c6c"; // Red
+  // Performance scale colors (from poor to excellent)
+  if (rating <= 2) {
+    return "#dc2626"; // Deep red - Very poor
+  } else if (rating <= 3) {
+    return "#ef4444"; // Red - Poor
+  } else if (rating <= 4) {
+    return "#f97316"; // Orange - Below average
   } else if (rating <= 5) {
-    return "#e6a23c"; // Orange
+    return "#eab308"; // Yellow - Average
+  } else if (rating <= 6) {
+    return "#a3e635"; // Light yellow-green - Above average
   } else if (rating <= 7) {
-    return "#409eff"; // Blue
+    return "#84cc16"; // Lime - Good
+  } else if (rating <= 8) {
+    return "#22c55e"; // Green - Very good
+  } else if (rating <= 9) {
+    return "#16a34a"; // Emerald - Excellent
   } else {
-    return "#67c23a"; // Green
+    return "#15803d"; // Forest green - Outstanding
   }
 }

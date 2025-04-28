@@ -19,8 +19,10 @@ interface BasePieChartProps {
   radius?: [string, string];
   showLegend?: boolean;
   legendPosition?: "left" | "right" | "top" | "bottom";
+  legendTop?: number;
   tooltipFormatter?: (params: any) => string;
   graphId: string;
+  center?: [string, string];
 }
 
 export const BasePieChart: React.FC<BasePieChartProps> = ({
@@ -33,8 +35,10 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
   radius = ["40%", "70%"],
   showLegend = true,
   legendPosition = "left",
+  legendTop = 0,
   tooltipFormatter,
   graphId,
+  center = ["50%", "55%"],
 }) => {
   const processedData = useMemo(() => {
     const distribution = data.reduce((acc, response) => {
@@ -95,6 +99,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
             legendPosition === "left" || legendPosition === "right"
               ? 10
               : "center",
+          top: legendTop,
           type: "scroll",
           textStyle: {
             width:
@@ -114,7 +119,7 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
       {
         type: "pie",
         radius,
-        center: ["50%", "55%"],
+        center,
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 10,
