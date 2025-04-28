@@ -2,16 +2,26 @@ import React, { useState } from "react";
 import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/neighborhood/MobilityGoalsByNeighborhood";
 import { HousingGoalsByNeighborhoodChart } from "../components/graphs/neighborhood/HousingGoalsByNeighborhood";
 import { HousingPrioritiesTable } from "../components/graphs/neighborhood/HousingPrioritiesTable";
-import { useSurveyData } from "../hooks/useSurveyData";
+import { useSurveyData, SurveyType } from "../hooks/useSurveyData";
 import { EducationGoalsByNeighborhoodChart } from "../components/graphs/neighborhood/EducationGoalsByNeighborhoodChart";
 import { EducationPrioritiesTable } from "../components/graphs/neighborhood/EducationPrioritiesTable";
 import { MobilityPrioritiesTable } from "@/components/graphs/neighborhood/MobilityPrioritiesTable";
+import {
+  DemographicFilters,
+  DemographicFiltersState,
+} from "@/components/filters/DemographicFilters";
 
 type QuestionType = "mobility" | "housing" | "education";
 
 export const NeighborhoodBreakdown: React.FC = () => {
-  const { data, isLoading, error } = useSurveyData();
   const [selectedType, setSelectedType] = useState<QuestionType>("mobility");
+  const [surveyType, setSurveyType] = useState<SurveyType>("formal");
+  const [filters, setFilters] = useState<DemographicFiltersState>({});
+  const { data, isLoading, error } = useSurveyData(surveyType, filters);
+
+  const handleFilterChange = (newFilters: DemographicFiltersState) => {
+    setFilters(newFilters);
+  };
 
   if (isLoading) {
     return (
@@ -64,6 +74,15 @@ export const NeighborhoodBreakdown: React.FC = () => {
               <option value="housing">Housing Questions</option>
               <option value="education">Education Questions</option>
             </select>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-8">
+            <DemographicFilters
+              onFilterChange={handleFilterChange}
+              totalResponses={data.length}
+              surveyType={surveyType}
+              onSurveyTypeChange={setSurveyType}
+            />
           </div>
         </div>
 
