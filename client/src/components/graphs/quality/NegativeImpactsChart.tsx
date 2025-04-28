@@ -87,7 +87,7 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
     });
 
     // Sort by count descending
-    return categoryCounts.sort((a, b) => b.value - a.value);
+    return categoryCounts.sort((a, b) => a.value - b.value);
   }, [data]);
 
   // If no valid data, show empty state
@@ -100,22 +100,6 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
   }
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Most Significant Negative Impacts on Quality of Life",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext:
-        subtitle ||
-        "What residents dislike most about living and working in Nashville",
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -136,7 +120,21 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
       },
     },
     legend: {
-      data: ["Overall Negative Impact", "Greatest Personal Impact"],
+      data: [
+        {
+          name: "Overall Negative Impact",
+          itemStyle: {
+            color: "#7f1d1d",
+          },
+        },
+        {
+          name: "Greatest Personal Impact",
+          itemStyle: {
+            color: "#000000",
+            opacity: 0.7,
+          },
+        },
+      ],
       bottom: 10,
     },
     grid: {
@@ -149,6 +147,8 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
     xAxis: {
       type: "value",
       name: "Number of Responses",
+      nameLocation: "middle",
+      nameGap: 30,
       axisLabel: {
         formatter: "{value}",
       },
@@ -167,30 +167,13 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
       {
         name: "Overall Negative Impact",
         type: "bar",
-        data: negativeImpactsData.map((item, index) => {
-          const colorStops = [
-            "#ef4444", // red-500
-            "#f97316", // orange-500
-            "#f59e0b", // amber-500
-            "#eab308", // yellow-500
-            "#84cc16", // lime-500
-            "#22c55e", // green-500
-            "#10b981", // emerald-500
-            "#14b8a6", // teal-500
-            "#06b6d4", // cyan-500
-            "#0ea5e9", // sky-500
-            "#3b82f6", // blue-500
-            "#6366f1", // indigo-500
-            "#8b5cf6", // violet-500
-          ];
-
+        data: negativeImpactsData.map((item) => {
           return {
             value: item.value,
             name: item.name,
             percentage: item.percentage,
             itemStyle: {
-              color:
-                index < colorStops.length ? colorStops[index] : colorStops[0],
+              color: "#7f1d1d", // red-900
             },
           };
         }),
@@ -227,11 +210,26 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
           },
           color: "#fff",
         },
+        emphasis: {
+          itemStyle: {
+            color: "#000000",
+            opacity: 0.7,
+          },
+        },
       },
     ],
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "800px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "800px" }}
+      graphId={graphId}
+      title={title || "Most Significant Negative Impacts on Quality of Life"}
+      subtitle={
+        subtitle ||
+        "What residents dislike most about living and working in Nashville"
+      }
+    />
   );
 };

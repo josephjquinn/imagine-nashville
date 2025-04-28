@@ -80,19 +80,6 @@ export const EquitableQualityOfLifeChart: React.FC<
 
   // Create the chart configuration
   const option: EChartsOption = {
-    title: {
-      text: title,
-      left: "center",
-      textStyle: {
-        fontSize: 16,
-        fontWeight: "bold",
-      },
-      subtext: subtitle,
-      subtextStyle: {
-        fontSize: 12,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -169,6 +156,12 @@ export const EquitableQualityOfLifeChart: React.FC<
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "200px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "200px" }}
+      graphId={graphId}
+      title={title}
+      subtitle={subtitle}
+    />
   );
 };

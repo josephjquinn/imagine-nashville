@@ -29,7 +29,8 @@ interface InclusiveServicesChartProps {
 
 export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
   data,
-  title = "Nashville is a very inclusive place where city services / opportunities are equally provided and available to all",
+  title = "Inclusive City Services",
+  subtitle = "Resident perceptions of equal access to city services and opportunities",
   graphId,
 }) => {
   // Process the survey data
@@ -91,18 +92,6 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
 
   // Create the chart configuration
   const option: EChartsOption = {
-    title: {
-      text: title,
-      left: "center",
-      textStyle: {
-        fontSize: 16,
-        fontWeight: "bold",
-      },
-      subtextStyle: {
-        fontSize: 12,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -179,6 +168,12 @@ export const InclusiveServicesChart: React.FC<InclusiveServicesChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "200px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "200px" }}
+      graphId={graphId}
+      title={title}
+      subtitle={subtitle}
+    />
   );
 };

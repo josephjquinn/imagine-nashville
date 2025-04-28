@@ -1,19 +1,22 @@
-import React, { useEffect, useRef } from "react";
-import * as echarts from "echarts";
+import React, { useMemo } from "react";
+import { BaseGraph } from "../base/BaseGraph";
+import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
 import { BasePieChart } from "../base/BasePieChart";
 
 interface QualityOfLifeLadderChartProps {
   data: SurveyResponse[];
   graphId: string;
+  title?: string;
+  subtitle?: string;
 }
 
 const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
   data,
   graphId,
+  title = "Quality of Life Ladder Averages",
+  subtitle = "Average ladder step over time",
 }) => {
-  const barChartRef = useRef<HTMLDivElement>(null);
-
   // Check if we have valid data for either chart
   const hasValidData = data.some(
     (response) =>
@@ -21,140 +24,35 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
       (response.HQ211 !== undefined && response.HQ211 !== null)
   );
 
-  useEffect(() => {
-    if (!barChartRef.current || !data.length || !hasValidData) return;
+  // Process the data for the bar chart
+  const processedData = useMemo(() => {
+    const timePoints = [
+      { key: "Q200", label: "5 Years Ago" },
+      { key: "Q205", label: "Today" },
+      { key: "Q210", label: "5 Years From Now" },
+    ];
 
-    const barChart = echarts.init(barChartRef.current);
+    const averages = timePoints.map(({ key }) => {
+      const validResponses = data.filter(
+        (response) => response[key] !== undefined && response[key] !== null
+      );
+      const sum = validResponses.reduce(
+        (acc, response) => acc + (Number(response[key]) || 0),
+        0
+      );
+      return sum / (validResponses.length || 1);
+    });
 
-    // Process the data for the bar chart
-    const processBarData = () => {
-      const timePoints = [
-        { key: "Q200", label: "5 Years Ago" },
-        { key: "Q205", label: "Today" },
-        { key: "Q210", label: "5 Years From Now" },
-      ];
+    const minValue = Math.min(...averages);
+    const maxValue = Math.max(...averages);
+    const range = maxValue - minValue;
+    const yAxisMin = Math.floor(minValue - range * 0.2);
+    const yAxisMax = Math.ceil(maxValue + range * 0.2);
 
-      const averages = timePoints.map(({ key }) => {
-        const validResponses = data.filter(
-          (response) => response[key] !== undefined && response[key] !== null
-        );
-        const sum = validResponses.reduce(
-          (acc, response) => acc + (Number(response[key]) || 0),
-          0
-        );
-        return sum / (validResponses.length || 1);
-      });
-
-      const minValue = Math.min(...averages);
-      const maxValue = Math.max(...averages);
-      const range = maxValue - minValue;
-      const yAxisMin = Math.floor(minValue - range * 0.2);
-      const yAxisMax = Math.ceil(maxValue + range * 0.2);
-
-      return {
-        timePoints,
-        averages,
-        yAxisRange: [yAxisMin, yAxisMax],
-      };
-    };
-
-    const { timePoints, averages, yAxisRange } = processBarData();
-
-    // Bar chart options
-    const barOption: echarts.EChartsOption = {
-      title: {
-        text: "Quality of Life Ladder Averages",
-        subtext: "Average ladder step over time",
-        left: "center",
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "shadow",
-        },
-        formatter: (params: any) => {
-          const param = params[0];
-          return `${param.name}: ${param.value.toFixed(1)} / 10`;
-        },
-      },
-      grid: {
-        left: "8%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true,
-      },
-      xAxis: {
-        type: "category",
-        data: timePoints.map((tp) => tp.label),
-        axisLabel: {
-          interval: 0,
-          rotate: 0,
-        },
-      },
-      yAxis: {
-        type: "value",
-        min: yAxisRange[0],
-        max: yAxisRange[1],
-        interval: 0.5,
-        name: "Ladder Step",
-        nameLocation: "middle",
-        nameGap: 50,
-        nameTextStyle: {
-          fontSize: 14,
-          fontWeight: "bold",
-        },
-        axisLabel: {
-          formatter: (value: number) => value.toFixed(1),
-          fontSize: 14,
-          fontWeight: "bold",
-          margin: 15,
-        },
-        axisLine: {
-          lineStyle: {
-            width: 2,
-          },
-        },
-        splitLine: {
-          lineStyle: {
-            type: "dashed",
-            width: 1,
-          },
-        },
-      },
-      series: [
-        {
-          name: "Average Ladder Step",
-          type: "bar",
-          data: averages.map((value) => Number(value.toFixed(1))),
-          barWidth: "60%",
-          barGap: "0%",
-          itemStyle: {
-            color: "#5470c6",
-          },
-          label: {
-            show: true,
-            position: "inside",
-            distance: 15,
-            formatter: (params: any) => params.value.toFixed(1),
-            fontSize: 16,
-            fontWeight: "bold",
-            color: "#fff",
-          },
-        },
-      ],
-    };
-
-    barChart.setOption(barOption);
-
-    const handleResize = () => {
-      barChart.resize();
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      barChart.dispose();
+    return {
+      timePoints,
+      averages,
+      yAxisRange: [yAxisMin, yAxisMax],
     };
   }, [data]);
 
@@ -171,6 +69,85 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
     }
   };
 
+  // Bar chart options
+  const barOption: EChartsOption = {
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+      },
+      formatter: (params: any) => {
+        const param = params[0];
+        return `${param.name}: ${param.value.toFixed(1)} / 10`;
+      },
+    },
+    grid: {
+      left: "8%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      data: processedData.timePoints.map((tp) => tp.label),
+      axisLabel: {
+        interval: 0,
+        rotate: 0,
+      },
+    },
+    yAxis: {
+      type: "value",
+      min: processedData.yAxisRange[0],
+      max: processedData.yAxisRange[1],
+      interval: 0.5,
+      name: "Ladder Step",
+      nameLocation: "middle",
+      nameGap: 50,
+      nameTextStyle: {
+        fontSize: 14,
+        fontWeight: "bold",
+      },
+      axisLabel: {
+        formatter: (value: number) => value.toFixed(1),
+        fontSize: 14,
+        fontWeight: "bold",
+        margin: 15,
+      },
+      axisLine: {
+        lineStyle: {
+          width: 2,
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          type: "dashed",
+          width: 1,
+        },
+      },
+    },
+    series: [
+      {
+        name: "Average Ladder Step",
+        type: "bar",
+        data: processedData.averages.map((value) => Number(value.toFixed(1))),
+        barWidth: "60%",
+        barGap: "0%",
+        itemStyle: {
+          color: "#5470c6",
+        },
+        label: {
+          show: true,
+          position: "inside",
+          distance: 15,
+          formatter: (params: any) => params.value.toFixed(1),
+          fontSize: 16,
+          fontWeight: "bold",
+          color: "#fff",
+        },
+      },
+    ],
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-4">
       {!hasValidData ? (
@@ -181,14 +158,15 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
         </div>
       ) : (
         <>
-          <div
-            ref={barChartRef}
-            className="flex-1"
-            style={{
-              height: "400px",
-              minHeight: "300px",
-            }}
-          />
+          <div className="flex-1">
+            <BaseGraph
+              option={barOption}
+              style={{ height: "400px", minHeight: "300px" }}
+              graphId={`${graphId}-bar`}
+              title={title}
+              subtitle={subtitle}
+            />
+          </div>
           <div className="flex-1">
             <BasePieChart
               data={data}
@@ -199,7 +177,7 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
               radius={["40%", "70%"]}
               showLegend={true}
               legendPosition="left"
-              graphId={graphId}
+              graphId={`${graphId}-pie`}
             />
           </div>
         </>

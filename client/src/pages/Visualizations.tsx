@@ -146,13 +146,13 @@ const SurveyDashboard: React.FC = () => {
                 graphId="quality-of-life-ladder"
               />
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <EquitableQualityOfLifeChart
                 data={surveyData}
                 graphId="equitable-quality-of-life"
               />
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <InclusiveServicesChart
                 data={surveyData}
                 graphId="inclusive-services"

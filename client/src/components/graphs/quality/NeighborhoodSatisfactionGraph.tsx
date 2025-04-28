@@ -10,11 +10,18 @@ interface SurveyData {
 interface NeighborhoodSatisfactionGraphProps {
   data: SurveyData[];
   graphId: string;
+  title?: string;
+  subtitle?: string;
 }
 
 export const NeighborhoodSatisfactionGraph: React.FC<
   NeighborhoodSatisfactionGraphProps
-> = ({ data, graphId }) => {
+> = ({
+  data,
+  graphId,
+  title = "Neighborhood Satisfaction Rating",
+  subtitle = "Distribution of resident ratings on a scale of 1 (least satisfied) to 10 (most satisfied)",
+}) => {
   const processedData = useMemo(() => {
     // Initialize counts for all possible ratings (1-10)
     const ratingCounts: { [key: number]: number } = {};
@@ -38,10 +45,6 @@ export const NeighborhoodSatisfactionGraph: React.FC<
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: "Neighborhood Satisfaction Rating",
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -76,10 +79,18 @@ export const NeighborhoodSatisfactionGraph: React.FC<
     grid: {
       containLabel: true,
       left: "3%",
+      top: "20%",
       right: "4%",
-      bottom: "3%",
+      bottom: "5%",
     },
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title={title}
+      subtitle={subtitle}
+    />
+  );
 };
