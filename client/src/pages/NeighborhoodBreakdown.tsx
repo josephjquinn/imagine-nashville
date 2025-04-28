@@ -75,8 +75,13 @@ export const NeighborhoodBreakdown: React.FC = () => {
               <option value="education">Education Questions</option>
             </select>
           </div>
+        </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-8">
+        <div className="py-4 border-b border-gray-200">
+          <div className="flex items-center gap-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Filter Results
+            </h2>
             <DemographicFilters
               onFilterChange={handleFilterChange}
               totalResponses={data.length}
@@ -86,7 +91,7 @@ export const NeighborhoodBreakdown: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-8 mt-8">
           {selectedType === "mobility" ? (
             <>
               <section>

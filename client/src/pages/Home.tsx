@@ -4,21 +4,29 @@ import { Link } from "react-router-dom";
 
 export function Home() {
   return (
-    <div className="w-full h-full flex items-center">
+    <div className="h-full flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center mb-4">
             <img
-              src="/in-logo.png"
+              src="/BY1.png"
               alt="Imagine Nashville Logo"
-              className="h-32 md:h-48 lg:h-56 w-auto object-contain"
+              className="h-16 md:h-20 lg:h-24 w-auto object-contain hidden md:block"
+            />
+            <img
+              src="/BY2.png"
+              alt="Imagine Nashville Logo Mobile"
+              className="h-16 md:h-20 lg:h-24 w-auto object-contain md:hidden"
             />
           </div>
-          <p className="mt-8 text-2xl md:text-3xl lg:text-4xl text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
-            Envisioning the future of Music City through data-driven insights
-            and community engagement.
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
+            Envisioning the Future of Music City
+          </h1>
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6 leading-relaxed">
+            Through data-driven insights and community engagement, we're shaping
+            a better Nashville for everyone.
           </p>
-          <div className="mt-12 flex justify-center gap-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link to="/visualizations">
               <Button className="bg-black text-white text-base tracking-wider font-bold px-12 py-6 rounded-none hover:bg-gray-800 transition-all duration-200 flex items-center gap-2 uppercase">
                 EXPLORE DATA <ArrowRight className="w-5 h-5" />
@@ -42,8 +50,8 @@ export function Home() {
 
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-32 w-96 h-96 bg-purple-100 rounded-full opacity-20 blur-3xl" />
-        <div className="absolute -bottom-40 -left-32 w-96 h-96 bg-blue-100 rounded-full opacity-20 blur-3xl" />
+        <div className="absolute -top-40 -right-32 w-96 h-96 bg-blue-100 rounded-full opacity-20 blur-3xl" />
+        <div className="absolute -bottom-40 -left-32 w-96 h-96 bg-purple-100 rounded-full opacity-20 blur-3xl" />
       </div>
     </div>
   );

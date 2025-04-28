@@ -358,11 +358,7 @@ const SurveyDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Nashville Survey Analytics
-            </h1>
-          </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"></div>
         </div>
       </div>
 
@@ -393,13 +389,18 @@ const SurveyDashboard: React.FC = () => {
             ))}
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-            <DemographicFilters
-              onFilterChange={handleFilterChange}
-              totalResponses={surveyData.length}
-              surveyType={surveyType}
-              onSurveyTypeChange={setSurveyType}
-            />
+          <div className="py-4 border-b border-gray-200">
+            <div className="flex items-center gap-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Filter Results
+              </h2>
+              <DemographicFilters
+                onFilterChange={handleFilterChange}
+                totalResponses={surveyData.length}
+                surveyType={surveyType}
+                onSurveyTypeChange={setSurveyType}
+              />
+            </div>
           </div>
 
           <div className="mb-8">{renderSection(activeSection)}</div>

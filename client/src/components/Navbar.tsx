@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { Button } from "./ui/button";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +18,7 @@ export function Navbar() {
 
   const navLinks = [
     { path: "/visualizations", label: "VISUALIZATIONS" },
-    { path: "/neighborhood-breakdown", label: "NEIGHBORHOOD BREAKDOWN" },
+    { path: "/neighborhood-breakdown", label: "NEIGHBORHOODS" },
     { path: "/about", label: "ABOUT" },
     { path: "/contact", label: "CONTACT" },
   ];
@@ -27,36 +28,52 @@ export function Navbar() {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-sm" : "bg-white"
+        isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : "bg-white"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-black">
-                Imagine Nashville Survey Report
-              </span>
-            </Link>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo and Brand */}
+          <Link to="/" className="flex items-center space-x-3">
+            <img
+              src="/BY1.png"
+              alt="Imagine Nashville Logo"
+              className="h-8 w-auto hidden md:block"
+            />
+            <img
+              src="/BY2.png"
+              alt="Imagine Nashville Logo Mobile"
+              className="h-8 w-auto md:hidden"
+            />
+            <span className="text-xl font-bold text-gray-900 hidden sm:block">
+              Imagine Nashville
+            </span>
+          </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-12">
+          <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={`text-sm tracking-wider font-bold transition-colors duration-200 ${
                   isActivePath(link.path)
-                    ? link.path === "/about"
-                      ? "text-[#00A7E1]"
-                      : "text-black"
+                    ? "text-[#00A7E1]"
                     : "text-black hover:text-gray-600"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
+            <Button
+              variant="default"
+              className="ml-4 bg-black hover:bg-gray-800 text-white tracking-wider font-bold"
+              onClick={() =>
+                window.open("https://imaginenashville.org/", "_blank")
+              }
+            >
+              LEARN MORE
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -86,11 +103,9 @@ export function Navbar() {
             <Link
               key={link.path}
               to={link.path}
-              className={`block px-3 py-2 text-base font-bold tracking-wider ${
+              className={`block px-3 py-2 text-base tracking-wider font-bold ${
                 isActivePath(link.path)
-                  ? link.path === "/about"
-                    ? "text-[#00A7E1]"
-                    : "text-black"
+                  ? "text-[#00A7E1]"
                   : "text-black hover:text-gray-600"
               }`}
               onClick={() => setIsOpen(false)}
@@ -98,6 +113,18 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          <div className="px-3 py-2">
+            <Button
+              variant="default"
+              className="w-full bg-black hover:bg-gray-800 text-white tracking-wider font-bold"
+              onClick={() => {
+                window.open("https://imaginenashville.org/", "_blank");
+                setIsOpen(false);
+              }}
+            >
+              LEARN MORE
+            </Button>
+          </div>
         </div>
       </div>
     </nav>

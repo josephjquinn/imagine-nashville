@@ -109,9 +109,13 @@ export function DemographicFilters({
     <div className="flex items-center gap-2">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="h-4 w-4" />
-            Filters
+          <Button
+            variant="outline"
+            size="default"
+            className="gap-2 px-4 py-2 h-auto"
+          >
+            <Filter className="h-5 w-5" />
+            <span className="text-base">Filters</span>
             {activeFiltersCount > 0 && (
               <Badge variant="secondary" className="ml-1">
                 {activeFiltersCount}
@@ -439,7 +443,7 @@ export function DemographicFilters({
         </DialogContent>
       </Dialog>
       {activeFiltersCount > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {Object.entries(activeFilters).map(
             ([key, value]) =>
               value && (
