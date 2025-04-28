@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { SurveyResponse } from "../../api/survey";
-import { BaseTable } from "./base/BaseTable";
+import { SurveyResponse } from "@/types/survey";
+import { BaseTable } from "../base/BaseTable";
 
-interface MobilityGoalsProps {
+interface EducationGoalsProps {
   data: SurveyResponse[];
   title?: string;
   subtitle?: string;
@@ -42,25 +42,29 @@ const NEIGHBORHOOD_CODE_MAP: Record<string, string> = {
   "13": "Gulch / Midtown / Belmont / 12South",
 };
 
-// Goals from the survey (Q630/Q635)
-const MOBILITY_GOALS: Record<string, string> = {
-  "1": "Make it easier to get around inside the neighborhoods and communities where people live",
-  "2": "Make it easier to get around Nashville — to and from downtown and from one place to another in the region",
-  "3": "Ensure everyone has good access to downtown / important parts of the region — across Nashville/Davidson Co.",
-  "4": "Improve transportation safety and reduce crashes and personal injuries",
+// Goals from the survey (Q660 series)
+const EDUCATION_GOALS: Record<string, string> = {
+  "1": "Ensure they can support themselves",
+  "2": "Ensure they are prepared for college",
+  "3": "Ensure they have the skills they will need to be successful in the workplace",
+  "4": "Provide a way to lift children out of poverty and level the playing field for their future",
+  "5": "Ensure they are well informed and able to engage in civic and political matters in their community",
 };
 
 // Goal abbreviations for display
 const GOAL_LABELS: Record<string, string> = {
-  "1": "Make it easier to get around inside the neighborhoods",
-  "2": "Make it easier to get around Nashville",
-  "3": "Ensure everyone has good access to downtown",
-  "4": "Improve transportation safety and reduce crashes",
+  "1": "Support themselves",
+  "2": "College preparation",
+  "3": "Workplace skills",
+  "4": "Lift out of poverty",
+  "5": "Civic engagement",
 };
 
-export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
+export const EducationGoalsByNeighborhoodChart: React.FC<
+  EducationGoalsProps
+> = ({
   data,
-  title = "Top Goals of Mobility by Neighborhood",
+  title = "Top Goals of Education by Neighborhood",
   subtitle = "",
 }) => {
   const [tableData, setTableData] = useState<{
@@ -82,20 +86,34 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
       "2": 0,
       "3": 0,
       "4": 0,
+      "5": 0,
     };
     const secondPriorityTotals: Record<string, number> = {
       "1": 0,
       "2": 0,
       "3": 0,
       "4": 0,
+      "5": 0,
     };
     let totalFirstPriorityResponses = 0;
     let totalSecondPriorityResponses = 0;
 
     // Process each neighborhood
     NEIGHBORHOODS.forEach((neighborhood) => {
-      firstChoiceData[neighborhood] = { "1": 0, "2": 0, "3": 0, "4": 0 };
-      secondChoiceData[neighborhood] = { "1": 0, "2": 0, "3": 0, "4": 0 };
+      firstChoiceData[neighborhood] = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+      };
+      secondChoiceData[neighborhood] = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+      };
 
       // Find the code for this neighborhood
       const neighborhoodCode = Object.entries(NEIGHBORHOOD_CODE_MAP).find(
@@ -111,12 +129,12 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
 
       // Count responses
       neighborhoodData.forEach((response) => {
-        const firstPriority = String(response.Q630);
-        const secondPriority = String(response.Q635);
+        const firstPriority = String(response.Q650);
+        const secondPriority = String(response.Q655);
 
         if (
           firstPriority &&
-          Object.keys(MOBILITY_GOALS).includes(firstPriority)
+          Object.keys(EDUCATION_GOALS).includes(firstPriority)
         ) {
           firstChoiceData[neighborhood][firstPriority]++;
           firstPriorityTotals[firstPriority]++;
@@ -125,7 +143,7 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
 
         if (
           secondPriority &&
-          Object.keys(MOBILITY_GOALS).includes(secondPriority)
+          Object.keys(EDUCATION_GOALS).includes(secondPriority)
         ) {
           secondChoiceData[neighborhood][secondPriority]++;
           secondPriorityTotals[secondPriority]++;
@@ -139,7 +157,7 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
     const secondPriorityPercentages: Record<string, string> = {};
     const goalValues: Record<string, number> = {};
 
-    Object.keys(MOBILITY_GOALS).forEach((goalId) => {
+    Object.keys(EDUCATION_GOALS).forEach((goalId) => {
       const firstPercentage =
         totalFirstPriorityResponses > 0
           ? (firstPriorityTotals[goalId] / totalFirstPriorityResponses) * 100
@@ -165,7 +183,7 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
     // Prepare table headers
     const headers = [
       <div className="w-[200px]"></div>,
-      ...Object.keys(MOBILITY_GOALS).map((goalId) => (
+      ...Object.keys(EDUCATION_GOALS).map((goalId) => (
         <div key={goalId} className="flex flex-col items-center space-y-2">
           <div className="text-2xl font-bold text-red-600">
             {firstPriorityPercentages[goalId]}
@@ -180,7 +198,7 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
     // Prepare table rows
     const rows = NEIGHBORHOODS.map((neighborhood) => [
       <div className="font-medium text-sm text-gray-700">{neighborhood}</div>,
-      ...Object.keys(MOBILITY_GOALS).map((goalId) => {
+      ...Object.keys(EDUCATION_GOALS).map((goalId) => {
         const isTopChoice = goalId === topChoice;
         const isSecondChoice = goalId === secondChoice;
 

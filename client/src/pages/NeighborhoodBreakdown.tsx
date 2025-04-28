@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/MobilityGoalsByNeighborhood";
-import { HousingGoalsByNeighborhoodChart } from "../components/graphs/HousingGoalsByNeighborhood";
-import { MobilityPrioritiesTable } from "../components/graphs/MobilityPrioritiesTable";
-import { HousingPrioritiesTable } from "../components/graphs/HousingPrioritiesTable";
+import { MobilityGoalsByNeighborhoodChart } from "../components/graphs/neighborhood/MobilityGoalsByNeighborhood";
+import { HousingGoalsByNeighborhoodChart } from "../components/graphs/neighborhood/HousingGoalsByNeighborhood";
+import { HousingPrioritiesTable } from "../components/graphs/neighborhood/HousingPrioritiesTable";
 import { useSurveyData } from "../hooks/useSurveyData";
-import { EducationGoalsByNeighborhoodChart } from "../components/graphs/EducationGoalsByNeighborhoodChart";
-import { EducationPrioritiesTable } from "../components/graphs/EducationPrioritiesTable";
+import { EducationGoalsByNeighborhoodChart } from "../components/graphs/neighborhood/EducationGoalsByNeighborhoodChart";
+import { EducationPrioritiesTable } from "../components/graphs/neighborhood/EducationPrioritiesTable";
+import { MobilityPrioritiesTable } from "@/components/graphs/neighborhood/MobilityPrioritiesTable";
 
 type QuestionType = "mobility" | "housing" | "education";
 

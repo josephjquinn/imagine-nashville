@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { SurveyResponse } from "../../api/survey";
-import { BaseTable } from "./base/BaseTable";
+import { SurveyResponse } from "@/types/survey";
+import { BaseTable } from "../base/BaseTable";
 
 interface HousingGoalsProps {
   data: SurveyResponse[];

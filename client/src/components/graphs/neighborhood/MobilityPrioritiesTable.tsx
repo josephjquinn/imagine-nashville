@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { SurveyResponse } from "../../api/survey";
+import { SurveyResponse } from "@/types/survey";
 
 interface MobilityPrioritiesTableProps {
   data: SurveyResponse[];
