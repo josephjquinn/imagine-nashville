@@ -38,8 +38,6 @@ interface EducationGoalsChartProps {
 
 export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
   data,
-  title,
-  subtitle,
   graphId,
 }) => {
   const { processedData } = useMemo(() => {
@@ -99,20 +97,6 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Education Goals: Top Priorities",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle || "% Selected as Top 2 Goals",
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -172,6 +156,7 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
         name: "Top",
         type: "bar",
         stack: "total",
+        barMaxWidth: 40,
         itemStyle: {
           color: "#6366f1", // indigo-500
         },
@@ -200,6 +185,7 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
         name: "Second",
         type: "bar",
         stack: "total",
+        barMaxWidth: 40,
         itemStyle: {
           color: "#a5b4fc", // indigo-300
         },
@@ -256,6 +242,11 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Education Goals: Top Priorities"
+      subtitle="% Selected as Top 2 Goals"
+    />
   );
 };

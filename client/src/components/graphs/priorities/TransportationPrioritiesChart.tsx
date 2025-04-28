@@ -36,14 +36,12 @@ const TRANSPORTATION_PRIORITIES = [
 
 interface TransportationPrioritiesChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const TransportationPrioritiesChart: React.FC<
   TransportationPrioritiesChartProps
-> = ({ data, title, subtitle, graphId }) => {
+> = ({ data, graphId }) => {
   const { processedData } = useMemo(() => {
     const results = TRANSPORTATION_PRIORITIES.map((priority) => {
       let sum = 0;
@@ -78,20 +76,6 @@ export const TransportationPrioritiesChart: React.FC<
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Transportation Priorities",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle || "Average Rating (1-10 Scale)",
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -157,7 +141,7 @@ export const TransportationPrioritiesChart: React.FC<
         type: "bar",
         barMaxWidth: 40,
         itemStyle: {
-          color: "#3b82f6", // blue-500
+          color: "#f59e0b", // amber-500
           borderRadius: [0, 4, 4, 0],
         },
         label: {
@@ -182,6 +166,11 @@ export const TransportationPrioritiesChart: React.FC<
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "500px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Transportation Priorities"
+      subtitle="Average Rating (1-10 Scale)"
+    />
   );
 };

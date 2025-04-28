@@ -28,14 +28,12 @@ const TRANSPORTATION_GOALS = [
 
 interface TransportationGoalsChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const TransportationGoalsChart: React.FC<
   TransportationGoalsChartProps
-> = ({ data, title, graphId }) => {
+> = ({ data, graphId }) => {
   const { processedData } = useMemo(() => {
     const goalCounts = new Map<string, { top: number; second: number }>();
 
@@ -93,15 +91,6 @@ export const TransportationGoalsChart: React.FC<
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Inter-City Transportation Top Goal",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -161,6 +150,7 @@ export const TransportationGoalsChart: React.FC<
         name: "Top",
         type: "bar",
         stack: "total",
+        barMaxWidth: 40,
         itemStyle: {
           color: "#f59e0b", // amber-500
         },
@@ -189,6 +179,7 @@ export const TransportationGoalsChart: React.FC<
         name: "Second",
         type: "bar",
         stack: "total",
+        barMaxWidth: 40,
         itemStyle: {
           color: "#fcd34d", // amber-300
         },
@@ -245,6 +236,11 @@ export const TransportationGoalsChart: React.FC<
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Transportation Goals: Top Priorities"
+      subtitle="% Selected as Top 2 Goals"
+    />
   );
 };

@@ -60,18 +60,12 @@ const DEFAULT_PRIORITY_FIELDS = [
 interface PriorityPerformanceChartProps {
   data: SurveyResponse[];
   priorityFields?: Array<{ field: string; label: string }>;
-  subtitle?: string;
   graphId: string;
 }
 
 export const PriorityPerformanceChart: React.FC<
   PriorityPerformanceChartProps
-> = ({
-  data,
-  priorityFields = DEFAULT_PRIORITY_FIELDS,
-  subtitle = "1 = Not performing well at all — 10 = Performing extremely well",
-  graphId,
-}) => {
+> = ({ data, priorityFields = DEFAULT_PRIORITY_FIELDS, graphId }) => {
   // Process data to get average ratings for each priority
   const priorityRatings = useMemo(() => {
     return priorityFields
@@ -129,26 +123,6 @@ export const PriorityPerformanceChart: React.FC<
   }
 
   const option: EChartsOption = {
-    title: [
-      {
-        text: "Nashville Priority Performance Ratings (1-10 Scale)",
-        left: "center",
-        top: 0,
-        textStyle: {
-          fontSize: 16,
-        },
-      },
-      {
-        text: subtitle,
-        left: "center",
-        top: 25,
-        textStyle: {
-          fontSize: 12,
-          fontWeight: "normal",
-          color: "#666",
-        },
-      },
-    ],
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -246,7 +220,13 @@ export const PriorityPerformanceChart: React.FC<
     ],
   };
   return (
-    <BaseGraph option={option} style={{ height: "600px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      style={{ height: "600px" }}
+      graphId={graphId}
+      title="Priority Performance"
+      subtitle="Average Rating (1-10 Scale)"
+    />
   );
 };
 

@@ -33,15 +33,11 @@ const HOUSING_PRIORITIES = [
 
 interface HousingPrioritiesChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
   data,
-  title,
-  subtitle,
   graphId,
 }) => {
   const { processedData } = useMemo(() => {
@@ -78,20 +74,6 @@ export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Housing Priorities",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle || "Average Rating (1-10 Scale)",
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -182,6 +164,11 @@ export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Housing Priorities"
+      subtitle="Average Rating (1-10 Scale)"
+    />
   );
 };

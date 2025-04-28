@@ -38,15 +38,11 @@ const BIG_IDEAS = [
 
 interface BigIdeasChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
   data,
-  title = "Nashville's Big Ideas for the Future",
-  subtitle = "% Selected as Top or Second Choice",
   graphId,
 }) => {
   const { processedData } = useMemo(() => {
@@ -96,20 +92,6 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title,
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle,
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -256,6 +238,11 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "700px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Nashville's Big Ideas for the Future"
+      subtitle="% Selected as Top or Second Choice"
+    />
   );
 };

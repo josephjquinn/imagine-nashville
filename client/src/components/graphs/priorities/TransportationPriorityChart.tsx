@@ -35,14 +35,12 @@ const TRANSPORTATION_MAPPINGS = {
 
 interface TransportationPriorityChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const TransportationPriorityChart: React.FC<
   TransportationPriorityChartProps
-> = ({ data, title = "Public Transportation Priority", graphId }) => {
+> = ({ data, graphId }) => {
   const getAnswerText = (value: string): string => {
     return (
       TRANSPORTATION_MAPPINGS[value as keyof typeof TRANSPORTATION_MAPPINGS] ||
@@ -89,7 +87,6 @@ export const TransportationPriorityChart: React.FC<
     <BasePieChart
       data={data}
       field="Q645"
-      title={title}
       getAnswerText={getAnswerText}
       emptyStateMessage="No valid transportation priority data available"
       customColors={AGREEMENT_SCALE.map((item) => item.color)}
@@ -111,6 +108,7 @@ export const TransportationPriorityChart: React.FC<
         </div>`;
       }}
       graphId={graphId}
+      title="Public Transportation Priority"
     />
   );
 };

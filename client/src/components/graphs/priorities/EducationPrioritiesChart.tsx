@@ -59,7 +59,7 @@ interface EducationPrioritiesChartProps {
 
 export const EducationPrioritiesChart: React.FC<
   EducationPrioritiesChartProps
-> = ({ data, title, subtitle, graphId }) => {
+> = ({ data, graphId }) => {
   const { processedData } = useMemo(() => {
     const results = EDUCATION_PRIORITIES.map((priority) => {
       let sum = 0;
@@ -94,20 +94,6 @@ export const EducationPrioritiesChart: React.FC<
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Education Priorities",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle || "Average Rating (1-10 Scale)",
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -198,6 +184,12 @@ export const EducationPrioritiesChart: React.FC<
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title={"Education Priorities"}
+      subtitle={"Average Rating (1-10 Scale)"}
+      style={{ height: "600px" }}
+    />
   );
 };

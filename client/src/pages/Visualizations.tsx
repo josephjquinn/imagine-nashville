@@ -3,7 +3,7 @@ import { GenderPieChart } from "../components/graphs/demographics/GenderPieChart
 import { EthnicityPieChart } from "../components/graphs/demographics/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/demographics/AgeHistogramChart";
 import { PriorityPerformanceChart } from "../components/graphs/priorities/PriorityPerformanceChart";
-import { PriorityQuadrantChart } from "../components/graphs/priorities/PriorityQuadrantChart";
+// import { PriorityQuadrantChart } from "../components/graphs/priorities/PriorityQuadrantChart";
 import { BelongingBarChart } from "../components/graphs/overview/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/priorities/InclusionRatingsChart";
 import { NegativeImpactsChart } from "../components/graphs/quality/NegativeImpactsChart";
@@ -231,12 +231,12 @@ const SurveyDashboard: React.FC = () => {
                 graphId="ideal-neighborhood-assets"
               />
             </div>
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            {/* <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <PriorityQuadrantChart
                 data={surveyData}
                 graphId="priority-quadrant"
               />
-            </div>
+            </div> */}
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <PriorityPerformanceChart
                 data={surveyData}

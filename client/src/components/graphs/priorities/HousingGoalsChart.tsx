@@ -32,15 +32,11 @@ const HOUSING_GOALS = [
 
 interface HousingGoalsChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
   data,
-  title,
-  subtitle,
   graphId,
 }) => {
   const { processedData } = useMemo(() => {
@@ -100,20 +96,6 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Housing Goals: Top Priorities",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle || "% Selected as Top 2 Goals",
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -173,6 +155,7 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
         name: "Top",
         type: "bar",
         stack: "total",
+        barMaxWidth: 40,
         itemStyle: {
           color: "#059669", // emerald-600
         },
@@ -201,6 +184,7 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
         name: "Second",
         type: "bar",
         stack: "total",
+        barMaxWidth: 40,
         itemStyle: {
           color: "#34d399", // emerald-400
         },
@@ -257,6 +241,11 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "400px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Housing Goals: Top Priorities"
+      subtitle="% Selected as Top 2 Goals"
+    />
   );
 };

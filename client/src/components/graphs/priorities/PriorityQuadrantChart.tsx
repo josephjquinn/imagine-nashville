@@ -67,14 +67,12 @@ const PRIORITY_IMPACT = {
 interface PriorityQuadrantChartProps {
   data: SurveyResponse[];
   priorityFields?: Array<{ field: string; label: string }>;
-  subtitle?: string;
   graphId: string;
 }
 
 export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
   data,
   priorityFields = DEFAULT_PRIORITY_FIELDS,
-  subtitle,
   graphId,
 }) => {
   // Process data to get average ratings for each priority
@@ -157,20 +155,6 @@ export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
   }
 
   const option: EChartsOption = {
-    title: {
-      text: "Top Learnings...And Biggest Issues Going Unaddressed",
-      left: "center",
-      top: 0,
-      textStyle: {
-        fontSize: 20,
-        fontWeight: "bold",
-      },
-      subtext: subtitle,
-      subtextStyle: {
-        fontSize: 14,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -383,7 +367,12 @@ export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "700px" }} graphId={graphId} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      title="Top Learnings...And Biggest Issues Going Unaddressed"
+      subtitle="Performance vs. Impact Analysis"
+    />
   );
 };
 

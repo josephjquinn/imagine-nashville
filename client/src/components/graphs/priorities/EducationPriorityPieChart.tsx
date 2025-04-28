@@ -11,23 +11,17 @@ const Q665_LABELS: Record<string, string> = {
 
 interface EducationPriorityPieChartProps {
   data: SurveyResponse[];
-  title?: string;
-  subtitle?: string;
   graphId: string;
 }
 
 export const EducationPriorityPieChart: React.FC<
   EducationPriorityPieChartProps
-> = ({
-  data,
-  title = "Agreement: Investing in Public Education is a Priority",
-  graphId,
-}) => {
+> = ({ data, graphId }) => {
   return (
     <BasePieChart
       data={data}
       field="Q665"
-      title={title}
+      title="Agreement: Investing in Public Education is a Priority"
       getAnswerText={(value) => Q665_LABELS[value] || value}
       showLegend={true}
       legendPosition="right"
