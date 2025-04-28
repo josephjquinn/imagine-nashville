@@ -18,6 +18,7 @@ interface BaseGraphProps {
   graphId: string;
   title?: string;
   subtitle?: string;
+  emptyStateMessage?: string;
 }
 
 // Standardized title and subtitle styles
@@ -38,10 +39,25 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
   graphId,
   title,
   subtitle,
+  emptyStateMessage = "No valid data available",
 }) => {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const { addGraph, removeGraph } = usePDF();
+
+  // Check if there's any data to display
+  const hasData = useMemo(() => {
+    if (!option.series) return false;
+    if (Array.isArray(option.series)) {
+      return option.series.some(series => {
+        if (Array.isArray(series.data)) {
+          return series.data.some(value => value > 0);
+        }
+        return false;
+      });
+    }
+    return false;
+  }, [option]);
 
   // Merge the provided options with standardized title and subtitle
   const mergedOption = useMemo(() => {
@@ -130,6 +146,14 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
       document.body.removeChild(link);
     }
   };
+
+  if (!hasData) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-500">{emptyStateMessage}</p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ position: "relative" }}>
