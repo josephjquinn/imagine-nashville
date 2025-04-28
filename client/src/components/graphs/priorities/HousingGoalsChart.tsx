@@ -124,6 +124,7 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
     legend: {
       data: ["Top", "Second"],
       bottom: 0,
+      left: "42%",
     },
     grid: {
       left: "3%",
@@ -135,6 +136,8 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
+      nameLocation: "middle",
+      nameGap: 30,
       max: 100,
       axisLabel: {
         formatter: "{value}%",

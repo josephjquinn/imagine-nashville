@@ -119,6 +119,7 @@ export const TransportationGoalsChart: React.FC<
     legend: {
       data: ["Top", "Second"],
       bottom: 0,
+      left: "42%",
     },
     grid: {
       left: "3%",
@@ -130,6 +131,8 @@ export const TransportationGoalsChart: React.FC<
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
+      nameLocation: "middle",
+      nameGap: 30,
       max: 100,
       axisLabel: {
         formatter: "{value}%",

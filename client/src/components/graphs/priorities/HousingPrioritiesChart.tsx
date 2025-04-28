@@ -117,6 +117,8 @@ export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
     xAxis: {
       type: "value",
       name: "Average Rating",
+      nameLocation: "middle",
+      nameGap: 30,
       min: 1,
       max: 10,
       axisLabel: {

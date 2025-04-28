@@ -125,6 +125,7 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
     legend: {
       data: ["Top", "Second"],
       bottom: 0,
+      left: "42%",
     },
     grid: {
       left: "3%",
@@ -136,6 +137,8 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
     xAxis: {
       type: "value",
       name: "Percentage of Respondents",
+      nameLocation: "middle",
+      nameGap: 30,
       max: 100,
       axisLabel: {
         formatter: "{value}%",
