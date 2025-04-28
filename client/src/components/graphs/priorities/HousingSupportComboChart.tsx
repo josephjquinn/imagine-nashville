@@ -127,6 +127,8 @@ export const HousingSupportComboChart: React.FC<
       {
         type: "value",
         name: "Percentage of Respondents",
+        nameLocation: "middle",
+        nameGap: 30,
         max: 100,
         axisLabel: { formatter: "{value}%" },
         gridIndex: 0,
