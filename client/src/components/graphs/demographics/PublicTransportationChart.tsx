@@ -1,90 +1,37 @@
-import React, { useMemo } from "react";
-import { BaseGraph } from "../base/BaseGraph";
-import type { EChartsOption } from "echarts";
+import React from "react";
+import { BasePieChart } from "../base/BasePieChart";
+import type { SurveyResponse } from "@/types/survey";
 
-interface SurveyData {
-  Q918?: string;
-  [key: string]: any;
-}
+const USAGE_MAPPINGS = {
+  "1": "Don't Use",
+  "2": "Few Times/Year",
+  "3": "Once/Month",
+  "4": "Once/Week+",
+};
 
 interface PublicTransportationChartProps {
-  data: SurveyData[];
+  data: SurveyResponse[];
   graphId: string;
 }
 
 export const PublicTransportationChart: React.FC<
   PublicTransportationChartProps
 > = ({ data, graphId }) => {
-  const processedData = useMemo(() => {
-    const categories = {
-      "1": "Don't Use",
-      "2": "Few Times/Year",
-      "3": "Once/Month",
-      "4": "Once/Week+",
-    };
-
-    const counts: { [key: string]: number } = {};
-    Object.keys(categories).forEach((key) => (counts[key] = 0));
-
-    data.forEach((item) => {
-      const category = item.Q918;
-      if (category && counts[category] !== undefined) {
-        counts[category]++;
-      }
-    });
-
-    return {
-      labels: Object.values(categories),
-      values: Object.keys(categories).map((key) => counts[key]),
-    };
-  }, [data]);
-
-  const option: EChartsOption = {
-    title: {
-      text: "Public Transportation Usage",
-      left: "center",
-    },
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "shadow",
-      },
-    },
-    xAxis: {
-      type: "category",
-      data: processedData.labels,
-      name: "Usage Frequency",
-      nameLocation: "middle",
-      nameGap: 30,
-      axisLabel: {
-        interval: 0,
-        rotate: 30,
-      },
-    },
-    yAxis: {
-      type: "value",
-      name: "Number of Responses",
-    },
-    series: [
-      {
-        type: "bar",
-        data: processedData.values,
-        itemStyle: {
-          color: "#4f46e5",
-        },
-        label: {
-          show: true,
-          position: "top",
-        },
-      },
-    ],
-    grid: {
-      containLabel: true,
-      left: "3%",
-      right: "4%",
-      bottom: "15%",
-    },
+  const getAnswerText = (value: string): string => {
+    return USAGE_MAPPINGS[value as keyof typeof USAGE_MAPPINGS] || value;
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BasePieChart
+      data={data}
+      field="Q918"
+      title="Public Transportation Usage"
+      getAnswerText={getAnswerText}
+      emptyStateMessage="No valid data available for Public Transportation Usage"
+      graphId={graphId}
+      radius={["40%", "70%"]}
+      showLegend={true}
+      legendPosition="left"
+    />
+  );
 };

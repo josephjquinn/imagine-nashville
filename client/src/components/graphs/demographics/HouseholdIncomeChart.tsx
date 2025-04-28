@@ -58,9 +58,6 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
     xAxis: {
       type: "category",
       data: processedData.labels,
-      name: "Income Range",
-      nameLocation: "middle",
-      nameGap: 30,
       axisLabel: {
         interval: 0,
         rotate: 30,
@@ -69,6 +66,7 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
     yAxis: {
       type: "value",
       name: "Number of Responses",
+      nameGap: 20,
     },
     series: [
       {
@@ -85,7 +83,7 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
     ],
     grid: {
       containLabel: true,
-      left: "3%",
+      left: "8%",
       right: "4%",
       bottom: "15%",
     },

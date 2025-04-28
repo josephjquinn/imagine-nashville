@@ -55,9 +55,6 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     xAxis: {
       type: "category",
       data: processedData.labels,
-      name: "Political Ideology",
-      nameLocation: "middle",
-      nameGap: 30,
       axisLabel: {
         interval: 0,
         rotate: 30,
@@ -66,6 +63,7 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     yAxis: {
       type: "value",
       name: "Number of Responses",
+      nameGap: 20,
     },
     series: [
       {
@@ -82,7 +80,7 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     ],
     grid: {
       containLabel: true,
-      left: "3%",
+      left: "8%",
       right: "4%",
       bottom: "15%",
     },

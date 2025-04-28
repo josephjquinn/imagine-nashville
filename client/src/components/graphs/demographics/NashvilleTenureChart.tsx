@@ -128,6 +128,8 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
     yAxis: {
       type: "value",
       name: "Number of Responses",
+      position: "left",
+      offset: 0,
     },
     series: [
       {
@@ -144,9 +146,9 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
     ],
     grid: {
       containLabel: true,
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
+      left: "10%",
+      right: "10%",
+      bottom: "5%",
     },
   };
 

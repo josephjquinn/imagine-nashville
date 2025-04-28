@@ -268,17 +268,17 @@ const SurveyDashboard: React.FC = () => {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <GenderPieChart data={surveyData} graphId="gender-pie" />
               </div>
-              <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <EthnicityPieChart data={surveyData} graphId="ethnicity-pie" />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <LivingAreaChart data={surveyData} graphId="living-area" />
+              </div>
+              <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <NashvilleTenureChart
                   data={surveyData}
                   graphId="nashville-tenure"
                 />
-              </div>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <LivingAreaChart data={surveyData} graphId="living-area" />
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <HousingStatusChart
