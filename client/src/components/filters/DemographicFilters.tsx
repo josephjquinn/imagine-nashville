@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { X, Filter } from "lucide-react";
+import { DISTRICT_DATA } from "@/data/districtData";
 
 interface DemographicFiltersProps {
   onFilterChange: (filters: DemographicFiltersState) => void;
@@ -41,6 +42,7 @@ export interface DemographicFiltersState {
   politicalAffiliation?: string;
   religiousAffiliation?: string;
   sexualOrientation?: string;
+  district?: string;
 }
 
 export function DemographicFilters({
@@ -58,12 +60,24 @@ export function DemographicFilters({
     key: keyof DemographicFiltersState,
     value: string
   ) => {
-    setPendingFilters((prev) => ({ ...prev, [key]: value }));
+    if (key === "district") {
+      // When district changes, update the filter with the district value
+      setPendingFilters((prev) => ({ ...prev, [key]: value }));
+    } else {
+      setPendingFilters((prev) => ({ ...prev, [key]: value }));
+    }
   };
 
   const applyFilters = () => {
-    setActiveFilters(pendingFilters);
-    onFilterChange(pendingFilters);
+    // Create a copy of the pending filters
+    const finalFilters = { ...pendingFilters };
+
+    // If there's a district filter, we'll handle it specially in the data processing
+    // The actual filtering by ZIP code will happen in the data processing layer
+    // using the Q113 column and the district-to-ZIP mapping
+
+    setActiveFilters(finalFilters);
+    onFilterChange(finalFilters);
   };
 
   const clearFilters = () => {
@@ -99,6 +113,7 @@ export function DemographicFilters({
       politicalAffiliation: "Political Affiliation",
       religiousAffiliation: "Religious Affiliation",
       sexualOrientation: "Sexual Orientation",
+      district: "District",
     };
     return `${labels[key]}: ${value}`;
   };
@@ -146,6 +161,25 @@ export function DemographicFilters({
             </Select>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">District</label>
+              <Select
+                value={pendingFilters.district}
+                onValueChange={(value) => handleFilterChange("district", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select district" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.keys(DISTRICT_DATA).map((district) => (
+                    <SelectItem key={district} value={district}>
+                      {district}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Gender</label>
               <Select

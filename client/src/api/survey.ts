@@ -2,7 +2,22 @@ import { supabase } from "../lib/supabase";
 
 export interface SurveyResponse {
   XID: number;
-  [key: string]: any;
+  [key: string]: number | string | null | undefined;
+}
+
+interface RangeFilter {
+  gte: number;
+  lte: number;
+}
+
+interface ArrayFilter {
+  in: string[];
+}
+
+type FilterValue = string | number | RangeFilter | ArrayFilter;
+
+export interface FilterOptions {
+  [key: string]: FilterValue;
 }
 
 export type SurveyType = 'formal' | 'public' | 'merged';
@@ -155,7 +170,7 @@ class BaseSurveyService {
    * @returns Promise containing filtered survey responses and total count
    */
   async getFilteredSurveyResponses(
-    filters: Record<string, any> = {}, 
+    filters: FilterOptions = {}, 
     batchSize: number = 1000
   ) {
     try {
@@ -166,20 +181,25 @@ class BaseSurveyService {
       let countQuery = supabase
         .from(this.tableName)
         .select('*', { count: 'exact', head: true });
-
+      
       // Apply filters to count query
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          if (typeof value === 'object' && 'gte' in value && 'lte' in value) {
-            countQuery = countQuery.gte(key, value.gte).lte(key, value.lte);
+          if (typeof value === 'object') {
+            if ('gte' in value && 'lte' in value) {
+              const rangeFilter = value as RangeFilter;
+              countQuery = countQuery.gte(key, rangeFilter.gte).lte(key, rangeFilter.lte);
+            } else if ('in' in value) {
+              const arrayFilter = value as ArrayFilter;
+              countQuery = countQuery.in(key, arrayFilter.in);
+            }
           } else {
             countQuery = countQuery.eq(key, value);
           }
         }
       });
-
-      const { count } = await countQuery;
       
+      const { count } = await countQuery;
       const totalRows = count || 0;
       const totalBatches = Math.ceil(totalRows / batchSize);
       
@@ -195,8 +215,14 @@ class BaseSurveyService {
         // Apply filters to data query
         Object.entries(filters).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
-            if (typeof value === 'object' && 'gte' in value && 'lte' in value) {
-              query = query.gte(key, value.gte).lte(key, value.lte);
+            if (typeof value === 'object') {
+              if ('gte' in value && 'lte' in value) {
+                const rangeFilter = value as RangeFilter;
+                query = query.gte(key, rangeFilter.gte).lte(key, rangeFilter.lte);
+              } else if ('in' in value) {
+                const arrayFilter = value as ArrayFilter;
+                query = query.in(key, arrayFilter.in);
+              }
             } else {
               query = query.eq(key, value);
             }

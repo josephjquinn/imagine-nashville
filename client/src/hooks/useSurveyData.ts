@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { SurveyResponse, SurveyType, createSurveyService } from "../api/survey";
+import { SurveyResponse, SurveyType, createSurveyService, FilterOptions } from "../api/survey";
 import { DemographicFiltersState } from "../components/filters/DemographicFilters";
+import { DISTRICT_DATA } from "../data/districtData";
 
 // Re-export SurveyType for backward compatibility
 export type { SurveyType };
@@ -10,8 +11,16 @@ export type { SurveyType };
  * @param filters The demographic filters to map
  * @returns A record of query parameters for the survey service
  */
-const mapFiltersToQuery = (filters: DemographicFiltersState): Record<string, any> => {
-  const queryFilters: Record<string, any> = {};
+const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
+  const queryFilters: FilterOptions = {};
+
+  if (filters.district) {
+    // Get the ZIP codes for the selected district
+    const districtZips = DISTRICT_DATA[filters.district];
+    if (districtZips && districtZips.length > 0) {
+      queryFilters.Q113 = { in: districtZips };
+    }
+  }
 
   if (filters.ageMin !== undefined && filters.ageMax !== undefined) {
     queryFilters.Q100 = {
