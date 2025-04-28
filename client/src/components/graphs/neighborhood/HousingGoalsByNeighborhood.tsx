@@ -77,34 +77,147 @@ export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
     if (!data || data.length === 0) return;
 
     // Initialize data structures for counting responses
-    const totalResponses: Record<string, number> = {};
-    Object.keys(HOUSING_GOALS).forEach((goal) => {
-      totalResponses[goal] = 0;
-    });
+    const firstChoiceData: Record<string, Record<string, number>> = {};
+    const secondChoiceData: Record<string, Record<string, number>> = {};
+    const firstPriorityTotals: Record<string, number> = {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+    };
+    const secondPriorityTotals: Record<string, number> = {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+    };
+    let totalFirstPriorityResponses = 0;
+    let totalSecondPriorityResponses = 0;
 
-    let totalValidResponses = 0;
+    // Process each neighborhood
+    NEIGHBORHOODS.forEach((neighborhood) => {
+      firstChoiceData[neighborhood] = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+      };
+      secondChoiceData[neighborhood] = {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+      };
 
-    // Count total responses for each goal
-    data.forEach((response) => {
-      const firstChoice = String(response.Q605);
-      if (firstChoice && Object.keys(HOUSING_GOALS).includes(firstChoice)) {
-        totalResponses[firstChoice]++;
-        totalValidResponses++;
+      // Find the code for this neighborhood
+      const neighborhoodCode = Object.entries(NEIGHBORHOOD_CODE_MAP).find(
+        ([_, name]) => name === neighborhood
+      )?.[0];
+
+      if (!neighborhoodCode) {
+        console.warn(`No code found for neighborhood: ${neighborhood}`);
+        return;
       }
+
+      // Filter data for this neighborhood using the code
+      const neighborhoodData = data.filter((response) => {
+        // Handle potential string/number mismatch in Area_NEW
+        const responseArea = String(response.Area_NEW).trim();
+        return responseArea === neighborhoodCode;
+      });
+
+      // Count responses for this neighborhood
+      let neighborhoodFirstPriorityTotal = 0;
+      let neighborhoodSecondPriorityTotal = 0;
+
+      neighborhoodData.forEach((response) => {
+        // Handle potential string/number mismatch in responses
+        const firstPriority = String(response.Q605).trim();
+        const secondPriority = String(response.Q610).trim();
+
+        // Validate first priority response
+        if (firstPriority && HOUSING_GOALS[firstPriority]) {
+          firstChoiceData[neighborhood][firstPriority]++;
+          firstPriorityTotals[firstPriority]++;
+          neighborhoodFirstPriorityTotal++;
+          totalFirstPriorityResponses++;
+        }
+
+        // Validate second priority response
+        if (secondPriority && HOUSING_GOALS[secondPriority]) {
+          secondChoiceData[neighborhood][secondPriority]++;
+          secondPriorityTotals[secondPriority]++;
+          neighborhoodSecondPriorityTotal++;
+          totalSecondPriorityResponses++;
+        }
+      });
+
+      // Calculate percentages for this neighborhood
+      Object.keys(HOUSING_GOALS).forEach((goalId) => {
+        const firstPercentage =
+          neighborhoodFirstPriorityTotal > 0
+            ? (firstChoiceData[neighborhood][goalId] /
+                neighborhoodFirstPriorityTotal) *
+              100
+            : 0;
+        const secondPercentage =
+          neighborhoodSecondPriorityTotal > 0
+            ? (secondChoiceData[neighborhood][goalId] /
+                neighborhoodSecondPriorityTotal) *
+              100
+            : 0;
+
+        firstChoiceData[neighborhood][goalId] = firstPercentage;
+        secondChoiceData[neighborhood][goalId] = secondPercentage;
+      });
     });
 
-    // Calculate percentages and find top choices
-    const percentages: Record<string, string> = {};
-    const values: Record<string, number> = {};
+    // Calculate overall percentages
+    const firstPriorityPercentages: Record<string, string> = {};
+    const secondPriorityPercentages: Record<string, string> = {};
+    const goalValues: Record<string, number> = {};
 
-    Object.keys(HOUSING_GOALS).forEach((goal) => {
-      const percentage = (totalResponses[goal] / totalValidResponses) * 100;
-      percentages[goal] = `${Math.round(percentage)}%`;
-      values[goal] = percentage;
+    Object.keys(HOUSING_GOALS).forEach((goalId) => {
+      const firstPercentage =
+        totalFirstPriorityResponses > 0
+          ? (firstPriorityTotals[goalId] / totalFirstPriorityResponses) * 100
+          : 0;
+      const secondPercentage =
+        totalSecondPriorityResponses > 0
+          ? (secondPriorityTotals[goalId] / totalSecondPriorityResponses) * 100
+          : 0;
+
+      firstPriorityPercentages[goalId] = `${firstPercentage.toFixed(1)}%`;
+      secondPriorityPercentages[goalId] = `${secondPercentage.toFixed(1)}%`;
+      goalValues[goalId] = firstPercentage;
     });
 
-    // Sort goals by percentage to find top choices
-    const sortedGoals = Object.entries(values)
+    // Debug output
+    console.log("Data processing summary:", {
+      totalResponses: data.length,
+      totalFirstPriorityResponses,
+      totalSecondPriorityResponses,
+      firstPriorityTotals,
+      secondPriorityTotals,
+      firstPriorityPercentages,
+      secondPriorityPercentages,
+    });
+
+    // Log sample data for debugging
+    if (data.length > 0) {
+      console.log("Sample response data:", {
+        Area_NEW: data[0].Area_NEW,
+        Q605: data[0].Q605,
+        Q610: data[0].Q610,
+      });
+    }
+
+    // Find top two goals based on first priority
+    const sortedGoals = Object.entries(goalValues)
       .sort(([, a], [, b]) => b - a)
       .map(([id]) => id);
 
@@ -117,7 +230,7 @@ export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
       ...Object.keys(HOUSING_GOALS).map((goalId) => (
         <div key={goalId} className="flex flex-col items-center space-y-2">
           <div className="text-2xl font-bold text-red-600">
-            {percentages[goalId]}
+            {firstPriorityPercentages[goalId]}
           </div>
           <div className="text-sm font-medium text-gray-700 max-w-[200px]">
             {GOAL_LABELS[goalId]}
@@ -128,41 +241,10 @@ export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
 
     // Prepare table rows
     const rows = NEIGHBORHOODS.map((neighborhood) => {
-      // Find the code for this neighborhood
-      const neighborhoodCode = Object.entries(NEIGHBORHOOD_CODE_MAP).find(
-        ([_, name]) => name === neighborhood
-      )?.[0];
-
-      if (!neighborhoodCode) return [];
-
-      // Filter data for this neighborhood
-      const neighborhoodData = data.filter(
-        (response) => response.Area_NEW === neighborhoodCode
-      );
-
-      // Count responses for this neighborhood
-      const neighborhoodResponses: Record<string, number> = {};
-      Object.keys(HOUSING_GOALS).forEach((goal) => {
-        neighborhoodResponses[goal] = 0;
-      });
-
-      let neighborhoodTotal = 0;
-
-      neighborhoodData.forEach((response) => {
-        const firstChoice = String(response.Q605);
-        if (firstChoice && Object.keys(HOUSING_GOALS).includes(firstChoice)) {
-          neighborhoodResponses[firstChoice]++;
-          neighborhoodTotal++;
-        }
-      });
-
       // Find top choices for this neighborhood
       const neighborhoodValues: Record<string, number> = {};
-      Object.keys(HOUSING_GOALS).forEach((goal) => {
-        neighborhoodValues[goal] =
-          neighborhoodTotal > 0
-            ? (neighborhoodResponses[goal] / neighborhoodTotal) * 100
-            : 0;
+      Object.keys(HOUSING_GOALS).forEach((goalId) => {
+        neighborhoodValues[goalId] = firstChoiceData[neighborhood][goalId];
       });
 
       const sortedNeighborhoodGoals = Object.entries(neighborhoodValues)
@@ -204,7 +286,7 @@ export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
     setTableData({
       headers,
       rows,
-      goalPercentages: percentages,
+      goalPercentages: firstPriorityPercentages,
       topChoice,
       secondChoice,
     });

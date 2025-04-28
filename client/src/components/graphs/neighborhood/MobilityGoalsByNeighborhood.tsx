@@ -102,39 +102,65 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
         ([_, name]) => name === neighborhood
       )?.[0];
 
-      if (!neighborhoodCode) return;
+      if (!neighborhoodCode) {
+        console.warn(`No code found for neighborhood: ${neighborhood}`);
+        return;
+      }
 
       // Filter data for this neighborhood using the code
-      const neighborhoodData = data.filter(
-        (response) => response.Area_NEW === neighborhoodCode
-      );
+      const neighborhoodData = data.filter((response) => {
+        // Handle potential string/number mismatch in Area_NEW
+        const responseArea = String(response.Area_NEW).trim();
+        return responseArea === neighborhoodCode;
+      });
 
-      // Count responses
+      // Count responses for this neighborhood
+      let neighborhoodFirstPriorityTotal = 0;
+      let neighborhoodSecondPriorityTotal = 0;
+
       neighborhoodData.forEach((response) => {
-        const firstPriority = String(response.Q630);
-        const secondPriority = String(response.Q635);
+        // Handle potential string/number mismatch in responses
+        const firstPriority = String(response.Q630).trim();
+        const secondPriority = String(response.Q635).trim();
 
-        if (
-          firstPriority &&
-          Object.keys(MOBILITY_GOALS).includes(firstPriority)
-        ) {
+        // Validate first priority response
+        if (firstPriority && MOBILITY_GOALS[firstPriority]) {
           firstChoiceData[neighborhood][firstPriority]++;
           firstPriorityTotals[firstPriority]++;
+          neighborhoodFirstPriorityTotal++;
           totalFirstPriorityResponses++;
         }
 
-        if (
-          secondPriority &&
-          Object.keys(MOBILITY_GOALS).includes(secondPriority)
-        ) {
+        // Validate second priority response
+        if (secondPriority && MOBILITY_GOALS[secondPriority]) {
           secondChoiceData[neighborhood][secondPriority]++;
           secondPriorityTotals[secondPriority]++;
+          neighborhoodSecondPriorityTotal++;
           totalSecondPriorityResponses++;
         }
       });
+
+      // Calculate percentages for this neighborhood
+      Object.keys(MOBILITY_GOALS).forEach((goalId) => {
+        const firstPercentage =
+          neighborhoodFirstPriorityTotal > 0
+            ? (firstChoiceData[neighborhood][goalId] /
+                neighborhoodFirstPriorityTotal) *
+              100
+            : 0;
+        const secondPercentage =
+          neighborhoodSecondPriorityTotal > 0
+            ? (secondChoiceData[neighborhood][goalId] /
+                neighborhoodSecondPriorityTotal) *
+              100
+            : 0;
+
+        firstChoiceData[neighborhood][goalId] = firstPercentage;
+        secondChoiceData[neighborhood][goalId] = secondPercentage;
+      });
     });
 
-    // Calculate percentages for first and second priorities separately
+    // Calculate overall percentages
     const firstPriorityPercentages: Record<string, string> = {};
     const secondPriorityPercentages: Record<string, string> = {};
     const goalValues: Record<string, number> = {};
@@ -149,10 +175,30 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
           ? (secondPriorityTotals[goalId] / totalSecondPriorityResponses) * 100
           : 0;
 
-      firstPriorityPercentages[goalId] = `${Math.round(firstPercentage)}%`;
-      secondPriorityPercentages[goalId] = `${Math.round(secondPercentage)}%`;
+      firstPriorityPercentages[goalId] = `${firstPercentage.toFixed(1)}%`;
+      secondPriorityPercentages[goalId] = `${secondPercentage.toFixed(1)}%`;
       goalValues[goalId] = firstPercentage;
     });
+
+    // Debug output
+    console.log("Data processing summary:", {
+      totalResponses: data.length,
+      totalFirstPriorityResponses,
+      totalSecondPriorityResponses,
+      firstPriorityTotals,
+      secondPriorityTotals,
+      firstPriorityPercentages,
+      secondPriorityPercentages,
+    });
+
+    // Log sample data for debugging
+    if (data.length > 0) {
+      console.log("Sample response data:", {
+        Area_NEW: data[0].Area_NEW,
+        Q630: data[0].Q630,
+        Q635: data[0].Q635,
+      });
+    }
 
     // Find top two goals based on first priority
     const sortedGoals = Object.entries(goalValues)
