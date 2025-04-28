@@ -17,10 +17,14 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { path: "/visualizations", label: "VISUALIZATIONS" },
-    { path: "/neighborhood-breakdown", label: "NEIGHBORHOODS" },
-    { path: "/about", label: "ABOUT" },
-    { path: "/contact", label: "CONTACT" },
+    { path: "/visualizations", label: "VISUALIZATIONS", clickable: true },
+    {
+      path: "/neighborhood-breakdown",
+      label: "NEIGHBORHOODS",
+      clickable: false,
+    },
+    { path: "/about", label: "ABOUT", clickable: false },
+    { path: "/contact", label: "CONTACT", clickable: false },
   ];
 
   const isActivePath = (path: string) => location.pathname === path;
@@ -42,19 +46,28 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8 justify-end flex-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`text-sm tracking-wider font-bold transition-colors duration-200 ${
-                  isActivePath(link.path)
-                    ? "text-[#00A7E1]"
-                    : "text-black hover:text-gray-600"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.clickable ? (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`text-sm tracking-wider font-bold transition-colors duration-200 ${
+                    isActivePath(link.path)
+                      ? "text-[#00A7E1]"
+                      : "text-black hover:text-gray-600"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <span
+                  key={link.path}
+                  className="text-sm tracking-wider font-bold text-gray-400 cursor-not-allowed"
+                >
+                  {link.label}
+                </span>
+              )
+            )}
             <Button
               variant="default"
               className="ml-4 bg-black hover:bg-gray-800 text-white tracking-wider font-bold"
@@ -84,25 +97,34 @@ export function Navbar() {
 
       {/* Mobile menu */}
       <div
-        className={`md:hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        } overflow-hidden bg-white border-t border-gray-100`}
+        className={`md:hidden fixed top-16 left-0 right-0 transition-all duration-300 ease-in-out ${
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        } bg-white border-t border-gray-100`}
       >
         <div className="px-4 py-2 space-y-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`block px-3 py-2 text-base tracking-wider font-bold ${
-                isActivePath(link.path)
-                  ? "text-[#00A7E1]"
-                  : "text-black hover:text-gray-600"
-              }`}
-              onClick={() => setIsOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.clickable ? (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`block px-3 py-2 text-base tracking-wider font-bold ${
+                  isActivePath(link.path)
+                    ? "text-[#00A7E1]"
+                    : "text-black hover:text-gray-600"
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <span
+                key={link.path}
+                className="block px-3 py-2 text-base tracking-wider font-bold text-gray-400 cursor-not-allowed"
+              >
+                {link.label}
+              </span>
+            )
+          )}
           <div className="px-3 py-2">
             <Button
               variant="default"
