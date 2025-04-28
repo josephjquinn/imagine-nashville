@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, Home } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function Navbar() {
@@ -31,27 +31,17 @@ export function Navbar() {
         isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : "bg-white"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-9">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Brand */}
-          <Link to="/" className="flex items-center space-x-3">
-            <img
-              src="/BY1.png"
-              alt="Imagine Nashville Logo"
-              className="h-8 w-auto hidden md:block"
-            />
-            <img
-              src="/BY2.png"
-              alt="Imagine Nashville Logo Mobile"
-              className="h-8 w-auto md:hidden"
-            />
-            <span className="text-xl font-bold text-gray-900 hidden sm:block">
-              Imagine Nashville
-            </span>
-          </Link>
+          <div className="flex-1 flex items-center">
+            <Link to="/" className="flex items-center">
+              <Home className="h-7 w-7 text-gray-900" />
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-8 justify-end flex-1">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -77,7 +67,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center justify-end flex-1">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-md text-gray-600 hover:text-gray-900 focus:outline-none"
