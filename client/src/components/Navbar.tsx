@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, X, Home } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function Navbar() {
@@ -40,7 +40,11 @@ export function Navbar() {
           {/* Logo and Brand */}
           <div className="flex-1 flex items-center">
             <Link to="/" className="flex items-center">
-              <Home className="h-7 w-7 text-gray-900" />
+              <img
+                src="/BY2.png"
+                alt="Imagine Nashville Logo"
+                className="h-10 w-auto"
+              />
             </Link>
           </div>
 
