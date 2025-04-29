@@ -282,17 +282,17 @@ export function DemographicFilters({
             </span>
           </div>
         </DialogTrigger>
-        <DialogContent className="!w-[65vw] !h-[80vh] !max-w-[65vw] !max-h-[80vh] flex flex-col">
+        <DialogContent className="!w-[95vw] sm:!w-[65vw] !h-[80vh] !max-w-[95vw] sm:!max-w-[65vw] !max-h-[80vh] flex flex-col">
           <DialogHeader className="flex-none bg-background border-b pb-4">
             <DialogTitle>Filter Responses</DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-6">
-            <div className="space-y-6 py-4">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6">
+            <div className="space-y-4 sm:space-y-6 py-4">
               {/* Survey Type */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Survey Type</label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative group flex-1">
                     <Button
                       variant={
@@ -313,7 +313,6 @@ export function DemographicFilters({
                       </p>
                     </div>
                   </div>
-
                   <div className="relative group flex-1">
                     <Button
                       variant={
@@ -334,7 +333,6 @@ export function DemographicFilters({
                       </p>
                     </div>
                   </div>
-
                   <div className="relative group flex-1">
                     <Button
                       variant={
@@ -414,11 +412,11 @@ export function DemographicFilters({
                 <MapPin className="h-5 w-5 text-gray-600" />,
                 "location",
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 p-1 bg-muted rounded-lg">
+                  <div className="flex flex-col sm:flex-row items-center gap-2 p-1 bg-muted rounded-lg">
                     <button
                       onClick={() => setSelectedLocationType("district")}
                       disabled={getFilterDisabledState("district")}
-                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "district"
                           ? "bg-background shadow-sm"
                           : "hover:bg-background/50"
@@ -433,7 +431,7 @@ export function DemographicFilters({
                     <button
                       onClick={() => setSelectedLocationType("region")}
                       disabled={getFilterDisabledState("region")}
-                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "region"
                           ? "bg-background shadow-sm"
                           : "hover:bg-background/50"
@@ -448,7 +446,7 @@ export function DemographicFilters({
                     <button
                       onClick={() => setSelectedLocationType("area")}
                       disabled={getFilterDisabledState("area")}
-                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "area"
                           ? "bg-background shadow-sm"
                           : "hover:bg-background/50"
@@ -463,7 +461,7 @@ export function DemographicFilters({
                     <button
                       onClick={() => setSelectedLocationType("neighborhood")}
                       disabled={getFilterDisabledState("neighborhood")}
-                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "neighborhood"
                           ? "bg-background shadow-sm"
                           : "hover:bg-background/50"
@@ -589,10 +587,10 @@ export function DemographicFilters({
                 "Demographics",
                 <Users className="h-5 w-5 text-gray-600" />,
                 "demographics",
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div className="space-y-4">
                     <label className="text-sm font-medium">Gender</label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       <Button
                         variant={
                           pendingFilters.gender === "male"
@@ -650,7 +648,7 @@ export function DemographicFilters({
                     <label className="text-sm font-medium">
                       Race/Ethnicity
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       <Button
                         variant={
                           pendingFilters.ethnicity === "white"
@@ -720,7 +718,7 @@ export function DemographicFilters({
                     <label className="text-sm font-medium">
                       Education Level
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="flex items-center gap-2">
                         <input
                           type="radio"
@@ -796,7 +794,7 @@ export function DemographicFilters({
 
                   <div className="space-y-4">
                     <label className="text-sm font-medium">Income Range</label>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="flex items-center gap-2">
                         <input
                           type="radio"
@@ -1319,17 +1317,23 @@ export function DemographicFilters({
             </div>
           </div>
 
-          <div className="flex-none bg-background border-t pt-4 px-6 pb-6">
-            <div className="flex justify-between items-center">
+          <div className="flex-none bg-background border-t pt-4 px-4 sm:px-6 pb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={clearFilters}
                 disabled={activeFiltersCount === 0}
+                className="w-full sm:w-auto"
               >
                 Clear All
               </Button>
-              <Button variant="default" size="sm" onClick={applyFilters}>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={applyFilters}
+                className="w-full sm:w-auto"
+              >
                 Apply Filters
               </Button>
             </div>
