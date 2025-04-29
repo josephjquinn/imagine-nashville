@@ -22,6 +22,18 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
     }
   }
 
+  if (filters.region) {
+    queryFilters.Region_NEW = filters.region;
+  }
+
+  if (filters.area) {
+    queryFilters.Area_NEW = filters.area;
+  }
+
+  if (filters.neighborhood) {
+    queryFilters.Neighborhood_New = filters.neighborhood;
+  }
+
   if (filters.ageMin !== undefined && filters.ageMax !== undefined) {
     queryFilters.Q100 = {
       gte: parseInt(filters.ageMin),
