@@ -28,8 +28,9 @@ export function Home() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8">
             <Link to="/visualizations">
-              <Button className="w-full sm:w-auto bg-black text-white text-base sm:text-lg tracking-wider font-bold px-8 sm:px-14 py-4 sm:py-7 rounded-none hover:bg-gray-800 transition-all duration-200 flex items-center justify-center gap-2 uppercase">
-                EXPLORE DATA <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+              <Button className="w-full sm:w-auto bg-[var(--brand-blue)] text-white text-base sm:text-lg tracking-wider font-bold px-8 sm:px-14 py-4 sm:py-7 rounded-none hover:bg-[#E94E3C] transition-all duration-200 flex items-center justify-center gap-2 uppercase">
+                DIG INTO THE DATA{" "}
+                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
               </Button>
             </Link>
             <a
@@ -39,7 +40,7 @@ export function Home() {
             >
               <Button
                 variant="outline"
-                className="w-full sm:w-auto text-base sm:text-lg tracking-wider font-bold px-8 sm:px-14 py-4 sm:py-7 rounded-none border-2 border-black hover:bg-gray-50 transition-all duration-200 uppercase"
+                className="w-full sm:w-auto text-base sm:text-lg tracking-wider font-bold px-8 sm:px-14 py-4 sm:py-7 rounded-none border-2 border-[var(--brand-blue)] text-[var(--brand-blue)] hover:bg-[#E94E3C] hover:text-white hover:border-[#E94E3C] transition-all duration-200 uppercase"
               >
                 LEARN MORE
               </Button>
