@@ -298,7 +298,11 @@ export function DemographicFilters({
                       variant={
                         pendingSurveyType === "formal" ? "default" : "outline"
                       }
-                      className="w-full gap-2"
+                      className={`w-full gap-2 ${
+                        pendingSurveyType === "formal"
+                          ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                          : ""
+                      }`}
                       onClick={() => setPendingSurveyType("formal")}
                     >
                       <ClipboardList className="h-4 w-4" />
@@ -318,7 +322,11 @@ export function DemographicFilters({
                       variant={
                         pendingSurveyType === "public" ? "default" : "outline"
                       }
-                      className="w-full gap-2"
+                      className={`w-full gap-2 ${
+                        pendingSurveyType === "public"
+                          ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                          : ""
+                      }`}
                       onClick={() => setPendingSurveyType("public")}
                     >
                       <Globe className="h-4 w-4" />
@@ -338,7 +346,11 @@ export function DemographicFilters({
                       variant={
                         pendingSurveyType === "merged" ? "default" : "outline"
                       }
-                      className="w-full gap-2"
+                      className={`w-full gap-2 ${
+                        pendingSurveyType === "merged"
+                          ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                          : ""
+                      }`}
                       onClick={() => setPendingSurveyType("merged")}
                     >
                       <Merge className="h-4 w-4" />
@@ -401,7 +413,7 @@ export function DemographicFilters({
                     handleFilterChange("ageMax", max.toString());
                   }}
                   step={1}
-                  className="w-full"
+                  className="w-full [&_[role=slider]]:bg-[var(--brand-blue)] [&_[role=slider]]:border-[var(--brand-blue)]"
                   disabled={getFilterDisabledState("ageMin")}
                 />
               </div>
@@ -418,7 +430,7 @@ export function DemographicFilters({
                       disabled={getFilterDisabledState("district")}
                       className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "district"
-                          ? "bg-background shadow-sm"
+                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
                           : "hover:bg-background/50"
                       } ${
                         getFilterDisabledState("district")
@@ -433,7 +445,7 @@ export function DemographicFilters({
                       disabled={getFilterDisabledState("region")}
                       className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "region"
-                          ? "bg-background shadow-sm"
+                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
                           : "hover:bg-background/50"
                       } ${
                         getFilterDisabledState("region")
@@ -448,7 +460,7 @@ export function DemographicFilters({
                       disabled={getFilterDisabledState("area")}
                       className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "area"
-                          ? "bg-background shadow-sm"
+                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
                           : "hover:bg-background/50"
                       } ${
                         getFilterDisabledState("area")
@@ -463,7 +475,7 @@ export function DemographicFilters({
                       disabled={getFilterDisabledState("neighborhood")}
                       className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         selectedLocationType === "neighborhood"
-                          ? "bg-background shadow-sm"
+                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
                           : "hover:bg-background/50"
                       } ${
                         getFilterDisabledState("neighborhood")
@@ -487,8 +499,8 @@ export function DemographicFilters({
                             disabled={getFilterDisabledState("district")}
                             className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
                               pendingFilters.district === district
-                                ? "bg-black text-white border-black"
-                                : "border-muted hover:border-black/50"
+                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                                : "border-muted hover:border-[var(--brand-blue)]/50"
                             } ${
                               getFilterDisabledState("district")
                                 ? "opacity-50 cursor-not-allowed"
@@ -512,8 +524,8 @@ export function DemographicFilters({
                             disabled={getFilterDisabledState("region")}
                             className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
                               pendingFilters.region === region.value
-                                ? "bg-black text-white border-black"
-                                : "border-muted hover:border-black/50"
+                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                                : "border-muted hover:border-[var(--brand-blue)]/50"
                             } ${
                               getFilterDisabledState("region")
                                 ? "opacity-50 cursor-not-allowed"
@@ -537,8 +549,8 @@ export function DemographicFilters({
                             disabled={getFilterDisabledState("area")}
                             className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
                               pendingFilters.area === area.value
-                                ? "bg-black text-white border-black"
-                                : "border-muted hover:border-black/50"
+                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                                : "border-muted hover:border-[var(--brand-blue)]/50"
                             } ${
                               getFilterDisabledState("area")
                                 ? "opacity-50 cursor-not-allowed"
@@ -565,8 +577,8 @@ export function DemographicFilters({
                             disabled={getFilterDisabledState("neighborhood")}
                             className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
                               pendingFilters.neighborhood === neighborhood.value
-                                ? "bg-black text-white border-black"
-                                : "border-muted hover:border-black/50"
+                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                                : "border-muted hover:border-[var(--brand-blue)]/50"
                             } ${
                               getFilterDisabledState("neighborhood")
                                 ? "opacity-50 cursor-not-allowed"
@@ -597,7 +609,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.gender === "male"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("gender", "male")}
                         disabled={getFilterDisabledState("gender")}
                       >
@@ -609,7 +625,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.gender === "female"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("gender", "female")}
                         disabled={getFilterDisabledState("gender")}
                       >
@@ -621,7 +641,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.gender === "other"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("gender", "other")}
                         disabled={getFilterDisabledState("gender")}
                       >
@@ -633,7 +657,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.gender === "prefer-not"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("gender", "prefer-not")
                         }
@@ -655,7 +683,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.ethnicity === "white"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("ethnicity", "white")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
@@ -667,7 +699,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.ethnicity === "black"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("ethnicity", "black")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
@@ -679,7 +715,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.ethnicity === "asian"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("ethnicity", "asian")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
@@ -691,7 +731,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.ethnicity === "hispanic"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("ethnicity", "hispanic")
                         }
@@ -705,7 +749,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.ethnicity === "other"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("ethnicity", "other")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
@@ -913,7 +961,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.housing === "own"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("housing", "own")}
                         disabled={getFilterDisabledState("housing")}
                       >
@@ -925,7 +977,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.housing === "rent"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("housing", "rent")}
                         disabled={getFilterDisabledState("housing")}
                       >
@@ -937,7 +993,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.housing === "other"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("housing", "other")}
                         disabled={getFilterDisabledState("housing")}
                       >
@@ -957,7 +1017,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.children === "yes"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("children", "yes")}
                         disabled={getFilterDisabledState("children")}
                       >
@@ -969,7 +1033,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.children === "no"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() => handleFilterChange("children", "no")}
                         disabled={getFilterDisabledState("children")}
                       >
@@ -989,7 +1057,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.maritalStatus === "married"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("maritalStatus", "married")
                         }
@@ -1003,7 +1075,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.maritalStatus === "single"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("maritalStatus", "single")
                         }
@@ -1017,7 +1093,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.maritalStatus === "divorced"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("maritalStatus", "divorced")
                         }
@@ -1031,7 +1111,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.maritalStatus === "widowed"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("maritalStatus", "widowed")
                         }
@@ -1045,7 +1129,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.maritalStatus === "separated"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("maritalStatus", "separated")
                         }
@@ -1075,7 +1163,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.politicalAffiliation === "democrat"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("politicalAffiliation", "democrat")
                         }
@@ -1091,7 +1183,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.politicalAffiliation === "republican"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange(
                             "politicalAffiliation",
@@ -1110,7 +1206,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.politicalAffiliation === "independent"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange(
                             "politicalAffiliation",
@@ -1129,7 +1229,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.politicalAffiliation === "other"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("politicalAffiliation", "other")
                         }
@@ -1153,7 +1257,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.religiousAffiliation === "protestant"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange(
                             "religiousAffiliation",
@@ -1172,7 +1280,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.religiousAffiliation === "catholic"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("religiousAffiliation", "catholic")
                         }
@@ -1188,7 +1300,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.religiousAffiliation === "jewish"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("religiousAffiliation", "jewish")
                         }
@@ -1204,7 +1320,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.religiousAffiliation === "muslim"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("religiousAffiliation", "muslim")
                         }
@@ -1220,7 +1340,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.religiousAffiliation === "other"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("religiousAffiliation", "other")
                         }
@@ -1236,7 +1360,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.religiousAffiliation === "none"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("religiousAffiliation", "none")
                         }
@@ -1260,7 +1388,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.sexualOrientation === "straight"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("sexualOrientation", "straight")
                         }
@@ -1274,7 +1406,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.sexualOrientation === "gay"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("sexualOrientation", "gay")
                         }
@@ -1288,7 +1424,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.sexualOrientation === "bisexual"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("sexualOrientation", "bisexual")
                         }
@@ -1302,7 +1442,11 @@ export function DemographicFilters({
                             ? "default"
                             : "outline"
                         }
-                        className="w-full"
+                        className={`w-full ${
+                          pendingFilters.sexualOrientation === "other"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleFilterChange("sexualOrientation", "other")
                         }
