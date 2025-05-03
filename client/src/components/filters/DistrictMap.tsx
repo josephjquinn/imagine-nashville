@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
+import { useEffect, useRef } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { DISTRICT_DATA } from "@/data/districtData";
 
 // Add type declarations for leaflet-fullscreen
 declare module "leaflet" {
