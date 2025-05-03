@@ -180,6 +180,15 @@ export function DemographicFilters({
     setPendingFilters(newFilters);
   };
 
+  const handleAgeRangeChange = (values: [number, number]) => {
+    const [min, max] = values;
+    setPendingFilters((prev) => ({
+      ...prev,
+      ageMin: min.toString(),
+      ageMax: max.toString(),
+    }));
+  };
+
   const applyFilters = () => {
     setActiveFilters(pendingFilters);
     onFilterChange(pendingFilters);
@@ -204,7 +213,7 @@ export function DemographicFilters({
 
   const getFilterLabel = (
     key: keyof DemographicFiltersState,
-    value: string
+    value: string | string[]
   ) => {
     const labels: Record<string, string> = {
       ageMin: "Age Min",
@@ -224,10 +233,13 @@ export function DemographicFilters({
       region: "Region",
       area: "Area",
       neighborhood: "Neighborhood",
+      districts: "Districts",
     };
 
     let displayValue = value;
-    if (key === "region") {
+    if (Array.isArray(value)) {
+      displayValue = value.join(", ");
+    } else if (key === "region") {
       const region = REGION_DATA.find((r) => r.value === value);
       if (region) displayValue = region.label;
     } else if (key === "area") {
@@ -433,10 +445,7 @@ export function DemographicFilters({
                     pendingFilters.ageMin ? Number(pendingFilters.ageMin) : 0,
                     pendingFilters.ageMax ? Number(pendingFilters.ageMax) : 120,
                   ]}
-                  onValueChange={([min, max]: [number, number]) => {
-                    handleFilterChange("ageMin", min.toString());
-                    handleFilterChange("ageMax", max.toString());
-                  }}
+                  onValueChange={handleAgeRangeChange}
                   step={1}
                   className="w-full [&_[role=slider]]:bg-[var(--brand-blue)] [&_[role=slider]]:border-[var(--brand-blue)]"
                   disabled={getFilterDisabledState("ageMin")}
