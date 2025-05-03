@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
@@ -24,6 +25,7 @@ import {
 } from "lucide-react";
 import { DISTRICT_DATA } from "@/data/districtData";
 import { REGION_DATA, AREA_DATA, NEIGHBORHOOD_DATA } from "@/data/locationData";
+import { DistrictMap } from "./DistrictMap";
 
 interface DemographicFiltersProps {
   onFilterChange: (filters: DemographicFiltersState) => void;
@@ -285,6 +287,9 @@ export function DemographicFilters({
         <DialogContent className="!w-[95vw] sm:!w-[65vw] !h-[80vh] !max-w-[95vw] sm:!max-w-[65vw] !max-h-[80vh] flex flex-col">
           <DialogHeader className="flex-none bg-background border-b pb-4">
             <DialogTitle>Filter Responses</DialogTitle>
+            <DialogDescription>
+              Filter survey responses by demographic information and location.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto px-4 sm:px-6">
@@ -489,28 +494,40 @@ export function DemographicFilters({
 
                   <div className="mt-4">
                     {selectedLocationType === "district" && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        {Object.keys(DISTRICT_DATA).map((district) => (
-                          <button
-                            key={district}
-                            onClick={() =>
-                              handleLocationChange("district", district)
-                            }
-                            disabled={getFilterDisabledState("district")}
-                            className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
-                              pendingFilters.district === district
-                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
-                                : "border-muted hover:border-[var(--brand-blue)]/50"
-                            } ${
-                              getFilterDisabledState("district")
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                          >
-                            {district}
-                          </button>
-                        ))}
-                      </div>
+                      <>
+                        <DistrictMap
+                          selectedDistricts={
+                            pendingFilters.district
+                              ? [pendingFilters.district]
+                              : []
+                          }
+                          onDistrictSelect={(district) =>
+                            handleLocationChange("district", district)
+                          }
+                        />
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
+                          {Object.keys(DISTRICT_DATA).map((district) => (
+                            <button
+                              key={district}
+                              onClick={() =>
+                                handleLocationChange("district", district)
+                              }
+                              disabled={getFilterDisabledState("district")}
+                              className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
+                                pendingFilters.district === district
+                                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                                  : "border-muted hover:border-[var(--brand-blue)]/50"
+                              } ${
+                                getFilterDisabledState("district")
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
+                              {district}
+                            </button>
+                          ))}
+                        </div>
+                      </>
                     )}
 
                     {selectedLocationType === "region" && (
