@@ -54,6 +54,7 @@ export interface DemographicFiltersState {
   region?: string;
   area?: string;
   neighborhood?: string;
+  districts?: string[];
 }
 
 export function DemographicFilters({
@@ -145,14 +146,33 @@ export function DemographicFilters({
     setPendingFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleDistrictSelect = (district: string) => {
+    setPendingFilters((prev) => {
+      const currentDistricts = prev.districts || [];
+      const newDistricts = currentDistricts.includes(district)
+        ? currentDistricts.filter((d) => d !== district)
+        : [...currentDistricts, district];
+
+      return {
+        ...prev,
+        districts: newDistricts.length > 0 ? newDistricts : undefined,
+      };
+    });
+  };
+
   const handleLocationChange = (
     type: "district" | "region" | "area" | "neighborhood",
     value: string
   ) => {
+    if (type === "district") {
+      handleDistrictSelect(value);
+      return;
+    }
+
     // Clear other location types when selecting a new one
     const newFilters = {
       ...pendingFilters,
-      district: type === "district" ? value : undefined,
+      district: undefined,
       region: type === "region" ? value : undefined,
       area: type === "area" ? value : undefined,
       neighborhood: type === "neighborhood" ? value : undefined,
@@ -496,25 +516,17 @@ export function DemographicFilters({
                     {selectedLocationType === "district" && (
                       <>
                         <DistrictMap
-                          selectedDistricts={
-                            pendingFilters.district
-                              ? [pendingFilters.district]
-                              : []
-                          }
-                          onDistrictSelect={(district) =>
-                            handleLocationChange("district", district)
-                          }
+                          selectedDistricts={pendingFilters.districts || []}
+                          onDistrictSelect={handleDistrictSelect}
                         />
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
                           {Object.keys(DISTRICT_DATA).map((district) => (
                             <button
                               key={district}
-                              onClick={() =>
-                                handleLocationChange("district", district)
-                              }
+                              onClick={() => handleDistrictSelect(district)}
                               disabled={getFilterDisabledState("district")}
                               className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
-                                pendingFilters.district === district
+                                pendingFilters.districts?.includes(district)
                                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                                   : "border-muted hover:border-[var(--brand-blue)]/50"
                               } ${

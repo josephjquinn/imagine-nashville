@@ -49,18 +49,12 @@ function DistrictLayer({
       "/geo/2022_Council_Districts_(Future)_view_8695257040167361136.geojson"
     )
       .then((response) => {
-        console.log("Response status:", response.status);
-        console.log("Response headers:", response.headers);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.text().then((text) => {
-          console.log("Response text:", text.substring(0, 100)); // Log first 100 chars
-          return JSON.parse(text);
-        });
+        return response.json();
       })
       .then((geoJson) => {
-        console.log("Successfully parsed GeoJSON:", geoJson);
         if (geoJsonRef.current) {
           map.removeLayer(geoJsonRef.current);
         }
@@ -68,8 +62,9 @@ function DistrictLayer({
         const geoJsonLayer = L.geoJSON(geoJson, {
           style: (feature) => {
             const district = feature?.properties?.DISTRICT;
+            const districtName = `District ${district}`;
             return {
-              fillColor: selectedDistricts.includes(district)
+              fillColor: selectedDistricts.includes(districtName)
                 ? "#4F46E5"
                 : "#E5E7EB",
               weight: 1,
@@ -80,7 +75,10 @@ function DistrictLayer({
           },
           onEachFeature: (feature, layer) => {
             const district = feature.properties.DISTRICT;
-            const tooltipContent = `District ${district}`;
+            const districtName = `District ${district}`;
+            const tooltipContent = `${districtName}${
+              selectedDistricts.includes(districtName) ? " (Selected)" : ""
+            }`;
             layer.bindTooltip(tooltipContent, {
               permanent: false,
               direction: "center",
@@ -88,7 +86,7 @@ function DistrictLayer({
             });
 
             layer.on({
-              click: () => onDistrictSelect(district),
+              click: () => onDistrictSelect(districtName),
             });
           },
         });
