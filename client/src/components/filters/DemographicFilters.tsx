@@ -793,82 +793,96 @@ export function DemographicFilters({
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       <Button
                         variant={
-                          pendingFilters.ethnicity === "white"
+                          pendingFilters.ethnicity === "3"
                             ? "default"
                             : "outline"
                         }
                         className={`w-full ${
-                          pendingFilters.ethnicity === "white"
+                          pendingFilters.ethnicity === "3"
                             ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                             : ""
                         }`}
-                        onClick={() => handleFilterChange("ethnicity", "white")}
+                        onClick={() => handleFilterChange("ethnicity", "3")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
                         White
                       </Button>
                       <Button
                         variant={
-                          pendingFilters.ethnicity === "black"
+                          pendingFilters.ethnicity === "4"
                             ? "default"
                             : "outline"
                         }
                         className={`w-full ${
-                          pendingFilters.ethnicity === "black"
+                          pendingFilters.ethnicity === "4"
                             ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                             : ""
                         }`}
-                        onClick={() => handleFilterChange("ethnicity", "black")}
+                        onClick={() => handleFilterChange("ethnicity", "4")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
                         Black
                       </Button>
                       <Button
                         variant={
-                          pendingFilters.ethnicity === "asian"
+                          pendingFilters.ethnicity === "5"
                             ? "default"
                             : "outline"
                         }
                         className={`w-full ${
-                          pendingFilters.ethnicity === "asian"
+                          pendingFilters.ethnicity === "5"
                             ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                             : ""
                         }`}
-                        onClick={() => handleFilterChange("ethnicity", "asian")}
+                        onClick={() => handleFilterChange("ethnicity", "5")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
-                        Asian
+                        Asian/Pacific
                       </Button>
                       <Button
                         variant={
-                          pendingFilters.ethnicity === "hispanic"
+                          pendingFilters.ethnicity === "1"
                             ? "default"
                             : "outline"
                         }
                         className={`w-full ${
-                          pendingFilters.ethnicity === "hispanic"
+                          pendingFilters.ethnicity === "1"
                             ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                             : ""
                         }`}
-                        onClick={() =>
-                          handleFilterChange("ethnicity", "hispanic")
-                        }
+                        onClick={() => handleFilterChange("ethnicity", "1")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
                         Hispanic
                       </Button>
                       <Button
                         variant={
-                          pendingFilters.ethnicity === "other"
+                          pendingFilters.ethnicity === "2"
                             ? "default"
                             : "outline"
                         }
                         className={`w-full ${
-                          pendingFilters.ethnicity === "other"
+                          pendingFilters.ethnicity === "2"
                             ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                             : ""
                         }`}
-                        onClick={() => handleFilterChange("ethnicity", "other")}
+                        onClick={() => handleFilterChange("ethnicity", "2")}
+                        disabled={getFilterDisabledState("ethnicity")}
+                      >
+                        Kurdish
+                      </Button>
+                      <Button
+                        variant={
+                          pendingFilters.ethnicity === "6"
+                            ? "default"
+                            : "outline"
+                        }
+                        className={`w-full ${
+                          pendingFilters.ethnicity === "6"
+                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
+                            : ""
+                        }`}
+                        onClick={() => handleFilterChange("ethnicity", "6")}
                         disabled={getFilterDisabledState("ethnicity")}
                       >
                         Other

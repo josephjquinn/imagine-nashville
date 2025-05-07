@@ -63,6 +63,10 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
     queryFilters.Q105 = genderMap[filters.gender];
   }
 
+  if (filters.ethnicity) {
+    queryFilters.HQ130 = filters.ethnicity;
+  }
+
   if (filters.education) {
     const educationMap: Record<string, string> = {
       "less-than-high-school": "1",
