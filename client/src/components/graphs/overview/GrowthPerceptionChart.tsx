@@ -103,7 +103,7 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
       itemWidth: 15,
       itemHeight: 10,
       textStyle: {
-        width: 140,
+        width: isMobile ? 100 : 140,
         overflow: "break",
         lineHeight: 14,
         fontSize: 11,
@@ -135,6 +135,10 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
           },
           fontSize: isMobile ? 12 : 14,
           fontWeight: "bold",
+        },
+        labelLine: {
+          length: isMobile ? 10 : 20,
+          length2: isMobile ? 5 : 10,
         },
         data: processedData.chartData,
         emphasis: {
