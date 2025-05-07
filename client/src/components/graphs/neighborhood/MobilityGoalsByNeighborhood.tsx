@@ -60,7 +60,7 @@ const GOAL_LABELS: Record<string, string> = {
 
 export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
   data,
-  title = "Top Goals of Mobility by Neighborhood",
+  title,
   subtitle = "",
 }) => {
   const [tableData, setTableData] = useState<{

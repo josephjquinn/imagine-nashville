@@ -62,7 +62,7 @@ const GOAL_LABELS: Record<string, string> = {
 
 export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
   data,
-  title = "Top Goals of Housing by Neighborhood",
+  title,
   subtitle = "",
 }) => {
   const [tableData, setTableData] = useState<{
