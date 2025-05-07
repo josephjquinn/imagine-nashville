@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface BaseGraphProps {
   option: EChartsOption;
@@ -20,17 +21,6 @@ interface BaseGraphProps {
   subtitle?: string;
   emptyStateMessage?: string;
 }
-
-// Standardized title and subtitle styles
-const TITLE_STYLE = {
-  fontSize: 18,
-  fontWeight: "bold" as const,
-};
-
-const SUBTITLE_STYLE = {
-  fontSize: 14,
-  color: "#666",
-};
 
 export const BaseGraph: React.FC<BaseGraphProps> = ({
   option,
@@ -44,6 +34,18 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const { addGraph, removeGraph } = usePDF();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // Standardized title and subtitle styles
+  const TITLE_STYLE = {
+    fontSize: isMobile ? 16 : 18,
+    fontWeight: "bold" as const,
+  };
+
+  const SUBTITLE_STYLE = {
+    fontSize: isMobile ? 13 : 14,
+    color: "#666",
+  };
 
   // Check if there's any data to display
   const hasData = useMemo(() => {
@@ -102,8 +104,13 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
       };
     }
 
+    // Remove legend completely on mobile
+    if (isMobile) {
+      newOption.legend = undefined;
+    }
+
     return newOption;
-  }, [option, title, subtitle]);
+  }, [option, title, subtitle, isMobile]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -170,20 +177,26 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
     <div style={{ position: "relative" }}>
       <div
         ref={chartRef}
-        style={{ width: "100%", height: "400px", ...style }}
+        style={{
+          width: "100%",
+          height: isMobile ? "240px" : "400px",
+          ...style,
+        }}
         className={className}
       />
-      <div className="absolute top-2 right-2">
+      <div className="absolute -top-1 -right-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              size="sm"
-              className="bg-background/80 hover:bg-background flex items-center gap-1.5"
+              size={isMobile ? "icon" : "sm"}
+              className={`bg-background/80 hover:bg-background flex items-center gap-1.5 ${
+                isMobile ? "h-5 w-5 p-0" : ""
+              }`}
               title="Download as PNG"
             >
-              <Download className="h-4 w-4" />
-              <ChevronDown className="h-3 w-3" />
+              <Download className={isMobile ? "h-2 w-2" : "h-4 w-4"} />
+              {!isMobile && <ChevronDown className="h-3 w-3" />}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
