@@ -101,17 +101,12 @@ export function DemographicFilters({
           "ageMax",
           "gender",
           "ethnicity",
-          "education",
           "district",
           "region",
           "area",
           "neighborhood",
           "housing",
           "children",
-          "maritalStatus",
-          "politicalAffiliation",
-          "religiousAffiliation",
-          "sexualOrientation",
         ].includes(filterKey);
       case "merged":
         return ![
@@ -119,17 +114,12 @@ export function DemographicFilters({
           "ageMax",
           "gender",
           "ethnicity",
-          "education",
           "district",
           "region",
           "area",
           "neighborhood",
           "housing",
           "children",
-          "maritalStatus",
-          "politicalAffiliation",
-          "religiousAffiliation",
-          "sexualOrientation",
         ].includes(filterKey);
       default:
         return true;
