@@ -358,31 +358,35 @@ const SurveyDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="w-full max-w-[95vw] mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="flex flex-col gap-4 sm:gap-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
-            {sections.map((section) => (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`p-3 sm:p-4 rounded-lg text-left transition-all ${
-                  activeSection === section.id
-                    ? "bg-blue-50 border-blue-200 shadow-sm"
-                    : "bg-white border-gray-100 hover:bg-gray-50"
-                } border`}
-              >
-                <h3
-                  className={`font-medium mb-1 ${
-                    activeSection === section.id
-                      ? "text-blue-700"
-                      : "text-gray-900"
-                  }`}
-                >
-                  {section.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-gray-500">
-                  {section.description}
-                </p>
-              </button>
-            ))}
+          <div className="flex justify-center w-full">
+            <div className="w-full sm:max-w-fit">
+              <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 p-1 bg-white rounded-full shadow-sm border border-gray-100">
+                {sections.map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`relative px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition-all duration-200 whitespace-nowrap text-[clamp(0.625rem,2vw,0.875rem)] ${
+                      activeSection === section.id
+                        ? "bg-[var(--brand-blue)] text-white"
+                        : "text-gray-600 hover:text-[var(--brand-blue)] hover:bg-gray-50"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <span className="font-medium">{section.title}</span>
+                      <span
+                        className={`text-[clamp(0.5rem,1.5vw,0.75rem)] hidden [@media(min-width:1618px)]:inline ${
+                          activeSection === section.id
+                            ? "text-blue-100"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {section.description}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="py-3 sm:py-4 border-b border-gray-200">
