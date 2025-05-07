@@ -22,10 +22,13 @@ import {
   ClipboardList,
   Globe,
   Merge,
+  Search,
 } from "lucide-react";
 import { DISTRICT_DATA } from "@/data/districtData";
 import { REGION_DATA, AREA_DATA, NEIGHBORHOOD_DATA } from "@/data/locationData";
 import { DistrictMap } from "./DistrictMap";
+import { Input } from "@/components/ui/input";
+import { AddressAutocomplete } from "./AddressAutocomplete";
 
 interface DemographicFiltersProps {
   onFilterChange: (filters: DemographicFiltersState) => void;
@@ -35,6 +38,22 @@ interface DemographicFiltersProps {
 }
 
 export type SurveyType = "formal" | "public" | "merged";
+
+// Add this interface for zip code to district mapping
+interface ZipToDistrict {
+  [zipCode: string]: string;
+}
+
+// Create a mapping from zip codes to districts
+const ZIP_TO_DISTRICT: ZipToDistrict = Object.entries(DISTRICT_DATA).reduce(
+  (acc, [district, zipCodes]) => {
+    zipCodes.forEach((zipCode) => {
+      acc[zipCode] = district;
+    });
+    return acc;
+  },
+  {} as ZipToDistrict
+);
 
 export interface DemographicFiltersState {
   ageMin?: number;
@@ -59,6 +78,9 @@ export interface DemographicFiltersState {
   area?: string;
   neighborhood?: string;
   districts?: string[];
+  address?: string;
+  placeId?: string;
+  zipCode?: string;
 }
 
 export function DemographicFilters({
@@ -83,7 +105,7 @@ export function DemographicFilters({
     beliefs: false,
   });
   const [selectedLocationType, setSelectedLocationType] = useState<
-    "district" | "region" | "area" | "neighborhood"
+    "district" | "region" | "area" | "neighborhood" | "address"
   >("district");
   const [pendingSurveyType, setPendingSurveyType] =
     useState<SurveyType>(surveyType);
@@ -191,6 +213,33 @@ export function DemographicFilters({
     }));
   };
 
+  const handleAddressSelect = (
+    address: string,
+    placeId: string,
+    zipCode: string
+  ) => {
+    const district = ZIP_TO_DISTRICT[zipCode];
+
+    // Clear all other location filters first
+    setPendingFilters((prev) => {
+      const newFilters = { ...prev };
+      // Clear all location-related filters
+      delete newFilters.region;
+      delete newFilters.area;
+      delete newFilters.neighborhood;
+      delete newFilters.districts;
+      delete newFilters.district;
+
+      // Only add the necessary filters
+      return {
+        ...newFilters,
+        address: address.split(",")[0], // Only keep the first part of the address
+        zipCode,
+        district, // Only use district, not districts
+      };
+    });
+  };
+
   const applyFilters = () => {
     // Create a new filters object for the API
     const apiFilters: Record<string, any> = {};
@@ -287,6 +336,8 @@ export function DemographicFilters({
       area: "Area",
       neighborhood: "Neighborhood",
       districts: "Districts",
+      address: "Address",
+      zipCode: "Zip Code",
     };
 
     let displayValue = value;
@@ -305,6 +356,9 @@ export function DemographicFilters({
       const ageRange = value as { gte: number; lte: number };
       displayValue = `${ageRange.gte}-${ageRange.lte} years`;
     }
+
+    // Don't show undefined values
+    if (displayValue === undefined) return null;
 
     return `${labels[key]}: ${displayValue}`;
   };
@@ -585,9 +639,41 @@ export function DemographicFilters({
                     >
                       Neighborhood
                     </button>
+                    <button
+                      onClick={() => setSelectedLocationType("address")}
+                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                        selectedLocationType === "address"
+                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
+                          : "hover:bg-background/50"
+                      }`}
+                    >
+                      Address
+                    </button>
                   </div>
 
                   <div className="mt-4">
+                    {selectedLocationType === "address" && (
+                      <div className="space-y-4">
+                        <AddressAutocomplete
+                          onAddressSelect={handleAddressSelect}
+                          value={pendingFilters.address}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          Enter your address to find information about your
+                          location and surrounding areas.
+                        </p>
+                        {pendingFilters.zipCode && (
+                          <div className="text-sm">
+                            <p className="font-medium">Location Details:</p>
+                            <p>Zip Code: {pendingFilters.zipCode}</p>
+                            {pendingFilters.district && (
+                              <p>District: {pendingFilters.district}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {selectedLocationType === "district" && (
                       <>
                         <DistrictMap

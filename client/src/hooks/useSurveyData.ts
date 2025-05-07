@@ -19,7 +19,14 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
     queryFilters.Q100 = filters.Q100;
   }
 
-  if (filters.districts && filters.districts.length > 0) {
+  // Handle district filters - support both single district and districts array
+  if (filters.district) {
+    // Get ZIP codes for the single district
+    const districtZips = DISTRICT_DATA[filters.district] || [];
+    if (districtZips.length > 0) {
+      queryFilters.Q113 = { in: districtZips };
+    }
+  } else if (filters.districts && filters.districts.length > 0) {
     // Get all ZIP codes for the selected districts
     const allDistrictZips = filters.districts.flatMap(district => DISTRICT_DATA[district] || []);
     if (allDistrictZips.length > 0) {
