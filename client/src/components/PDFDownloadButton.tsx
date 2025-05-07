@@ -15,13 +15,15 @@ export const PDFDownloadButton: React.FC = () => {
       variant="outline"
       onClick={downloadPDF}
       size={isMobile ? "icon" : "default"}
-      className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-background/80 hover:bg-background ${
-        isMobile ? "h-8 w-8 p-0" : ""
+      className={`fixed bottom-1 sm:bottom-4 right-3 sm:right-6 z-50 flex items-center gap-1.5 hover:bg-gray-50 ${
+        isMobile
+          ? "h-6 w-6 p-0 rounded-md bg-transparent border-0"
+          : "rounded-lg text-xs sm:text-sm font-medium bg-white border-0"
       }`}
       title="Download All Graphs as PDF"
     >
-      <FileText className={isMobile ? "h-3 w-3" : "h-4 w-4"} />
-      {!isMobile && <span>Download All Graphs as PDF</span>}
+      <FileText className={isMobile ? "h-2.5 w-2.5" : "h-3.5 w-3.5"} />
+      {!isMobile && <span>Download PDF</span>}
     </Button>
   );
 };
