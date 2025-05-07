@@ -240,48 +240,47 @@ export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
     ];
 
     // Prepare table rows
-    const rows = NEIGHBORHOODS.map((neighborhood) => {
-      // Find top choices for this neighborhood
-      const neighborhoodValues: Record<string, number> = {};
-      Object.keys(HOUSING_GOALS).forEach((goalId) => {
-        neighborhoodValues[goalId] = firstChoiceData[neighborhood][goalId];
-      });
+    const rows = NEIGHBORHOODS.map((neighborhood) => [
+      <div className="font-medium text-sm text-gray-700">
+        {neighborhood}
+        <div className="text-[10px] text-gray-500 mt-1">
+          n=
+          {
+            data.filter((response: SurveyResponse) => {
+              const responseArea = String(response.Area_NEW).trim();
+              const neighborhoodCode = Object.entries(
+                NEIGHBORHOOD_CODE_MAP
+              ).find(([_, name]) => name === neighborhood)?.[0];
+              return responseArea === neighborhoodCode;
+            }).length
+          }
+        </div>
+      </div>,
+      ...Object.keys(HOUSING_GOALS).map((goalId) => {
+        const isTopChoice = goalId === topChoice;
+        const isSecondChoice = goalId === secondChoice;
 
-      const sortedNeighborhoodGoals = Object.entries(neighborhoodValues)
-        .sort(([, a], [, b]) => b - a)
-        .map(([id]) => id);
-
-      const neighborhoodTopChoice = sortedNeighborhoodGoals[0];
-      const neighborhoodSecondChoice = sortedNeighborhoodGoals[1];
-
-      return [
-        <div className="font-medium text-sm text-gray-700">{neighborhood}</div>,
-        ...Object.keys(HOUSING_GOALS).map((goalId) => {
-          const isTopChoice = goalId === neighborhoodTopChoice;
-          const isSecondChoice = goalId === neighborhoodSecondChoice;
-
-          return (
-            <div className="flex justify-center space-x-4">
-              {isTopChoice && (
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">1</span>
-                  </div>
+        return (
+          <div className="flex justify-center space-x-4">
+            {isTopChoice && (
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">1</span>
                 </div>
-              )}
-              {isSecondChoice && (
-                <div className="flex items-center">
-                  <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">2</span>
-                  </div>
+              </div>
+            )}
+            {isSecondChoice && (
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold">2</span>
                 </div>
-              )}
-              {!isTopChoice && !isSecondChoice && <div className="w-8 h-8" />}
-            </div>
-          );
-        }),
-      ];
-    });
+              </div>
+            )}
+            {!isTopChoice && !isSecondChoice && <div className="w-8 h-8" />}
+          </div>
+        );
+      }),
+    ]);
 
     setTableData({
       headers,

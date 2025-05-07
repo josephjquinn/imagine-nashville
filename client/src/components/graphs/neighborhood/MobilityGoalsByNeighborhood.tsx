@@ -225,7 +225,21 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
 
     // Prepare table rows
     const rows = NEIGHBORHOODS.map((neighborhood) => [
-      <div className="font-medium text-sm text-gray-700">{neighborhood}</div>,
+      <div className="font-medium text-sm text-gray-700">
+        {neighborhood}
+        <div className="text-[10px] text-gray-500 mt-1">
+          n=
+          {
+            data.filter((response: SurveyResponse) => {
+              const responseArea = String(response.Area_NEW).trim();
+              const neighborhoodCode = Object.entries(
+                NEIGHBORHOOD_CODE_MAP
+              ).find(([_, name]) => name === neighborhood)?.[0];
+              return responseArea === neighborhoodCode;
+            }).length
+          }
+        </div>
+      </div>,
       ...Object.keys(MOBILITY_GOALS).map((goalId) => {
         const isTopChoice = goalId === topChoice;
         const isSecondChoice = goalId === secondChoice;

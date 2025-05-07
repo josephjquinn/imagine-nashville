@@ -89,6 +89,7 @@ export const MobilityPrioritiesTable: React.FC<
       string,
       Record<string, { score: number; rank?: number }>
     > = {};
+    const responseCounts: Record<string, number> = { All: 0 };
 
     // Initialize structure for each priority
     MOBILITY_PRIORITIES.forEach((priority) => {
@@ -100,6 +101,22 @@ export const MobilityPrioritiesTable: React.FC<
       Object.values(NEIGHBORHOOD_CODE_MAP).forEach((neighborhood) => {
         result[priority.questionId][neighborhood] = { score: 0 };
       });
+    });
+
+    // Initialize response counts for each neighborhood
+    Object.values(NEIGHBORHOOD_CODE_MAP).forEach((neighborhood) => {
+      responseCounts[neighborhood] = 0;
+    });
+
+    // Count responses for each neighborhood
+    data.forEach((response) => {
+      responseCounts["All"]++;
+      if (response.Area_NEW) {
+        const neighborhood = NEIGHBORHOOD_CODE_MAP[response.Area_NEW];
+        if (neighborhood) {
+          responseCounts[neighborhood]++;
+        }
+      }
     });
 
     // Process all responses
@@ -169,7 +186,7 @@ export const MobilityPrioritiesTable: React.FC<
       });
     });
 
-    return result;
+    return { scores: result, counts: responseCounts };
   }, [data]);
 
   return (
@@ -189,6 +206,9 @@ export const MobilityPrioritiesTable: React.FC<
               >
                 <div className="text-[10px] font-medium text-gray-600 w-20 break-words">
                   {neighborhood}
+                  <div className="text-[10px] text-gray-500 mt-1">
+                    n={processedData.counts[neighborhood] || 0}
+                  </div>
                 </div>
               </th>
             ))}
@@ -206,7 +226,8 @@ export const MobilityPrioritiesTable: React.FC<
                 </div>
               </td>
               {NEIGHBORHOODS.map((neighborhood) => {
-                const data = processedData[priority.questionId][neighborhood];
+                const data =
+                  processedData.scores[priority.questionId][neighborhood];
                 const score = data?.score.toFixed(1);
                 const isHighScore = data?.score >= 9.0;
                 const rank = data?.rank;
