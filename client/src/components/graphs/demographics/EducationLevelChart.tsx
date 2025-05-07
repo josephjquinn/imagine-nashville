@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface SurveyData {
   Q935?: string;
@@ -16,6 +17,8 @@ export const EducationLevelChart: React.FC<EducationLevelChartProps> = ({
   data,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
+
   const processedData = useMemo(() => {
     const categories = {
       "1": "Less than High School",
@@ -43,10 +46,6 @@ export const EducationLevelChart: React.FC<EducationLevelChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: "Education Level",
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -63,7 +62,7 @@ export const EducationLevelChart: React.FC<EducationLevelChartProps> = ({
     },
     yAxis: {
       type: "value",
-      name: "Number of Responses",
+      name: isMobile ? "" : "Number of Responses",
       nameGap: 20,
     },
     series: [
@@ -88,6 +87,11 @@ export const EducationLevelChart: React.FC<EducationLevelChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      style={{ height: "350px" }}
+      title="Education Level"
+    />
   );
 };

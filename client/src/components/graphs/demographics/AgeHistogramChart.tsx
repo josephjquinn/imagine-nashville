@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface AgeHistogramChartProps {
   data: SurveyResponse[];
@@ -26,6 +27,7 @@ export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
   title,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
   const field = "Q100";
 
   // Process data to get age distribution
@@ -73,10 +75,6 @@ export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
   }
 
   const option: EChartsOption = {
-    title: {
-      text: title || "Age Distribution",
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       formatter: "{b}: {c} respondents",
@@ -90,7 +88,7 @@ export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
     },
     yAxis: {
       type: "value",
-      name: "Number of Respondents",
+      name: isMobile ? "" : "Number of Respondents",
     },
     series: [
       {
@@ -118,6 +116,11 @@ export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} graphId={graphId} style={{ height: "400px" }} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      style={{ height: "400px" }}
+      title={title || "Age Distribution"}
+    />
   );
 };

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface SurveyData {
   Q975?: string;
@@ -16,6 +17,8 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
   data,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
+
   const processedData = useMemo(() => {
     const categories = {
       "1": "Conservative",
@@ -42,10 +45,6 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: "Political Ideology",
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -62,7 +61,7 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     },
     yAxis: {
       type: "value",
-      name: "Number of Responses",
+      name: isMobile ? "" : "Number of Responses",
       nameGap: 20,
     },
     series: [
@@ -87,6 +86,11 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      style={{ height: "350px" }}
+      title="Political Ideology"
+    />
   );
 };

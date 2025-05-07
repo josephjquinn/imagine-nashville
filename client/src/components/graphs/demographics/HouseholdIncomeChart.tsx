@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface SurveyData {
   Q987?: string;
@@ -16,6 +17,8 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
   data,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
+
   const processedData = useMemo(() => {
     const categories = {
       "1": "Under $15,000",
@@ -45,10 +48,6 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
   }, [data]);
 
   const option: EChartsOption = {
-    title: {
-      text: "Household Income",
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -65,7 +64,7 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
     },
     yAxis: {
       type: "value",
-      name: "Number of Responses",
+      name: isMobile ? "" : "Number of Responses",
       nameGap: 20,
     },
     series: [
@@ -90,6 +89,11 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      style={{ height: "350px" }}
+      title="Household Income"
+    />
   );
 };

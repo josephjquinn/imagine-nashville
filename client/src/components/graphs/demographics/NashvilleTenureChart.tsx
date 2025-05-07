@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface SurveyData {
   Q900?: string;
@@ -17,6 +18,8 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
   data,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
+
   const computedTenureData = useMemo(() => {
     const categories = {
       "1": "1 year or less",
@@ -68,10 +71,6 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
   }, [data]);
 
   const computedOption: EChartsOption = {
-    title: {
-      text: "Nashville Tenure (Categories)",
-      left: "center",
-    },
     tooltip: {
       trigger: "item",
       formatter: "{b}: {c} ({d}%)",
@@ -94,6 +93,11 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
         label: {
           show: true,
           formatter: "{d}%",
+          distanceToLabelLine: isMobile ? 5 : 10,
+        },
+        labelLine: {
+          length: isMobile ? 3 : 20,
+          length2: isMobile ? 3 : 10,
         },
         emphasis: {
           label: {
@@ -108,10 +112,6 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
   };
 
   const rawOption: EChartsOption = {
-    title: {
-      text: "Years Living in Nashville",
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -127,7 +127,7 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
     },
     yAxis: {
       type: "value",
-      name: "Number of Responses",
+      name: isMobile ? "" : "Number of Responses",
       position: "left",
       offset: 0,
     },
@@ -158,11 +158,13 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
         option={computedOption}
         graphId={graphId}
         style={{ height: "400px" }}
+        title="Nashville Tenure (Categories)"
       />
       <BaseGraph
         option={rawOption}
         graphId={graphId}
         style={{ height: "400px" }}
+        title="Years Living in Nashville"
       />
     </div>
   );

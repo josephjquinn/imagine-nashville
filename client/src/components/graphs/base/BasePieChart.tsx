@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "./BaseGraph";
 import type { EChartsOption } from "echarts";
 import type { SurveyResponse } from "@/types/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export interface PieChartData {
   name: string;
@@ -40,6 +41,8 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
   graphId,
   center = ["50%", "55%"],
 }) => {
+  const isMobile = useIsMobile();
+
   const processedData = useMemo(() => {
     const distribution = data.reduce((acc, response) => {
       const value = response[field];
@@ -69,10 +72,6 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
   const total = processedData.reduce((sum, item) => sum + item.value, 0);
 
   const option: EChartsOption = {
-    title: {
-      text: title,
-      left: "center",
-    },
     tooltip: {
       trigger: "item",
       formatter:
@@ -104,27 +103,29 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
           textStyle: {
             width:
               legendPosition === "left" || legendPosition === "right"
-                ? 140
+                ? isMobile
+                  ? 100
+                  : 140
                 : undefined,
             overflow: "break",
-            lineHeight: 14,
-            fontSize: 11,
+            lineHeight: isMobile ? 12 : 14,
+            fontSize: isMobile ? 10 : 11,
           },
           backgroundColor: "rgba(0,0,0,0.03)",
-          padding: [10, 10, 10, 10],
+          padding: isMobile ? [5, 5, 5, 5] : [10, 10, 10, 10],
           borderRadius: 5,
         }
       : undefined,
     series: [
       {
         type: "pie",
-        radius,
-        center,
+        radius: isMobile ? ["35%", "60%"] : radius,
+        center: isMobile ? ["50%", "40%"] : center,
         avoidLabelOverlap: false,
         itemStyle: {
-          borderRadius: 10,
+          borderRadius: isMobile ? 5 : 10,
           borderColor: "#fff",
-          borderWidth: 2,
+          borderWidth: isMobile ? 1 : 2,
           color: customColors ? undefined : undefined,
         },
         label: {
@@ -134,13 +135,19 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
               total > 0 ? ((params.value / total) * 100).toFixed(1) : "0.0";
             return `${percentage}%`;
           },
-          fontSize: 14,
+          fontSize: isMobile ? 11 : 14,
           fontWeight: "bold",
+          distanceToLabelLine: isMobile ? 5 : 16,
+          alignTo: isMobile ? "labelLine" : "labelLine",
+          edgeDistance: isMobile ? "10%" : "16%",
+          position: "outside",
         },
         labelLine: {
           show: true,
-          length: 15,
-          length2: 10,
+          length: isMobile ? 5 : 24,
+          length2: isMobile ? 3 : 8,
+          smooth: isMobile ? false : true,
+          minTurnAngle: isMobile ? 0 : 45,
         },
         emphasis: {
           itemStyle: {
@@ -155,6 +162,11 @@ export const BasePieChart: React.FC<BasePieChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} graphId={graphId} style={{ height: "400px" }} />
+    <BaseGraph
+      option={option}
+      graphId={graphId}
+      style={{ height: isMobile ? "260px" : "400px" }}
+      title={title}
+    />
   );
 };
