@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
@@ -22,11 +21,15 @@ import {
   ClipboardList,
   Globe,
   Merge,
+  Search,
 } from "lucide-react";
 import { DISTRICT_DATA } from "@/data/districtData";
 import { REGION_DATA, AREA_DATA, NEIGHBORHOOD_DATA } from "@/data/locationData";
 import { DistrictMap } from "./DistrictMap";
 import { AddressAutocomplete } from "./AddressAutocomplete";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface DemographicFiltersProps {
   onFilterChange: (filters: DemographicFiltersState) => void;
@@ -37,12 +40,10 @@ interface DemographicFiltersProps {
 
 export type SurveyType = "formal" | "public" | "merged";
 
-// Add this interface for zip code to district mapping
 interface ZipToDistrict {
   [zipCode: string]: string;
 }
 
-// Create a mapping from zip codes to districts
 const ZIP_TO_DISTRICT: ZipToDistrict = Object.entries(DISTRICT_DATA).reduce(
   (acc, [district, zipCodes]) => {
     zipCodes.forEach((zipCode) => {
@@ -80,6 +81,39 @@ export interface DemographicFiltersState {
   zipCode?: string;
 }
 
+const FILTER_SECTIONS = [
+  {
+    id: "survey-type",
+    title: "Survey Type",
+    icon: ClipboardList,
+    description: "Choose the type of survey data to view",
+  },
+  {
+    id: "location",
+    title: "Location",
+    icon: MapPin,
+    description: "Filter by geographic location",
+  },
+  {
+    id: "demographics",
+    title: "Demographics",
+    icon: Users,
+    description: "Filter by personal characteristics",
+  },
+  {
+    id: "household",
+    title: "Household",
+    icon: Home,
+    description: "Filter by household information",
+  },
+  {
+    id: "beliefs",
+    title: "Beliefs & Identity",
+    icon: Heart,
+    description: "Filter by personal beliefs and identity",
+  },
+];
+
 export function DemographicFilters({
   onFilterChange,
   totalResponses,
@@ -93,21 +127,14 @@ export function DemographicFilters({
     {}
   );
   const [isOpen, setIsOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<
-    Record<string, boolean>
-  >({
-    location: false,
-    demographics: false,
-    household: false,
-    beliefs: false,
-  });
-  const [selectedLocationType, setSelectedLocationType] = useState<
-    "district" | "region" | "area" | "neighborhood" | "address"
-  >("district");
+  const [activeSection, setActiveSection] = useState<string>("survey-type");
+  const [searchQuery, setSearchQuery] = useState("");
   const [pendingSurveyType, setPendingSurveyType] =
     useState<SurveyType>(surveyType);
+  const [activeLocationTab, setActiveLocationTab] = useState<
+    "district" | "region" | "area" | "neighborhood" | "search"
+  >("district");
 
-  // Function to get the disabled state for a filter
   const getFilterDisabledState = (
     filterKey: keyof DemographicFiltersState
   ): boolean => {
@@ -115,18 +142,6 @@ export function DemographicFilters({
       case "formal":
         return false;
       case "public":
-        return ![
-          "ageMin",
-          "ageMax",
-          "gender",
-          "ethnicity",
-          "district",
-          "region",
-          "area",
-          "neighborhood",
-          "housing",
-          "children",
-        ].includes(filterKey);
       case "merged":
         return ![
           "ageMin",
@@ -145,47 +160,17 @@ export function DemographicFilters({
     }
   };
 
-  // Function to clear invalid filters when switching survey types
   const clearInvalidFilters = (newSurveyType: SurveyType) => {
     setPendingFilters((prev) => {
       const newFilters = { ...prev };
       Object.keys(newFilters).forEach((key) => {
         const filterKey = key as keyof DemographicFiltersState;
-        const isDisabled = (() => {
-          switch (newSurveyType) {
-            case "formal":
-              return false;
-            case "public":
-            case "merged":
-              return ![
-                "ageMin",
-                "ageMax",
-                "gender",
-                "ethnicity",
-                "district",
-                "region",
-                "area",
-                "neighborhood",
-                "housing",
-                "children",
-              ].includes(filterKey);
-            default:
-              return true;
-          }
-        })();
-        if (isDisabled) {
+        if (getFilterDisabledState(filterKey)) {
           delete newFilters[filterKey];
         }
       });
       return newFilters;
     });
-  };
-
-  const toggleSection = (section: string) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
   };
 
   const handleFilterChange = (
@@ -198,7 +183,6 @@ export function DemographicFilters({
   const handleDistrictSelect = (district: string) => {
     setPendingFilters((prev) => {
       const newFilters = { ...prev };
-      // Clear all other location filters first
       delete newFilters.region;
       delete newFilters.area;
       delete newFilters.neighborhood;
@@ -213,6 +197,22 @@ export function DemographicFilters({
     });
   };
 
+  const handleLocationTabChange = (
+    tab: "district" | "region" | "area" | "neighborhood" | "search"
+  ) => {
+    setActiveLocationTab(tab);
+    // Clear other location filters when switching tabs
+    setPendingFilters((prev) => {
+      const newFilters = { ...prev };
+      delete newFilters.region;
+      delete newFilters.area;
+      delete newFilters.neighborhood;
+      delete newFilters.districts;
+      delete newFilters.district;
+      return newFilters;
+    });
+  };
+
   const handleLocationChange = (
     type: "district" | "region" | "area" | "neighborhood",
     value: string
@@ -222,16 +222,13 @@ export function DemographicFilters({
       return;
     }
 
-    // Clear all location filters and set only the selected one
     setPendingFilters((prev) => {
       const newFilters = { ...prev };
-      // Clear all location-related filters
       delete newFilters.district;
       delete newFilters.region;
       delete newFilters.area;
       delete newFilters.neighborhood;
       delete newFilters.districts;
-      // Set the new location filter
       newFilters[type] = value;
       return newFilters;
     });
@@ -248,32 +245,26 @@ export function DemographicFilters({
 
   const handleAddressSelect = (address: string, zipCode: string) => {
     const district = ZIP_TO_DISTRICT[zipCode];
-
-    // Clear all other location filters first
     setPendingFilters((prev) => {
       const newFilters = { ...prev };
-      // Clear all location-related filters
       delete newFilters.region;
       delete newFilters.area;
       delete newFilters.neighborhood;
       delete newFilters.districts;
       delete newFilters.district;
 
-      // Only add the necessary filters
       return {
         ...newFilters,
-        address: address.split(",")[0], // Only keep the first part of the address
+        address: address.split(",")[0],
         zipCode,
-        district, // Only use district, not districts
+        district,
       };
     });
   };
 
   const applyFilters = () => {
-    // Create a new filters object for the API
     const apiFilters: Record<string, any> = {};
 
-    // Handle age range filter
     if (
       pendingFilters.ageMin !== undefined ||
       pendingFilters.ageMax !== undefined
@@ -284,15 +275,11 @@ export function DemographicFilters({
       };
     }
 
-    // Copy other filters
     Object.entries(pendingFilters).forEach(([key, value]) => {
       if (key !== "ageMin" && key !== "ageMax" && value !== undefined) {
         apiFilters[key] = value;
       }
     });
-
-    // Log the filters being sent to the API
-    console.log("Applying filters:", apiFilters);
 
     setActiveFilters(pendingFilters);
     onFilterChange(apiFilters);
@@ -313,10 +300,8 @@ export function DemographicFilters({
     setActiveFilters(newFilters);
     setPendingFilters(newFilters);
 
-    // Create a new filters object for the API
     const apiFilters: Record<string, any> = {};
 
-    // Handle age range filter
     if (newFilters.ageMin !== undefined || newFilters.ageMax !== undefined) {
       apiFilters.Q100 = {
         gte: Number(newFilters.ageMin) || 0,
@@ -324,15 +309,11 @@ export function DemographicFilters({
       };
     }
 
-    // Copy other filters
     Object.entries(newFilters).forEach(([key, value]) => {
       if (key !== "ageMin" && key !== "ageMax" && value !== undefined) {
         apiFilters[key] = value;
       }
     });
-
-    // Log the filters being sent to the API
-    console.log("Removing filter, new filters:", apiFilters);
 
     onFilterChange(apiFilters);
   };
@@ -341,7 +322,6 @@ export function DemographicFilters({
     key: keyof DemographicFiltersState,
     value: string | string[] | number
   ) => {
-    // Don't show age filter if it's at default values
     if (key === "ageMin" && value === 0) return null;
     if (key === "ageMax" && value === 90) return null;
 
@@ -386,18 +366,14 @@ export function DemographicFilters({
       displayValue = `${ageRange.gte}-${ageRange.lte} years`;
     }
 
-    // Don't show undefined values
     if (displayValue === undefined) return null;
 
     return `${labels[key]}: ${displayValue}`;
   };
 
   const activeFiltersCount = Object.keys(activeFilters).filter((key) => {
-    // Don't count age filters if they're at default values
     if (key === "ageMin" && activeFilters[key] === 0) return false;
     if (key === "ageMax" && activeFilters[key] === 90) return false;
-
-    // Only count one location filter at a time
     if (["district", "region", "area", "neighborhood"].includes(key)) {
       return (
         key ===
@@ -409,32 +385,629 @@ export function DemographicFilters({
     return true;
   }).length;
 
-  const renderSection = (
-    title: string,
-    icon: React.ReactNode,
-    section: string,
-    content: React.ReactNode
-  ) => (
-    <div className="space-y-2">
-      <button
-        onClick={() => toggleSection(section)}
-        className="flex items-center justify-between w-full p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          {icon}
-          <span className="font-medium">{title}</span>
-        </div>
-        {expandedSections[section] ? (
-          <ChevronUp className="h-5 w-5 text-gray-600" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-gray-600" />
-        )}
-      </button>
-      {expandedSections[section] && (
-        <div className="pl-6 space-y-4">{content}</div>
-      )}
+  const renderSurveyTypeSection = () => (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <button
+          onClick={() => {
+            setPendingSurveyType("formal");
+            clearInvalidFilters("formal");
+          }}
+          className={cn(
+            "p-4 rounded-lg border-2 transition-all hover:border-[var(--brand-blue)]/50",
+            pendingSurveyType === "formal"
+              ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/5"
+              : "border-muted"
+          )}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <ClipboardList className="h-5 w-5" />
+            <span className="font-medium">Formal Survey</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            In-depth survey with detailed questions, but limited to targeted
+            outreach.
+          </p>
+        </button>
+
+        <button
+          onClick={() => {
+            setPendingSurveyType("public");
+            clearInvalidFilters("public");
+          }}
+          className={cn(
+            "p-4 rounded-lg border-2 transition-all hover:border-[var(--brand-blue)]/50",
+            pendingSurveyType === "public"
+              ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/5"
+              : "border-muted"
+          )}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Globe className="h-5 w-5" />
+            <span className="font-medium">Public Survey</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Open survey with basic questions, available to all community
+            members.
+          </p>
+        </button>
+
+        <button
+          onClick={() => {
+            setPendingSurveyType("merged");
+            clearInvalidFilters("merged");
+          }}
+          className={cn(
+            "p-4 rounded-lg border-2 transition-all hover:border-[var(--brand-blue)]/50",
+            pendingSurveyType === "merged"
+              ? "border-[var(--brand-blue)] bg-[var(--brand-blue)]/5"
+              : "border-muted"
+          )}
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <Merge className="h-5 w-5" />
+            <span className="font-medium">Merged Survey</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Combines both survey types, using only questions common to both.
+          </p>
+        </button>
+      </div>
     </div>
   );
+
+  const renderLocationSection = () => (
+    <div className="space-y-6">
+      <div className="flex gap-2 border-b overflow-x-auto">
+        <button
+          onClick={() => handleLocationTabChange("district")}
+          className={cn(
+            "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+            activeLocationTab === "district"
+              ? "border-[var(--brand-blue)] text-[var(--brand-blue)]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Districts
+        </button>
+        <button
+          onClick={() => handleLocationTabChange("region")}
+          className={cn(
+            "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+            activeLocationTab === "region"
+              ? "border-[var(--brand-blue)] text-[var(--brand-blue)]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Regions
+        </button>
+        <button
+          onClick={() => handleLocationTabChange("area")}
+          className={cn(
+            "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+            activeLocationTab === "area"
+              ? "border-[var(--brand-blue)] text-[var(--brand-blue)]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Areas
+        </button>
+        <button
+          onClick={() => handleLocationTabChange("neighborhood")}
+          className={cn(
+            "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+            activeLocationTab === "neighborhood"
+              ? "border-[var(--brand-blue)] text-[var(--brand-blue)]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Neighborhoods
+        </button>
+        <button
+          onClick={() => handleLocationTabChange("search")}
+          className={cn(
+            "px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
+            activeLocationTab === "search"
+              ? "border-[var(--brand-blue)] text-[var(--brand-blue)]"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Search
+        </button>
+      </div>
+
+      <div
+        className={cn(
+          "grid gap-6",
+          activeLocationTab === "district"
+            ? "grid-cols-1 lg:grid-cols-2"
+            : "grid-cols-1"
+        )}
+      >
+        <div className="space-y-4">
+          <ScrollArea className="h-[300px] pr-4">
+            {activeLocationTab === "district" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {Object.keys(DISTRICT_DATA)
+                  .filter((district) =>
+                    district.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((district) => (
+                    <button
+                      key={district}
+                      onClick={() => handleDistrictSelect(district)}
+                      disabled={getFilterDisabledState("district")}
+                      className={cn(
+                        "p-2 text-sm rounded-lg border-2 transition-colors",
+                        pendingFilters.districts?.includes(district)
+                          ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                          : "border-muted hover:border-[var(--brand-blue)]/50",
+                        getFilterDisabledState("district") &&
+                          "opacity-50 cursor-not-allowed"
+                      )}
+                    >
+                      {district}
+                    </button>
+                  ))}
+              </div>
+            )}
+
+            {activeLocationTab === "region" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {REGION_DATA.filter((region) =>
+                  region.label.toLowerCase().includes(searchQuery.toLowerCase())
+                ).map((region) => (
+                  <button
+                    key={region.value}
+                    onClick={() => handleLocationChange("region", region.value)}
+                    disabled={getFilterDisabledState("region")}
+                    className={cn(
+                      "p-2 text-sm rounded-lg border-2 transition-colors",
+                      pendingFilters.region === region.value
+                        ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                        : "border-muted hover:border-[var(--brand-blue)]/50",
+                      getFilterDisabledState("region") &&
+                        "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    {region.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {activeLocationTab === "area" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {AREA_DATA.filter((area) =>
+                  area.label.toLowerCase().includes(searchQuery.toLowerCase())
+                ).map((area) => (
+                  <button
+                    key={area.value}
+                    onClick={() => handleLocationChange("area", area.value)}
+                    disabled={getFilterDisabledState("area")}
+                    className={cn(
+                      "p-2 text-sm rounded-lg border-2 transition-colors",
+                      pendingFilters.area === area.value
+                        ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                        : "border-muted hover:border-[var(--brand-blue)]/50",
+                      getFilterDisabledState("area") &&
+                        "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    {area.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {activeLocationTab === "neighborhood" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {NEIGHBORHOOD_DATA.filter((neighborhood) =>
+                  neighborhood.label
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+                ).map((neighborhood) => (
+                  <button
+                    key={neighborhood.value}
+                    onClick={() =>
+                      handleLocationChange("neighborhood", neighborhood.value)
+                    }
+                    disabled={getFilterDisabledState("neighborhood")}
+                    className={cn(
+                      "p-2 text-sm rounded-lg border-2 transition-colors",
+                      pendingFilters.neighborhood === neighborhood.value
+                        ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                        : "border-muted hover:border-[var(--brand-blue)]/50",
+                      getFilterDisabledState("neighborhood") &&
+                        "opacity-50 cursor-not-allowed"
+                    )}
+                  >
+                    {neighborhood.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {activeLocationTab === "search" && (
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <h3 className="font-medium">Search by Address</h3>
+                  <div className="px-2 sm:px-4">
+                    <AddressAutocomplete
+                      onAddressSelect={handleAddressSelect}
+                      value={pendingFilters.address}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+
+        {activeLocationTab === "district" && (
+          <div className="space-y-4">
+            <h3 className="font-medium">Map View</h3>
+            <div className="border rounded-lg overflow-hidden">
+              <DistrictMap
+                selectedDistricts={pendingFilters.districts || []}
+                onDistrictSelect={handleDistrictSelect}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderDemographicsSection = () => (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="font-medium">Age Range</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Minimum Age</label>
+            <Input
+              type="number"
+              min="0"
+              max="90"
+              value={pendingFilters.ageMin ?? ""}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                  handleFilterChange("ageMin", value);
+                }
+              }}
+              disabled={getFilterDisabledState("ageMin")}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm text-muted-foreground">Maximum Age</label>
+            <Input
+              type="number"
+              min="0"
+              max="90"
+              value={pendingFilters.ageMax ?? ""}
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (!isNaN(value)) {
+                  handleFilterChange("ageMax", value);
+                }
+              }}
+              disabled={getFilterDisabledState("ageMax")}
+            />
+          </div>
+        </div>
+        <Slider
+          min={0}
+          max={90}
+          value={[pendingFilters.ageMin ?? 0, pendingFilters.ageMax ?? 90]}
+          onValueChange={handleAgeRangeChange}
+          step={1}
+          className="w-full [&_[role=slider]]:bg-[var(--brand-blue)] [&_[role=slider]]:border-[var(--brand-blue)]"
+          disabled={getFilterDisabledState("ageMin")}
+        />
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Gender</h3>
+        <div className="grid grid-cols-4 gap-2">
+          {["male", "female", "other", "prefer-not"].map((gender) => (
+            <button
+              key={gender}
+              onClick={() => handleFilterChange("gender", gender)}
+              disabled={getFilterDisabledState("gender")}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-colors",
+                pendingFilters.gender === gender
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("gender") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {gender.charAt(0).toUpperCase() +
+                gender.slice(1).replace("-", " ")}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Race/Ethnicity</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { value: "3", label: "White" },
+            { value: "4", label: "Black" },
+            { value: "5", label: "Asian/Pacific" },
+            { value: "1", label: "Hispanic" },
+            { value: "2", label: "Kurdish" },
+            { value: "6", label: "Other" },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleFilterChange("ethnicity", value)}
+              disabled={getFilterDisabledState("ethnicity")}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-colors",
+                pendingFilters.ethnicity === value
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("ethnicity") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Education Level</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { value: "high-school", label: "High School/GED" },
+            { value: "some-college", label: "Some College" },
+            { value: "bachelors", label: "Bachelor's Degree" },
+            { value: "masters", label: "Master's Degree" },
+            { value: "doctorate", label: "Doctorate" },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleFilterChange("education", value)}
+              disabled={getFilterDisabledState("education")}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-colors",
+                pendingFilters.education === value
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("education") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Income Range</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {[
+            { value: "under-15k", label: "Under $15,000" },
+            { value: "15k-25k", label: "$15,000-$24,999" },
+            { value: "25k-50k", label: "$25,000-$49,999" },
+            { value: "50k-100k", label: "$50,000-$99,999" },
+            { value: "100k-150k", label: "$100,000-$149,999" },
+            { value: "150k-200k", label: "$150,000-$199,999" },
+            { value: "200k+", label: "$200,000+" },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleFilterChange("income", value)}
+              disabled={getFilterDisabledState("income")}
+              className={cn(
+                "p-2 text-sm rounded-lg border-2 transition-colors",
+                pendingFilters.income === value
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("income") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderHouseholdSection = () => (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="font-medium">Housing Status</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {["own", "rent", "other"].map((status) => (
+            <button
+              key={status}
+              onClick={() => handleFilterChange("housing", status)}
+              disabled={getFilterDisabledState("housing")}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-colors",
+                pendingFilters.housing === status
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("housing") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Children in Household</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { value: "yes", label: "Has Children" },
+            { value: "no", label: "No Children" },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleFilterChange("children", value)}
+              disabled={getFilterDisabledState("children")}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-colors",
+                pendingFilters.children === value
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("children") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Marital Status</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { value: "married", label: "Married" },
+            { value: "single", label: "Single" },
+            { value: "divorced", label: "Divorced" },
+            { value: "widowed", label: "Widowed" },
+            { value: "separated", label: "Separated" },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleFilterChange("maritalStatus", value)}
+              disabled={getFilterDisabledState("maritalStatus")}
+              className={cn(
+                "p-2 rounded-lg border-2 transition-colors",
+                pendingFilters.maritalStatus === value
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("maritalStatus") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderBeliefsSection = () => (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="font-medium">Political Affiliation</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          {["democrat", "republican", "independent", "other"].map(
+            (affiliation) => (
+              <button
+                key={affiliation}
+                onClick={() =>
+                  handleFilterChange("politicalAffiliation", affiliation)
+                }
+                disabled={getFilterDisabledState("politicalAffiliation")}
+                className={cn(
+                  "p-2 text-sm rounded-lg border-2 transition-colors",
+                  pendingFilters.politicalAffiliation === affiliation
+                    ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                    : "border-muted hover:border-[var(--brand-blue)]/50",
+                  getFilterDisabledState("politicalAffiliation") &&
+                    "opacity-50 cursor-not-allowed"
+                )}
+              >
+                {affiliation.charAt(0).toUpperCase() + affiliation.slice(1)}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Religious Affiliation</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          {["protestant", "catholic", "jewish", "muslim", "other", "none"].map(
+            (affiliation) => (
+              <button
+                key={affiliation}
+                onClick={() =>
+                  handleFilterChange("religiousAffiliation", affiliation)
+                }
+                disabled={getFilterDisabledState("religiousAffiliation")}
+                className={cn(
+                  "p-2 text-sm rounded-lg border-2 transition-colors",
+                  pendingFilters.religiousAffiliation === affiliation
+                    ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                    : "border-muted hover:border-[var(--brand-blue)]/50",
+                  getFilterDisabledState("religiousAffiliation") &&
+                    "opacity-50 cursor-not-allowed"
+                )}
+              >
+                {affiliation.charAt(0).toUpperCase() + affiliation.slice(1)}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="font-medium">Sexual Orientation</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          {[
+            { value: "straight", label: "Straight/Heterosexual" },
+            { value: "gay", label: "Gay/Lesbian" },
+            { value: "bisexual", label: "Bisexual" },
+            { value: "other", label: "Other" },
+          ].map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => handleFilterChange("sexualOrientation", value)}
+              disabled={getFilterDisabledState("sexualOrientation")}
+              className={cn(
+                "p-2 text-sm rounded-lg border-2 transition-colors",
+                pendingFilters.sexualOrientation === value
+                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
+                  : "border-muted hover:border-[var(--brand-blue)]/50",
+                getFilterDisabledState("sexualOrientation") &&
+                  "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "survey-type":
+        return renderSurveyTypeSection();
+      case "location":
+        return renderLocationSection();
+      case "demographics":
+        return renderDemographicsSection();
+      case "household":
+        return renderHouseholdSection();
+      case "beliefs":
+        return renderBeliefsSection();
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -459,1251 +1032,45 @@ export function DemographicFilters({
             </span>
           </div>
         </DialogTrigger>
-        <DialogContent className="!w-[95vw] sm:!w-[65vw] !h-[80vh] !max-w-[95vw] sm:!max-w-[65vw] !max-h-[80vh] flex flex-col">
-          <DialogHeader className="flex-none bg-background border-b pb-4">
+        <DialogContent className="!w-[95vw] sm:!w-[80vw] !h-[90vh] !max-w-[95vw] sm:!max-w-[80vw] !max-h-[90vh] flex flex-col p-0">
+          <DialogHeader className="flex-none bg-background border-b p-4">
             <DialogTitle>Filter Responses</DialogTitle>
-            <DialogDescription>
-              Filter survey responses by demographic information and location.
-            </DialogDescription>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6">
-            <div className="space-y-4 sm:space-y-6 py-4">
-              {/* Survey Type */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Survey Type</label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <div className="relative group flex-1">
-                    <Button
-                      variant={
-                        pendingSurveyType === "formal" ? "default" : "outline"
-                      }
-                      className={`w-full gap-2 ${
-                        pendingSurveyType === "formal"
-                          ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        setPendingSurveyType("formal");
-                        clearInvalidFilters("formal");
-                      }}
-                    >
-                      <ClipboardList className="h-4 w-4" />
-                      Formal
-                    </Button>
-                    <div className="absolute hidden group-hover:block z-50 w-64 p-3 mt-1 bg-background text-foreground rounded-md shadow-md border border-border">
-                      <p className="font-medium text-blue-500">Formal Survey</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        In-depth survey with detailed questions, but limited to
-                        targeted outreach. Captures more demographic and
-                        detailed responses, but from fewer participants.
-                      </p>
+          <div className="flex-1 flex flex-col sm:flex-row overflow-hidden">
+            <div className="w-full sm:w-64 border-b sm:border-b-0 sm:border-r p-4 space-y-2 overflow-y-auto">
+              <div className="flex sm:flex-col gap-2 overflow-x-auto sm:overflow-x-visible justify-center sm:justify-start">
+                {FILTER_SECTIONS.map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={cn(
+                      "flex-none sm:flex-1 p-3 rounded-lg text-left transition-colors",
+                      activeSection === section.id
+                        ? "bg-[var(--brand-blue)] text-white"
+                        : "hover:bg-muted"
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      <section.icon className="h-5 w-5" />
+                      <span className="font-medium hidden sm:inline">
+                        {section.title}
+                      </span>
                     </div>
-                  </div>
-                  <div className="relative group flex-1">
-                    <Button
-                      variant={
-                        pendingSurveyType === "public" ? "default" : "outline"
-                      }
-                      className={`w-full gap-2 ${
-                        pendingSurveyType === "public"
-                          ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        setPendingSurveyType("public");
-                        clearInvalidFilters("public");
-                      }}
-                    >
-                      <Globe className="h-4 w-4" />
-                      Public
-                    </Button>
-                    <div className="absolute hidden group-hover:block z-50 w-64 p-3 mt-1 bg-background text-foreground rounded-md shadow-md border border-border">
-                      <p className="font-medium text-blue-500">Public Survey</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Open survey with basic questions, available to all
-                        community members. Captures fewer data points but from a
-                        much larger and more diverse group of participants.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="relative group flex-1">
-                    <Button
-                      variant={
-                        pendingSurveyType === "merged" ? "default" : "outline"
-                      }
-                      className={`w-full gap-2 ${
-                        pendingSurveyType === "merged"
-                          ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                          : ""
-                      }`}
-                      onClick={() => {
-                        setPendingSurveyType("merged");
-                        clearInvalidFilters("merged");
-                      }}
-                    >
-                      <Merge className="h-4 w-4" />
-                      Merged
-                    </Button>
-                    <div className="absolute hidden group-hover:block z-50 w-64 p-3 mt-1 bg-background text-foreground rounded-md shadow-md border border-border">
-                      <p className="font-medium text-blue-500">Merged Survey</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Combines both survey types, using only questions common
-                        to both. Provides the largest dataset but excludes
-                        detailed questions unique to the formal survey.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                    <p className="text-sm mt-1 opacity-80 hidden sm:block">
+                      {section.description}
+                    </p>
+                  </button>
+                ))}
               </div>
+            </div>
 
-              {/* Age Range Section */}
-              <div className="space-y-4">
-                <label className="text-sm font-medium">Age Range</label>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <input
-                      type="number"
-                      min="0"
-                      max="90"
-                      value={pendingFilters.ageMin ?? ""}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("ageMin", value);
-                        }
-                      }}
-                      disabled={getFilterDisabledState("ageMin")}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      placeholder="Min age"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <input
-                      type="number"
-                      min="0"
-                      max="90"
-                      value={pendingFilters.ageMax ?? ""}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value);
-                        if (!isNaN(value)) {
-                          handleFilterChange("ageMax", value);
-                        }
-                      }}
-                      disabled={getFilterDisabledState("ageMax")}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      placeholder="Max age"
-                    />
-                  </div>
-                </div>
-                <Slider
-                  min={0}
-                  max={90}
-                  value={[
-                    pendingFilters.ageMin ?? 0,
-                    pendingFilters.ageMax ?? 90,
-                  ]}
-                  onValueChange={handleAgeRangeChange}
-                  step={1}
-                  className="w-full [&_[role=slider]]:bg-[var(--brand-blue)] [&_[role=slider]]:border-[var(--brand-blue)]"
-                  disabled={getFilterDisabledState("ageMin")}
-                />
-              </div>
-
-              {/* Location Section */}
-              {renderSection(
-                "Location",
-                <MapPin className="h-5 w-5 text-gray-600" />,
-                "location",
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row items-center gap-2 p-1 bg-muted rounded-lg">
-                    <button
-                      onClick={() => setSelectedLocationType("district")}
-                      disabled={getFilterDisabledState("district")}
-                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                        selectedLocationType === "district"
-                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
-                          : "hover:bg-background/50"
-                      } ${
-                        getFilterDisabledState("district")
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      District
-                    </button>
-                    <button
-                      onClick={() => setSelectedLocationType("region")}
-                      disabled={getFilterDisabledState("region")}
-                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                        selectedLocationType === "region"
-                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
-                          : "hover:bg-background/50"
-                      } ${
-                        getFilterDisabledState("region")
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      Region
-                    </button>
-                    <button
-                      onClick={() => setSelectedLocationType("area")}
-                      disabled={getFilterDisabledState("area")}
-                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                        selectedLocationType === "area"
-                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
-                          : "hover:bg-background/50"
-                      } ${
-                        getFilterDisabledState("area")
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      Area
-                    </button>
-                    <button
-                      onClick={() => setSelectedLocationType("neighborhood")}
-                      disabled={getFilterDisabledState("neighborhood")}
-                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                        selectedLocationType === "neighborhood"
-                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
-                          : "hover:bg-background/50"
-                      } ${
-                        getFilterDisabledState("neighborhood")
-                          ? "opacity-50 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      Neighborhood
-                    </button>
-                    <button
-                      onClick={() => setSelectedLocationType("address")}
-                      className={`flex-1 w-full sm:w-auto py-2 px-3 rounded-md text-sm font-medium transition-colors ${
-                        selectedLocationType === "address"
-                          ? "bg-[var(--brand-blue)] text-white shadow-sm"
-                          : "hover:bg-background/50"
-                      }`}
-                    >
-                      Address
-                    </button>
-                  </div>
-
-                  <div className="mt-4">
-                    {selectedLocationType === "address" && (
-                      <div className="space-y-4">
-                        <AddressAutocomplete
-                          onAddressSelect={handleAddressSelect}
-                          value={pendingFilters.address}
-                        />
-                        <p className="text-sm text-muted-foreground">
-                          Enter your address to find information about your
-                          location and surrounding areas.
-                        </p>
-                        {pendingFilters.zipCode && (
-                          <div className="text-sm">
-                            <p className="font-medium">Location Details:</p>
-                            <p>Zip Code: {pendingFilters.zipCode}</p>
-                            {pendingFilters.district && (
-                              <p>District: {pendingFilters.district}</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {selectedLocationType === "district" && (
-                      <>
-                        <DistrictMap
-                          selectedDistricts={pendingFilters.districts || []}
-                          onDistrictSelect={handleDistrictSelect}
-                        />
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-4">
-                          {Object.keys(DISTRICT_DATA).map((district) => (
-                            <button
-                              key={district}
-                              onClick={() => handleDistrictSelect(district)}
-                              disabled={getFilterDisabledState("district")}
-                              className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
-                                pendingFilters.districts?.includes(district)
-                                  ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
-                                  : "border-muted hover:border-[var(--brand-blue)]/50"
-                              } ${
-                                getFilterDisabledState("district")
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                              }`}
-                            >
-                              {district}
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-
-                    {selectedLocationType === "region" && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        {REGION_DATA.map((region) => (
-                          <button
-                            key={region.id}
-                            onClick={() =>
-                              handleLocationChange("region", region.value)
-                            }
-                            disabled={getFilterDisabledState("region")}
-                            className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
-                              pendingFilters.region === region.value
-                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
-                                : "border-muted hover:border-[var(--brand-blue)]/50"
-                            } ${
-                              getFilterDisabledState("region")
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                          >
-                            {region.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {selectedLocationType === "area" && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        {AREA_DATA.map((area) => (
-                          <button
-                            key={area.id}
-                            onClick={() =>
-                              handleLocationChange("area", area.value)
-                            }
-                            disabled={getFilterDisabledState("area")}
-                            className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
-                              pendingFilters.area === area.value
-                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
-                                : "border-muted hover:border-[var(--brand-blue)]/50"
-                            } ${
-                              getFilterDisabledState("area")
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                          >
-                            {area.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {selectedLocationType === "neighborhood" && (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                        {NEIGHBORHOOD_DATA.map((neighborhood) => (
-                          <button
-                            key={neighborhood.id}
-                            onClick={() =>
-                              handleLocationChange(
-                                "neighborhood",
-                                neighborhood.value
-                              )
-                            }
-                            disabled={getFilterDisabledState("neighborhood")}
-                            className={`p-2 text-sm rounded-lg border transition-colors whitespace-normal break-words ${
-                              pendingFilters.neighborhood === neighborhood.value
-                                ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
-                                : "border-muted hover:border-[var(--brand-blue)]/50"
-                            } ${
-                              getFilterDisabledState("neighborhood")
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                          >
-                            {neighborhood.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Demographics Section */}
-              {renderSection(
-                "Demographics",
-                <Users className="h-5 w-5 text-gray-600" />,
-                "demographics",
-                <div className="space-y-4 sm:space-y-6">
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">Gender</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.gender === "male"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.gender === "male"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("gender", "male")}
-                        disabled={getFilterDisabledState("gender")}
-                      >
-                        Male
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.gender === "female"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.gender === "female"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("gender", "female")}
-                        disabled={getFilterDisabledState("gender")}
-                      >
-                        Female
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.gender === "other"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.gender === "other"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("gender", "other")}
-                        disabled={getFilterDisabledState("gender")}
-                      >
-                        Other
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.gender === "prefer-not"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.gender === "prefer-not"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("gender", "prefer-not")
-                        }
-                        disabled={getFilterDisabledState("gender")}
-                      >
-                        Prefer not to say
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Race/Ethnicity
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.ethnicity === "3"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.ethnicity === "3"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("ethnicity", "3")}
-                        disabled={getFilterDisabledState("ethnicity")}
-                      >
-                        White
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.ethnicity === "4"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.ethnicity === "4"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("ethnicity", "4")}
-                        disabled={getFilterDisabledState("ethnicity")}
-                      >
-                        Black
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.ethnicity === "5"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.ethnicity === "5"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("ethnicity", "5")}
-                        disabled={getFilterDisabledState("ethnicity")}
-                      >
-                        Asian/Pacific
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.ethnicity === "1"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.ethnicity === "1"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("ethnicity", "1")}
-                        disabled={getFilterDisabledState("ethnicity")}
-                      >
-                        Hispanic
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.ethnicity === "2"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.ethnicity === "2"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("ethnicity", "2")}
-                        disabled={getFilterDisabledState("ethnicity")}
-                      >
-                        Kurdish
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.ethnicity === "6"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.ethnicity === "6"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("ethnicity", "6")}
-                        disabled={getFilterDisabledState("ethnicity")}
-                      >
-                        Other
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Education Level
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="high-school"
-                          name="education"
-                          checked={pendingFilters.education === "high-school"}
-                          onChange={() =>
-                            handleFilterChange("education", "high-school")
-                          }
-                          disabled={getFilterDisabledState("education")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="high-school">High School/GED</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="some-college"
-                          name="education"
-                          checked={pendingFilters.education === "some-college"}
-                          onChange={() =>
-                            handleFilterChange("education", "some-college")
-                          }
-                          disabled={getFilterDisabledState("education")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="some-college">Some College</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="bachelors"
-                          name="education"
-                          checked={pendingFilters.education === "bachelors"}
-                          onChange={() =>
-                            handleFilterChange("education", "bachelors")
-                          }
-                          disabled={getFilterDisabledState("education")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="bachelors">Bachelor's Degree</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="masters"
-                          name="education"
-                          checked={pendingFilters.education === "masters"}
-                          onChange={() =>
-                            handleFilterChange("education", "masters")
-                          }
-                          disabled={getFilterDisabledState("education")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="masters">Master's Degree</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="doctorate"
-                          name="education"
-                          checked={pendingFilters.education === "doctorate"}
-                          onChange={() =>
-                            handleFilterChange("education", "doctorate")
-                          }
-                          disabled={getFilterDisabledState("education")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="doctorate">Doctorate</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">Income Range</label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="under-15k"
-                          name="income"
-                          checked={pendingFilters.income === "under-15k"}
-                          onChange={() =>
-                            handleFilterChange("income", "under-15k")
-                          }
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="under-15k">Under $15,000</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="15k-25k"
-                          name="income"
-                          checked={pendingFilters.income === "15k-25k"}
-                          onChange={() =>
-                            handleFilterChange("income", "15k-25k")
-                          }
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="15k-25k">$15,000-$24,999</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="25k-50k"
-                          name="income"
-                          checked={pendingFilters.income === "25k-50k"}
-                          onChange={() =>
-                            handleFilterChange("income", "25k-50k")
-                          }
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="25k-50k">$25,000-$49,999</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="50k-100k"
-                          name="income"
-                          checked={pendingFilters.income === "50k-100k"}
-                          onChange={() =>
-                            handleFilterChange("income", "50k-100k")
-                          }
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="50k-100k">$50,000-$99,999</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="100k-150k"
-                          name="income"
-                          checked={pendingFilters.income === "100k-150k"}
-                          onChange={() =>
-                            handleFilterChange("income", "100k-150k")
-                          }
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="100k-150k">$100,000-$149,999</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="150k-200k"
-                          name="income"
-                          checked={pendingFilters.income === "150k-200k"}
-                          onChange={() =>
-                            handleFilterChange("income", "150k-200k")
-                          }
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="150k-200k">$150,000-$199,999</label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="radio"
-                          id="200k+"
-                          name="income"
-                          checked={pendingFilters.income === "200k+"}
-                          onChange={() => handleFilterChange("income", "200k+")}
-                          disabled={getFilterDisabledState("income")}
-                          className="h-4 w-4"
-                        />
-                        <label htmlFor="200k+">$200,000+</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Household Section */}
-              {renderSection(
-                "Household",
-                <Home className="h-5 w-5 text-gray-600" />,
-                "household",
-                <div className="space-y-6">
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Housing Status
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.housing === "own"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.housing === "own"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("housing", "own")}
-                        disabled={getFilterDisabledState("housing")}
-                      >
-                        Own
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.housing === "rent"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.housing === "rent"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("housing", "rent")}
-                        disabled={getFilterDisabledState("housing")}
-                      >
-                        Rent
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.housing === "other"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.housing === "other"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("housing", "other")}
-                        disabled={getFilterDisabledState("housing")}
-                      >
-                        Other
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Children in Household
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.children === "yes"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.children === "yes"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("children", "yes")}
-                        disabled={getFilterDisabledState("children")}
-                      >
-                        Has Children
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.children === "no"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.children === "no"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() => handleFilterChange("children", "no")}
-                        disabled={getFilterDisabledState("children")}
-                      >
-                        No Children
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Marital Status
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.maritalStatus === "married"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.maritalStatus === "married"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("maritalStatus", "married")
-                        }
-                        disabled={getFilterDisabledState("maritalStatus")}
-                      >
-                        Married
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.maritalStatus === "single"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.maritalStatus === "single"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("maritalStatus", "single")
-                        }
-                        disabled={getFilterDisabledState("maritalStatus")}
-                      >
-                        Single
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.maritalStatus === "divorced"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.maritalStatus === "divorced"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("maritalStatus", "divorced")
-                        }
-                        disabled={getFilterDisabledState("maritalStatus")}
-                      >
-                        Divorced
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.maritalStatus === "widowed"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.maritalStatus === "widowed"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("maritalStatus", "widowed")
-                        }
-                        disabled={getFilterDisabledState("maritalStatus")}
-                      >
-                        Widowed
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.maritalStatus === "separated"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.maritalStatus === "separated"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("maritalStatus", "separated")
-                        }
-                        disabled={getFilterDisabledState("maritalStatus")}
-                      >
-                        Separated
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Beliefs Section */}
-              {renderSection(
-                "Beliefs & Identity",
-                <Heart className="h-5 w-5 text-gray-600" />,
-                "beliefs",
-                <div className="space-y-6">
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Political Affiliation
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.politicalAffiliation === "democrat"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.politicalAffiliation === "democrat"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("politicalAffiliation", "democrat")
-                        }
-                        disabled={getFilterDisabledState(
-                          "politicalAffiliation"
-                        )}
-                      >
-                        Democrat
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.politicalAffiliation === "republican"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.politicalAffiliation === "republican"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange(
-                            "politicalAffiliation",
-                            "republican"
-                          )
-                        }
-                        disabled={getFilterDisabledState(
-                          "politicalAffiliation"
-                        )}
-                      >
-                        Republican
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.politicalAffiliation === "independent"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.politicalAffiliation === "independent"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange(
-                            "politicalAffiliation",
-                            "independent"
-                          )
-                        }
-                        disabled={getFilterDisabledState(
-                          "politicalAffiliation"
-                        )}
-                      >
-                        Independent
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.politicalAffiliation === "other"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.politicalAffiliation === "other"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("politicalAffiliation", "other")
-                        }
-                        disabled={getFilterDisabledState(
-                          "politicalAffiliation"
-                        )}
-                      >
-                        Other
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Religious Affiliation
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.religiousAffiliation === "protestant"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.religiousAffiliation === "protestant"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange(
-                            "religiousAffiliation",
-                            "protestant"
-                          )
-                        }
-                        disabled={getFilterDisabledState(
-                          "religiousAffiliation"
-                        )}
-                      >
-                        Protestant
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.religiousAffiliation === "catholic"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.religiousAffiliation === "catholic"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("religiousAffiliation", "catholic")
-                        }
-                        disabled={getFilterDisabledState(
-                          "religiousAffiliation"
-                        )}
-                      >
-                        Catholic
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.religiousAffiliation === "jewish"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.religiousAffiliation === "jewish"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("religiousAffiliation", "jewish")
-                        }
-                        disabled={getFilterDisabledState(
-                          "religiousAffiliation"
-                        )}
-                      >
-                        Jewish
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.religiousAffiliation === "muslim"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.religiousAffiliation === "muslim"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("religiousAffiliation", "muslim")
-                        }
-                        disabled={getFilterDisabledState(
-                          "religiousAffiliation"
-                        )}
-                      >
-                        Muslim
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.religiousAffiliation === "other"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.religiousAffiliation === "other"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("religiousAffiliation", "other")
-                        }
-                        disabled={getFilterDisabledState(
-                          "religiousAffiliation"
-                        )}
-                      >
-                        Other
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.religiousAffiliation === "none"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.religiousAffiliation === "none"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("religiousAffiliation", "none")
-                        }
-                        disabled={getFilterDisabledState(
-                          "religiousAffiliation"
-                        )}
-                      >
-                        None
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="text-sm font-medium">
-                      Sexual Orientation
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant={
-                          pendingFilters.sexualOrientation === "straight"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.sexualOrientation === "straight"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("sexualOrientation", "straight")
-                        }
-                        disabled={getFilterDisabledState("sexualOrientation")}
-                      >
-                        Straight/Heterosexual
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.sexualOrientation === "gay"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.sexualOrientation === "gay"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("sexualOrientation", "gay")
-                        }
-                        disabled={getFilterDisabledState("sexualOrientation")}
-                      >
-                        Gay/Lesbian
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.sexualOrientation === "bisexual"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.sexualOrientation === "bisexual"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("sexualOrientation", "bisexual")
-                        }
-                        disabled={getFilterDisabledState("sexualOrientation")}
-                      >
-                        Bisexual
-                      </Button>
-                      <Button
-                        variant={
-                          pendingFilters.sexualOrientation === "other"
-                            ? "default"
-                            : "outline"
-                        }
-                        className={`w-full ${
-                          pendingFilters.sexualOrientation === "other"
-                            ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleFilterChange("sexualOrientation", "other")
-                        }
-                        disabled={getFilterDisabledState("sexualOrientation")}
-                      >
-                        Other
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+              {renderActiveSection()}
             </div>
           </div>
 
-          <div className="flex-none bg-background border-t pt-4 px-4 sm:px-6 pb-6">
+          <div className="flex-none bg-background border-t p-4">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
               <Button
                 variant="ghost"
@@ -1726,6 +1093,7 @@ export function DemographicFilters({
           </div>
         </DialogContent>
       </Dialog>
+
       {activeFiltersCount > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           {Object.entries(activeFilters).map(([key, value]) => {
