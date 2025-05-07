@@ -233,15 +233,21 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
         }}
         className={className}
       />
-      <div className="absolute -top-1 -right-1">
+      <div
+        className={`absolute ${
+          isMobile ? "-top-3 -right-3" : "-top-1 -right-1"
+        }`}
+      >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="outline"
+              variant={isMobile ? "ghost" : "outline"}
               size={isMobile ? "icon" : "sm"}
-              className={`bg-background/80 hover:bg-background flex items-center gap-1.5 ${
-                isMobile ? "h-5 w-5 p-0" : ""
-              }`}
+              className={`${
+                isMobile
+                  ? "h-5 w-5 p-0 hover:bg-transparent"
+                  : "bg-background/80 hover:bg-background"
+              } flex items-center gap-1.5`}
               title="Download as PNG"
             >
               <Download className={isMobile ? "h-2 w-2" : "h-4 w-4"} />
