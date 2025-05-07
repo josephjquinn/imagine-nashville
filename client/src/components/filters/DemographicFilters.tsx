@@ -111,7 +111,7 @@ export function DemographicFilters({
   const getFilterDisabledState = (
     filterKey: keyof DemographicFiltersState
   ): boolean => {
-    switch (surveyType) {
+    switch (pendingSurveyType) {
       case "formal":
         return false;
       case "public":
@@ -143,6 +143,42 @@ export function DemographicFilters({
       default:
         return true;
     }
+  };
+
+  // Function to clear invalid filters when switching survey types
+  const clearInvalidFilters = (newSurveyType: SurveyType) => {
+    setPendingFilters((prev) => {
+      const newFilters = { ...prev };
+      Object.keys(newFilters).forEach((key) => {
+        const filterKey = key as keyof DemographicFiltersState;
+        const isDisabled = (() => {
+          switch (newSurveyType) {
+            case "formal":
+              return false;
+            case "public":
+            case "merged":
+              return ![
+                "ageMin",
+                "ageMax",
+                "gender",
+                "ethnicity",
+                "district",
+                "region",
+                "area",
+                "neighborhood",
+                "housing",
+                "children",
+              ].includes(filterKey);
+            default:
+              return true;
+          }
+        })();
+        if (isDisabled) {
+          delete newFilters[filterKey];
+        }
+      });
+      return newFilters;
+    });
   };
 
   const toggleSection = (section: string) => {
@@ -447,7 +483,10 @@ export function DemographicFilters({
                           ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                           : ""
                       }`}
-                      onClick={() => setPendingSurveyType("formal")}
+                      onClick={() => {
+                        setPendingSurveyType("formal");
+                        clearInvalidFilters("formal");
+                      }}
                     >
                       <ClipboardList className="h-4 w-4" />
                       Formal
@@ -471,7 +510,10 @@ export function DemographicFilters({
                           ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                           : ""
                       }`}
-                      onClick={() => setPendingSurveyType("public")}
+                      onClick={() => {
+                        setPendingSurveyType("public");
+                        clearInvalidFilters("public");
+                      }}
                     >
                       <Globe className="h-4 w-4" />
                       Public
@@ -495,7 +537,10 @@ export function DemographicFilters({
                           ? "bg-[var(--brand-blue)] text-white hover:bg-[var(--brand-blue)]/90"
                           : ""
                       }`}
-                      onClick={() => setPendingSurveyType("merged")}
+                      onClick={() => {
+                        setPendingSurveyType("merged");
+                        clearInvalidFilters("merged");
+                      }}
                     >
                       <Merge className="h-4 w-4" />
                       Merged
