@@ -23,8 +23,6 @@ export function Navbar() {
       label: "NEIGHBORHOODS",
       clickable: true,
     },
-    { path: "/about", label: "ABOUT", clickable: false },
-    { path: "/contact", label: "CONTACT", clickable: false },
   ];
 
   const isActivePath = (path: string) => location.pathname === path;
