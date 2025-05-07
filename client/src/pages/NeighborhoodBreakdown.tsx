@@ -61,6 +61,8 @@ export const NeighborhoodBreakdown: React.FC = () => {
       area: "Area",
       neighborhood: "Neighborhood",
       districts: "Districts",
+      address: "Address",
+      zipCode: "Zip Code",
     };
 
     let displayValue = value;

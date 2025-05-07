@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 interface AddressAutocompleteProps {
-  onAddressSelect: (address: string, placeId: string, zipCode: string) => void;
+  onAddressSelect: (address: string, zipCode: string) => void;
   value?: string;
   disabled?: boolean;
 }
@@ -83,11 +83,7 @@ export function AddressAutocomplete({
   const handleSuggestionClick = (suggestion: NominatimResult) => {
     const zipCode = suggestion.address?.postcode || "";
     setInputValue(suggestion.display_name);
-    onAddressSelect(
-      suggestion.display_name,
-      suggestion.place_id.toString(),
-      zipCode
-    );
+    onAddressSelect(suggestion.display_name, zipCode);
     setShowSuggestions(false);
   };
 

@@ -22,12 +22,10 @@ import {
   ClipboardList,
   Globe,
   Merge,
-  Search,
 } from "lucide-react";
 import { DISTRICT_DATA } from "@/data/districtData";
 import { REGION_DATA, AREA_DATA, NEIGHBORHOOD_DATA } from "@/data/locationData";
 import { DistrictMap } from "./DistrictMap";
-import { Input } from "@/components/ui/input";
 import { AddressAutocomplete } from "./AddressAutocomplete";
 
 interface DemographicFiltersProps {
@@ -79,7 +77,6 @@ export interface DemographicFiltersState {
   neighborhood?: string;
   districts?: string[];
   address?: string;
-  placeId?: string;
   zipCode?: string;
 }
 
@@ -213,11 +210,7 @@ export function DemographicFilters({
     }));
   };
 
-  const handleAddressSelect = (
-    address: string,
-    placeId: string,
-    zipCode: string
-  ) => {
+  const handleAddressSelect = (address: string, zipCode: string) => {
     const district = ZIP_TO_DISTRICT[zipCode];
 
     // Clear all other location filters first
