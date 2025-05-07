@@ -10,8 +10,12 @@ import {
   DemographicFilters,
   DemographicFiltersState,
 } from "@/components/filters/DemographicFilters";
+import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type QuestionType = "mobility" | "housing" | "education";
+
+type FilterKey = keyof DemographicFiltersState;
 
 export const NeighborhoodBreakdown: React.FC = () => {
   const [selectedType, setSelectedType] = useState<QuestionType>("mobility");
@@ -21,6 +25,36 @@ export const NeighborhoodBreakdown: React.FC = () => {
 
   const handleFilterChange = (newFilters: DemographicFiltersState) => {
     setFilters(newFilters);
+  };
+
+  const removeFilter = (key: FilterKey) => {
+    const newFilters = { ...filters };
+    delete newFilters[key];
+    setFilters(newFilters);
+  };
+
+  const getFilterLabel = (key: FilterKey, value: string) => {
+    const labels: Record<FilterKey, string> = {
+      ageMin: "Age Min",
+      ageMax: "Age Max",
+      income: "Income",
+      gender: "Gender",
+      ethnicity: "Ethnicity",
+      education: "Education",
+      employment: "Employment",
+      housing: "Housing",
+      maritalStatus: "Marital Status",
+      children: "Children",
+      politicalAffiliation: "Political Affiliation",
+      religiousAffiliation: "Religious Affiliation",
+      sexualOrientation: "Sexual Orientation",
+      district: "District",
+      region: "Region",
+      area: "Area",
+      neighborhood: "Neighborhood",
+      districts: "Districts",
+    };
+    return `${labels[key]}: ${value}`;
   };
 
   if (isLoading) {
@@ -90,6 +124,23 @@ export const NeighborhoodBreakdown: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Active Filters Display */}
+        {Object.keys(filters).length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mt-4">
+            {Object.entries(filters).map(([key, value]) => (
+              <Badge key={key} variant="secondary" className="gap-1">
+                {getFilterLabel(key as FilterKey, value as string)}
+                <button
+                  onClick={() => removeFilter(key as FilterKey)}
+                  className="ml-1 hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            ))}
+          </div>
+        )}
 
         <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-8">
           {selectedType === "mobility" ? (

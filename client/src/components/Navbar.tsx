@@ -21,7 +21,7 @@ export function Navbar() {
     {
       path: "/neighborhood-breakdown",
       label: "NEIGHBORHOODS",
-      clickable: false,
+      clickable: true,
     },
     { path: "/about", label: "ABOUT", clickable: false },
     { path: "/contact", label: "CONTACT", clickable: false },
