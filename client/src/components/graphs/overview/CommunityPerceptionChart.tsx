@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Define the agreement categories and their colors
 const AGREEMENT_CATEGORIES = [
@@ -21,6 +22,8 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
   data,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
+
   // Process the survey data
   const processedData = useMemo(() => {
     // Define the questions and their fields
@@ -138,7 +141,7 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
       },
     },
     grid: {
-      left: "15%",
+      left: isMobile ? "3%" : "15%",
       right: "4%",
       bottom: "3%",
       top: "15%",
@@ -156,9 +159,10 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
-        width: 300,
+        width: isMobile ? 200 : 300,
         overflow: "break",
         interval: 0,
+        fontSize: isMobile ? 10 : 12,
       },
     },
     series: [
@@ -174,7 +178,7 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
           },
           position: "inside" as const,
           color: category.value === 3 ? "#000" : "#fff",
-          fontSize: 12,
+          fontSize: isMobile ? 9 : 12,
           fontWeight: "bold" as const,
         },
         itemStyle: {
@@ -195,29 +199,31 @@ const CommunityPerceptionChart: React.FC<CommunityPerceptionChartProps> = ({
             const netAgree = processedData[params.dataIndex].netAgree;
             return `Net Agree: ${netAgree}%`;
           },
-          fontSize: 14,
+          fontSize: isMobile ? 10 : 14,
           fontWeight: "bold" as const,
           color: "#000",
         },
         data: processedData.map(() => 0),
       },
     ],
-    legend: {
-      orient: "vertical",
-      left: 10,
-      top: "center",
-      itemWidth: 15,
-      itemHeight: 10,
-      textStyle: {
-        width: 140,
-        overflow: "break",
-        lineHeight: 14,
-        fontSize: 11,
-      },
-      backgroundColor: "rgba(0,0,0,0.03)",
-      padding: [10, 10, 10, 10],
-      borderRadius: 5,
-    },
+    legend: isMobile
+      ? undefined
+      : {
+          orient: "vertical",
+          left: 10,
+          top: "center",
+          itemWidth: 15,
+          itemHeight: 10,
+          textStyle: {
+            width: 140,
+            overflow: "break",
+            lineHeight: 14,
+            fontSize: 11,
+          },
+          backgroundColor: "rgba(0,0,0,0.03)",
+          padding: [10, 10, 10, 10],
+          borderRadius: 5,
+        },
   };
 
   return (

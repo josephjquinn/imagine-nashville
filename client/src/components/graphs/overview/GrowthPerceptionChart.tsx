@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Define the growth perception categories and their labels
 const GROWTH_PERCEPTION_CATEGORIES = [
@@ -25,6 +26,8 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
   subtitle = "Is Nashville's rapid growth making things better or worse?",
   graphId,
 }) => {
+  const isMobile = useIsMobile();
+
   // The field we're analyzing
   const FIELD = "Q500";
 
@@ -77,19 +80,6 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
 
   // Create the chart configuration
   const option: EChartsOption = {
-    title: {
-      text: title,
-      left: "center",
-      textStyle: {
-        fontSize: 16,
-        fontWeight: "bold",
-      },
-      subtext: subtitle,
-      subtextStyle: {
-        fontSize: 12,
-        color: "#666",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -128,8 +118,8 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
       {
         name: "Growth Perception",
         type: "pie",
-        radius: ["30%", "70%"],
-        center: ["60%", "55%"],
+        radius: isMobile ? ["25%", "60%"] : ["30%", "70%"],
+        center: isMobile ? ["50%", "55%"] : ["60%", "55%"],
         roseType: "radius",
         itemStyle: {
           borderRadius: 10,
@@ -145,7 +135,7 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
                 : "0.0";
             return `${percentage}%`;
           },
-          fontSize: 14,
+          fontSize: isMobile ? 12 : 14,
           fontWeight: "bold",
         },
         data: processedData.chartData,
@@ -157,7 +147,7 @@ export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
           },
           label: {
             show: true,
-            fontSize: 14,
+            fontSize: isMobile ? 12 : 14,
             fontWeight: "bold",
           },
         },

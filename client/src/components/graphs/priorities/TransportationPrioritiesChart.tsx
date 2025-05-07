@@ -170,6 +170,7 @@ export const TransportationPrioritiesChart: React.FC<
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Transportation Priorities"
       subtitle="Average Rating (1-10 Scale)"

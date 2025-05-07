@@ -82,5 +82,7 @@ export const SexualOrientationChart: React.FC<SexualOrientationChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+  );
 };

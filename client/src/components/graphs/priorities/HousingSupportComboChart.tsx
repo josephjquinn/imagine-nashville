@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const Q620_MAPPINGS = {
   "1": "Everyone treated the same",
@@ -30,6 +31,8 @@ interface HousingSupportComboChartProps {
 export const HousingSupportComboChart: React.FC<
   HousingSupportComboChartProps
 > = ({ data, graphId }) => {
+  const isMobile = useIsMobile();
+
   // Pie chart data for Q620
   const q620PieData = useMemo(() => {
     const counts: Record<"1" | "2", number> = { "1": 0, "2": 0 };
@@ -78,15 +81,21 @@ export const HousingSupportComboChart: React.FC<
     title: [
       {
         text: "Should some groups get special support?",
-        left: "20%",
-        top: 0,
+        left: isMobile ? "25%" : "20%",
+        top: isMobile ? 10 : 0,
         textAlign: "center",
+        textStyle: {
+          fontSize: isMobile ? 12 : 14,
+        },
       },
       {
         text: "Who most deserves special support for housing?",
-        left: "70%",
-        top: 0,
+        left: isMobile ? "75%" : "70%",
+        top: isMobile ? 10 : 0,
         textAlign: "center",
+        textStyle: {
+          fontSize: isMobile ? 12 : 14,
+        },
       },
     ],
     tooltip: {
@@ -109,16 +118,19 @@ export const HousingSupportComboChart: React.FC<
     legend: [
       {
         orient: "vertical",
-        left: "5%",
-        top: "10%",
+        left: isMobile ? "2%" : "5%",
+        top: isMobile ? "15%" : "10%",
         data: q620PieData.map((item) => item.name),
+        textStyle: {
+          fontSize: isMobile ? 10 : 12,
+        },
       },
     ],
     grid: [
       {
-        left: "45%",
+        left: isMobile ? "50%" : "45%",
         right: "5%",
-        top: "10%",
+        top: isMobile ? "15%" : "10%",
         bottom: "15%",
         containLabel: true,
       },
@@ -128,9 +140,15 @@ export const HousingSupportComboChart: React.FC<
         type: "value",
         name: "Percentage of Respondents",
         nameLocation: "middle",
-        nameGap: 30,
+        nameGap: isMobile ? 20 : 30,
         max: 100,
-        axisLabel: { formatter: "{value}%" },
+        axisLabel: {
+          formatter: "{value}%",
+          fontSize: isMobile ? 10 : 12,
+        },
+        nameTextStyle: {
+          fontSize: isMobile ? 10 : 12,
+        },
         gridIndex: 0,
       },
     ],
@@ -139,10 +157,11 @@ export const HousingSupportComboChart: React.FC<
         type: "category",
         data: q625BarData.map((g) => g.name),
         axisLabel: {
-          width: 300,
+          width: isMobile ? 150 : 300,
           overflow: "break",
           interval: 0,
           align: "right",
+          fontSize: isMobile ? 10 : 12,
         },
         gridIndex: 0,
       },
@@ -150,19 +169,20 @@ export const HousingSupportComboChart: React.FC<
     series: [
       {
         type: "pie",
-        radius: ["35%", "60%"],
-        center: ["20%", "55%"],
+        radius: isMobile ? ["25%", "45%"] : ["35%", "60%"],
+        center: isMobile ? ["25%", "45%"] : ["20%", "55%"],
         data: q620PieData,
         label: {
           formatter: "{d}%",
+          fontSize: isMobile ? 10 : 12,
         },
       },
       {
         name: "Selected as Top 3",
         type: "bar",
-        barMaxWidth: 40,
+        barMaxWidth: isMobile ? 25 : 40,
         itemStyle: {
-          color: "#3b82f6", // blue-500
+          color: "#3b82f6",
           borderRadius: [0, 4, 4, 0],
         },
         label: {
@@ -171,6 +191,7 @@ export const HousingSupportComboChart: React.FC<
           formatter: (params: any) => `${params.data.percentage.toFixed(1)}%`,
           color: "#666",
           distance: 5,
+          fontSize: isMobile ? 10 : 12,
         },
         data: q625BarData,
         xAxisIndex: 0,
@@ -182,7 +203,7 @@ export const HousingSupportComboChart: React.FC<
   return (
     <BaseGraph
       option={option}
-      style={{ height: "500px", width: "100%" }}
+      style={{ height: isMobile ? "450px" : "500px" }}
       graphId={graphId}
     />
   );

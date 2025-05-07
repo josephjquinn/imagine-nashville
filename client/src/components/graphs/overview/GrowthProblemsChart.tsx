@@ -136,7 +136,7 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "15%",
+      bottom: "5%",
       top: 80,
       containLabel: true,
     },
@@ -166,7 +166,8 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
       {
         name: "Selected as Top 3",
         type: "bar",
-        barCategoryGap: "30%",
+        barWidth: "90%",
+        barCategoryGap: "20%",
         itemStyle: {
           borderRadius: [0, 4, 4, 0],
         },
@@ -226,7 +227,7 @@ export const GrowthProblemsChart: React.FC<GrowthProblemsChartProps> = ({
   return (
     <BaseGraph
       option={option}
-      style={{ height: "800px" }}
+      style={{ height: "700px" }}
       graphId={graphId}
       title="Problems Caused by Growth: How to Talk about Growth"
       subtitle="% Selected as Top 3 Reason"

@@ -3,6 +3,7 @@ import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import type { CallbackDataParams } from "echarts/types/dist/shared";
 import { SurveyResponse } from "@/types/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 // Inclusion categories
 const INCLUSION_CATEGORIES = {
   EXCLUDED: "Excluded (1-4)",
@@ -50,6 +51,7 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
   subtitle,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
   // Process data to get percentage distributions for each inclusion category
   const inclusionData = useMemo<InclusionData[]>(() => {
     return inclusionFields
@@ -179,13 +181,13 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
         show: true,
       },
       axisLabel: {
-        width: 260,
+        width: isMobile ? 200 : 260,
         overflow: "break",
         interval: 0,
-        margin: 300,
+        margin: isMobile ? 200 : 300,
         align: "left",
-        fontSize: 12,
-        lineHeight: 16,
+        fontSize: isMobile ? 9 : 12,
+        lineHeight: isMobile ? 14 : 16,
       },
     },
     series: [
@@ -259,6 +261,6 @@ export const InclusionRatingsChart: React.FC<InclusionRatingsChartProps> = ({
   };
 
   return (
-    <BaseGraph option={option} style={{ height: "600px" }} graphId={graphId} />
+    <BaseGraph option={option} style={{ height: "500px" }} graphId={graphId} />
   );
 };

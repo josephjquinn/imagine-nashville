@@ -146,7 +146,7 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "15%",
+      bottom: "5%",
       top: 80,
       containLabel: true,
     },
@@ -176,7 +176,8 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
       {
         name: "Selected as Top 3",
         type: "bar",
-        barCategoryGap: "30%",
+        barWidth: "90%",
+        barCategoryGap: "20%",
         itemStyle: {
           borderRadius: [0, 4, 4, 0],
         },
@@ -236,7 +237,7 @@ export const GrowthBenefitsChart: React.FC<GrowthBenefitsChartProps> = ({
   return (
     <BaseGraph
       option={option}
-      style={{ height: "800px" }}
+      style={{ height: "700px" }}
       graphId={graphId}
       title="Benefits of Growth: Key Positive Impacts"
       subtitle="% Selected as Top 3 Reason"

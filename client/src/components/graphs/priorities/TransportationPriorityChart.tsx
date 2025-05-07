@@ -87,6 +87,7 @@ export const TransportationPriorityChart: React.FC<
     <BasePieChart
       data={data}
       field="Q645"
+      title="Public Transportation Priority"
       getAnswerText={getAnswerText}
       emptyStateMessage="No valid transportation priority data available"
       customColors={AGREEMENT_SCALE.map((item) => item.color)}
@@ -108,7 +109,6 @@ export const TransportationPriorityChart: React.FC<
         </div>`;
       }}
       graphId={graphId}
-      title="Public Transportation Priority"
     />
   );
 };

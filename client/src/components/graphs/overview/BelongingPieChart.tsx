@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "../../../api/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Belonging scale definitions with colors
 const BELONGING_SCALE = [
@@ -70,6 +71,7 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
   data,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
   // Process the belonging sentiment data
   const processedData = useMemo(() => {
     // Initialize counters for each option
@@ -148,18 +150,19 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
     title: {
       text: TITLE,
       left: "center",
-      top: 0,
+      top: isMobile ? 10 : 0,
       textStyle: {
-        fontSize: 16,
+        fontSize: isMobile ? 14 : 16,
       },
-      subtext:
-        processedData.belongingTotal > 0 && processedData.locationTotal > 0
-          ? "Inner: Where people feel greatest sense of belonging, Outer: General feeling of belonging"
-          : processedData.belongingTotal > 0
-          ? "General feeling of belonging"
-          : "Where people feel greatest sense of belonging",
+      subtext: isMobile
+        ? ""
+        : processedData.belongingTotal > 0 && processedData.locationTotal > 0
+        ? "Inner: Where people feel greatest sense of belonging, Outer: General feeling of belonging"
+        : processedData.belongingTotal > 0
+        ? "General feeling of belonging"
+        : "Where people feel greatest sense of belonging",
       subtextStyle: {
-        fontSize: 12,
+        fontSize: isMobile ? 0 : 12,
         color: "#666",
       },
     },
@@ -184,86 +187,32 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
         </div>`;
       },
     },
-    legend: [
-      ...(processedData.belongingTotal > 0
-        ? [
-            {
-              type: "plain" as const,
-              orient: "vertical" as const,
-              left: 10,
-              top: 90,
-              itemWidth: 15,
-              itemHeight: 10,
-              textStyle: {
-                width: 140,
-                overflow: "break" as const,
-                lineHeight: 14,
-                fontSize: 11,
-              },
-              backgroundColor: "rgba(0,0,0,0.03)",
-              padding: [10, 10, 10, 10],
-              borderRadius: 5,
-              data: BELONGING_SCALE.map((item) => item.label),
-            },
-          ]
-        : []),
-      ...(processedData.locationTotal > 0
-        ? [
-            {
-              type: "plain" as const,
-              orient: "vertical" as const,
-              left: 10,
-              top: processedData.belongingTotal > 0 ? 320 : 90,
-              itemWidth: 15,
-              itemHeight: 10,
-              textStyle: {
-                width: 140,
-                overflow: "break" as const,
-                lineHeight: 14,
-                fontSize: 11,
-              },
-              backgroundColor: "rgba(0,0,0,0.03)",
-              padding: [10, 10, 10, 10],
-              borderRadius: 5,
-              data: BELONGING_LOCATION_SCALE.map((item) => item.label),
-            },
-          ]
-        : []),
-    ],
-    graphic: [
-      ...(processedData.belongingTotal > 0
-        ? [
-            {
-              type: "text" as const,
-              left: 10,
-              top: 70,
-              style: {
-                text: "Feeling of Belonging:",
-                align: "left" as const,
-                fontSize: 10,
-                fontWeight: "normal" as const,
-                fill: "#666",
-              },
-            },
-          ]
-        : []),
-      ...(processedData.locationTotal > 0
-        ? [
-            {
-              type: "text" as const,
-              left: 10,
-              top: processedData.belongingTotal > 0 ? 300 : 70,
-              style: {
-                text: "Where People Feel Belonging:",
-                align: "left" as const,
-                fontSize: 10,
-                fontWeight: "normal" as const,
-                fill: "#666",
-              },
-            },
-          ]
-        : []),
-    ],
+    legend: {
+      show: !isMobile,
+      type: "plain" as const,
+      orient: "vertical" as const,
+      left: 10,
+      top: 90,
+      itemWidth: 15,
+      itemHeight: 10,
+      textStyle: {
+        width: 140,
+        overflow: "break" as const,
+        lineHeight: 14,
+        fontSize: 11,
+      },
+      backgroundColor: "rgba(0,0,0,0.03)",
+      padding: [10, 10, 10, 10],
+      borderRadius: 5,
+      data: [
+        ...(processedData.belongingTotal > 0
+          ? BELONGING_SCALE.map((item) => item.label)
+          : []),
+        ...(processedData.locationTotal > 0
+          ? BELONGING_LOCATION_SCALE.map((item) => item.label)
+          : []),
+      ],
+    },
     series: [
       ...(processedData.locationTotal > 0
         ? [
@@ -272,9 +221,11 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
               type: "pie" as const,
               radius:
                 processedData.belongingTotal > 0
-                  ? ["0%", "35%"]
+                  ? isMobile
+                    ? ["0%", "35%"]
+                    : ["0%", "35%"]
                   : ["0%", "65%"],
-              center: ["65%", "55%"],
+              center: isMobile ? ["50%", "45%"] : ["65%", "55%"],
               avoidLabelOverlap: true,
               itemStyle: {
                 borderRadius: 5,
@@ -297,13 +248,13 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
                       : "0.0";
                   return `${percentage}%`;
                 },
-                fontSize: 12,
+                fontSize: isMobile ? 10 : 12,
                 color: "#fff",
               },
               labelLine: {
                 show: !processedData.belongingTotal,
-                length: 15,
-                length2: 10,
+                length: isMobile ? 10 : 15,
+                length2: isMobile ? 5 : 10,
               },
               data: processedData.locationPieData,
               z: 2,
@@ -317,9 +268,11 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
               type: "pie" as const,
               radius:
                 processedData.locationTotal > 0
-                  ? ["45%", "65%"]
+                  ? isMobile
+                    ? ["45%", "60%"]
+                    : ["45%", "65%"]
                   : ["0%", "65%"],
-              center: ["65%", "55%"],
+              center: isMobile ? ["50%", "45%"] : ["65%", "55%"],
               avoidLabelOverlap: true,
               itemStyle: {
                 borderRadius: 5,
@@ -338,10 +291,11 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
                       : "0.0";
                   return `${percentage}%`;
                 },
+                fontSize: isMobile ? 10 : 12,
               },
               labelLine: {
-                length: 15,
-                length2: 10,
+                length: isMobile ? 10 : 15,
+                length2: isMobile ? 5 : 10,
               },
               data: processedData.belongingPieData,
               z: 1,
@@ -354,7 +308,7 @@ export const BelongingBarChart: React.FC<BelongingBarChartProps> = ({
   return (
     <BaseGraph
       option={option}
-      style={{ height: "550px" }}
+      style={{ height: isMobile ? "450px" : "550px" }}
       graphId={graphId || "belonging-pie"}
       title="Sense of Belonging in Nashville"
       subtitle="How residents feel about their connection to the city"

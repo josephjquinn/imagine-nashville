@@ -246,6 +246,7 @@ export const HousingGoalsChart: React.FC<HousingGoalsChartProps> = ({
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Housing Goals: Top Priorities"
       subtitle="% Selected as Top 2 Goals"

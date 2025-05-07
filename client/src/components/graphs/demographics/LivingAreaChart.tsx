@@ -80,5 +80,7 @@ export const LivingAreaChart: React.FC<LivingAreaChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "400px" }} />
+  );
 };

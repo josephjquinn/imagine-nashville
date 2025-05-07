@@ -85,5 +85,7 @@ export const ReligiousAffiliationChart: React.FC<
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+  );
 };

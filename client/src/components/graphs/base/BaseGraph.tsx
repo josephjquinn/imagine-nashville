@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface BaseGraphProps {
   option: EChartsOption;
@@ -34,16 +34,18 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const { addGraph, removeGraph } = usePDF();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
+  console.log("BaseGraph - isMobile:", isMobile);
+  console.log("BaseGraph - incoming option.legend:", option.legend);
 
   // Standardized title and subtitle styles
   const TITLE_STYLE = {
-    fontSize: isMobile ? 16 : 18,
+    fontSize: isMobile ? 14 : 18,
     fontWeight: "bold" as const,
   };
 
   const SUBTITLE_STYLE = {
-    fontSize: isMobile ? 13 : 14,
+    fontSize: isMobile ? 11 : 14,
     color: "#666",
   };
 
@@ -73,40 +75,83 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
 
   // Merge the provided options with standardized title and subtitle
   const mergedOption = useMemo(() => {
-    if (!title && !subtitle) return option;
-
     const newOption = { ...option };
 
-    // Handle both single title and array of titles
-    if (Array.isArray(newOption.title)) {
-      newOption.title = [
-        {
-          text: title || newOption.title[0]?.text || "",
+    // Handle title and subtitle if provided
+    if (title || subtitle) {
+      // Handle both single title and array of titles
+      if (Array.isArray(newOption.title)) {
+        newOption.title = [
+          {
+            text: title || newOption.title[0]?.text || "",
+            left: "center",
+            top: isMobile ? 5 : 0,
+            textStyle: TITLE_STYLE,
+          },
+          {
+            text: subtitle || newOption.title[1]?.text || "",
+            left: "center",
+            top: isMobile ? 20 : 25,
+            textStyle: SUBTITLE_STYLE,
+          },
+        ];
+      } else {
+        newOption.title = {
+          text: title || newOption.title?.text || "",
           left: "center",
-          top: 0,
+          top: isMobile ? 5 : 0,
           textStyle: TITLE_STYLE,
-        },
-        {
-          text: subtitle || newOption.title[1]?.text || "",
-          left: "center",
-          top: 25,
-          textStyle: SUBTITLE_STYLE,
-        },
-      ];
-    } else {
-      newOption.title = {
-        text: title || newOption.title?.text || "",
-        left: "center",
-        top: 0,
-        textStyle: TITLE_STYLE,
-        subtext: subtitle || newOption.title?.subtext || "",
-        subtextStyle: SUBTITLE_STYLE,
-      };
+          subtext: subtitle || newOption.title?.subtext || "",
+          subtextStyle: SUBTITLE_STYLE,
+        };
+      }
     }
 
-    // Remove legend completely on mobile
+    // Adjust grid and margins for mobile
     if (isMobile) {
-      newOption.legend = undefined;
+      // Remove legend completely on mobile
+      newOption.legend = { show: false };
+
+      // Adjust axis label font size if present
+      if (newOption.xAxis) {
+        if (Array.isArray(newOption.xAxis)) {
+          newOption.xAxis = newOption.xAxis.map((axis) => ({
+            ...axis,
+            axisLabel: {
+              ...axis.axisLabel,
+              fontSize: 10,
+            },
+          }));
+        } else {
+          newOption.xAxis = {
+            ...newOption.xAxis,
+            axisLabel: {
+              ...newOption.xAxis?.axisLabel,
+              fontSize: 10,
+            },
+          };
+        }
+      }
+
+      if (newOption.yAxis) {
+        if (Array.isArray(newOption.yAxis)) {
+          newOption.yAxis = newOption.yAxis.map((axis) => ({
+            ...axis,
+            axisLabel: {
+              ...axis.axisLabel,
+              fontSize: 10,
+            },
+          }));
+        } else {
+          newOption.yAxis = {
+            ...newOption.yAxis,
+            axisLabel: {
+              ...newOption.yAxis?.axisLabel,
+              fontSize: 10,
+            },
+          };
+        }
+      }
     }
 
     return newOption;
@@ -126,6 +171,10 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
 
   useEffect(() => {
     if (chartInstance.current) {
+      console.log(
+        "BaseGraph - setting option with legend:",
+        mergedOption.legend
+      );
       chartInstance.current.setOption(mergedOption);
     }
   }, [mergedOption]);

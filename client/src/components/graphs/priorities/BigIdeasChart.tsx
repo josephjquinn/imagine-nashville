@@ -243,6 +243,7 @@ export const BigIdeasChart: React.FC<BigIdeasChartProps> = ({
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Nashville's Big Ideas for the Future"
       subtitle="% Selected as Top 2 Ideas"

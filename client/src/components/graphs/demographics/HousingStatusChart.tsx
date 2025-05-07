@@ -79,5 +79,7 @@ export const HousingStatusChart: React.FC<HousingStatusChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "400px" }} />
+  );
 };

@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "../../../api/survey";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Rating scale definitions
 const RATING_SCALE = {
@@ -66,6 +67,7 @@ interface PriorityPerformanceChartProps {
 export const PriorityPerformanceChart: React.FC<
   PriorityPerformanceChartProps
 > = ({ data, priorityFields = DEFAULT_PRIORITY_FIELDS, graphId }) => {
+  const isMobile = useIsMobile();
   // Process data to get average ratings for each priority
   const priorityRatings = useMemo(() => {
     return priorityFields
@@ -189,11 +191,11 @@ export const PriorityPerformanceChart: React.FC<
         show: true,
       },
       axisLabel: {
-        overflow: "none", // Don't truncate or wrap text
+        overflow: "break", // Enable text wrapping
         lineHeight: 16,
-        margin: 440,
+        margin: isMobile ? 300 : 440,
         align: "left",
-        fontSize: 12, // Ensure font size is appropriate
+        fontSize: isMobile ? 10 : 12,
       },
     },
     series: [
@@ -222,7 +224,7 @@ export const PriorityPerformanceChart: React.FC<
   return (
     <BaseGraph
       option={option}
-      style={{ height: "600px" }}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Nashville Priority Performance Ratings"
       subtitle="1 = Not performing well at all, 10 = Performing extremely well"

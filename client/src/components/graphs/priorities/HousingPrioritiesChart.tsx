@@ -168,6 +168,7 @@ export const HousingPrioritiesChart: React.FC<HousingPrioritiesChartProps> = ({
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Housing Priorities"
       subtitle="Average Rating (1-10 Scale)"

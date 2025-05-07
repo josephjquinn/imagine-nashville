@@ -86,5 +86,7 @@ export const PoliticalIdeologyChart: React.FC<PoliticalIdeologyChartProps> = ({
     },
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+  );
 };

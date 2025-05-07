@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
-
+import { useIsMobile } from "../../../hooks/useIsMobile";
 // Fields from the image provided (Q405)
 const Q405_FIELDS = [
   { field: "Q405_1", label: "High cost of living" },
@@ -51,6 +51,7 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
   subtitle,
   graphId,
 }) => {
+  const isMobile = useIsMobile();
   // Process data to count mentions of each negative impact
   const negativeImpactsData = useMemo(() => {
     // Count the overall responses for each category (Q405)
@@ -223,7 +224,7 @@ export const NegativeImpactsChart: React.FC<NegativeImpactsChartProps> = ({
   return (
     <BaseGraph
       option={option}
-      style={{ height: "800px" }}
+      style={{ height: isMobile ? "750px" : "800px" }}
       graphId={graphId}
       title={title || "Most Significant Negative Impacts on Quality of Life"}
       subtitle={

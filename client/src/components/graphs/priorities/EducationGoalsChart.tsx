@@ -247,6 +247,7 @@ export const EducationGoalsChart: React.FC<EducationGoalsChartProps> = ({
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Education Goals: Top Priorities"
       subtitle="% Selected as Top 2 Goals"

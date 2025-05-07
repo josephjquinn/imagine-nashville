@@ -131,7 +131,7 @@ export const IdealNeighborhoodAssetsChart: React.FC<
       left: "3%",
       right: "4%",
       bottom: "10%",
-      top: "8%",
+      top: "10p%",
       containLabel: true,
     },
     xAxis: {
@@ -268,6 +268,6 @@ export const IdealNeighborhoodAssetsChart: React.FC<
   };
 
   return (
-    <BaseGraph graphId={graphId} option={option} style={{ height: "800px" }} />
+    <BaseGraph graphId={graphId} option={option} style={{ height: "600px" }} />
   );
 };

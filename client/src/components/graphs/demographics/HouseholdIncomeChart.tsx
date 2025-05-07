@@ -89,5 +89,7 @@ export const HouseholdIncomeChart: React.FC<HouseholdIncomeChartProps> = ({
     },
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "350px" }} />
+  );
 };

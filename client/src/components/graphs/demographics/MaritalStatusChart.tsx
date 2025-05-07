@@ -84,5 +84,7 @@ export const MaritalStatusChart: React.FC<MaritalStatusChartProps> = ({
     ],
   };
 
-  return <BaseGraph option={option} graphId={graphId} />;
+  return (
+    <BaseGraph option={option} graphId={graphId} style={{ height: "400px" }} />
+  );
 };

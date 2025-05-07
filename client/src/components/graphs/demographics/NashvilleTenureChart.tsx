@@ -154,8 +154,16 @@ export const NashvilleTenureChart: React.FC<NashvilleTenureChartProps> = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <BaseGraph option={computedOption} graphId={graphId} />
-      <BaseGraph option={rawOption} graphId={graphId} />
+      <BaseGraph
+        option={computedOption}
+        graphId={graphId}
+        style={{ height: "400px" }}
+      />
+      <BaseGraph
+        option={rawOption}
+        graphId={graphId}
+        style={{ height: "400px" }}
+      />
     </div>
   );
 };

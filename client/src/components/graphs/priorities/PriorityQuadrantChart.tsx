@@ -367,12 +367,14 @@ export const PriorityQuadrantChart: React.FC<PriorityQuadrantChartProps> = ({
   };
 
   return (
-    <BaseGraph
-      option={option}
-      graphId={graphId}
-      title="Top Learnings...And Biggest Issues Going Unaddressed"
-      subtitle="Performance vs. Impact Analysis"
-    />
+    <div className="w-full" style={{ height: "500px" }}>
+      <BaseGraph
+        option={option}
+        graphId={graphId}
+        title="Top Learnings...And Biggest Issues Going Unaddressed"
+        subtitle="Performance vs. Impact Analysis"
+      />
+    </div>
   );
 };
 

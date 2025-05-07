@@ -241,6 +241,7 @@ export const TransportationGoalsChart: React.FC<
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title="Transportation Goals: Top Priorities"
       subtitle="% Selected as Top 2 Goals"

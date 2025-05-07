@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 interface SurveyData {
   Q700?: string;
@@ -22,6 +23,7 @@ export const NeighborhoodSatisfactionGraph: React.FC<
   title = "Neighborhood Satisfaction Rating",
   subtitle = "Distribution of resident ratings on a scale of 1 (least satisfied) to 10 (most satisfied)",
 }) => {
+  const isMobile = useIsMobile();
   const processedData = useMemo(() => {
     // Initialize counts for all possible ratings (1-10)
     const ratingCounts: { [key: number]: number } = {};
@@ -56,11 +58,17 @@ export const NeighborhoodSatisfactionGraph: React.FC<
       data: processedData.map((item) => item.rating),
       name: "Rating (1-10)",
       nameLocation: "middle",
-      nameGap: 30,
+      nameGap: isMobile ? 20 : 30,
     },
     yAxis: {
       type: "value",
       name: "Number of Responses",
+      nameGap: 35,
+      nameLocation: "middle",
+      nameRotate: 90,
+      nameTextStyle: {
+        padding: [0, 0, 0, isMobile ? 20 : 30],
+      },
     },
     series: [
       {
@@ -73,21 +81,23 @@ export const NeighborhoodSatisfactionGraph: React.FC<
         label: {
           show: true,
           position: "top",
+          fontSize: isMobile ? 10 : 12,
         },
       },
     ],
     grid: {
       containLabel: true,
-      left: "3%",
-      top: "20%",
-      right: "4%",
-      bottom: "5%",
+      left: isMobile ? "5%" : "3%",
+      top: "25%",
+      right: isMobile ? "5%" : "4%",
+      bottom: isMobile ? "15%" : "10%",
     },
   };
 
   return (
     <BaseGraph
       option={option}
+      style={{ height: isMobile ? "300px" : "350px" }}
       graphId={graphId}
       title={title}
       subtitle={subtitle}

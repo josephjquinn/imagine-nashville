@@ -188,10 +188,10 @@ export const EducationPrioritiesChart: React.FC<
   return (
     <BaseGraph
       option={option}
+      style={{ height: "500px" }}
       graphId={graphId}
       title={"Education Priorities"}
       subtitle={"Average Rating (1-10 Scale)"}
-      style={{ height: "600px" }}
     />
   );
 };
