@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
@@ -22,8 +22,6 @@ interface GrowthPerceptionChartProps {
 
 export const GrowthPerceptionChart: React.FC<GrowthPerceptionChartProps> = ({
   data,
-  title = "Perceptions of Nashville's Growth",
-  subtitle = "Is Nashville's rapid growth making things better or worse?",
   graphId,
 }) => {
   const isMobile = useIsMobile();

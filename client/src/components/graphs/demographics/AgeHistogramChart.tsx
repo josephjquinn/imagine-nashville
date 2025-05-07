@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { BaseGraph } from "../base/BaseGraph";
 import type { EChartsOption } from "echarts";
 import { SurveyResponse } from "@/types/survey";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface AgeHistogramChartProps {
   data: SurveyResponse[];
@@ -28,7 +27,6 @@ export const AgeHistogramChart: React.FC<AgeHistogramChartProps> = ({
   graphId,
 }) => {
   const field = "Q100";
-  const isMobile = useIsMobile();
 
   // Process data to get age distribution
   const ageDistribution = useMemo(() => {
