@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +12,6 @@ import { Slider } from "@/components/ui/slider";
 import {
   X,
   Filter,
-  ChevronDown,
-  ChevronUp,
   MapPin,
   Users,
   Home,
@@ -21,7 +19,6 @@ import {
   ClipboardList,
   Globe,
   Merge,
-  Search,
 } from "lucide-react";
 import { DISTRICT_DATA } from "@/data/districtData";
 import { REGION_DATA, AREA_DATA, NEIGHBORHOOD_DATA } from "@/data/locationData";
@@ -128,12 +125,12 @@ export function DemographicFilters({
   );
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("survey-type");
-  const [searchQuery, setSearchQuery] = useState("");
   const [pendingSurveyType, setPendingSurveyType] =
     useState<SurveyType>(surveyType);
   const [activeLocationTab, setActiveLocationTab] = useState<
     "district" | "region" | "area" | "neighborhood" | "search"
   >("district");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const getFilterDisabledState = (
     filterKey: keyof DemographicFiltersState
@@ -160,7 +157,7 @@ export function DemographicFilters({
     }
   };
 
-  const clearInvalidFilters = (newSurveyType: SurveyType) => {
+  const clearInvalidFilters = () => {
     setPendingFilters((prev) => {
       const newFilters = { ...prev };
       Object.keys(newFilters).forEach((key) => {
@@ -391,7 +388,7 @@ export function DemographicFilters({
         <button
           onClick={() => {
             setPendingSurveyType("formal");
-            clearInvalidFilters("formal");
+            clearInvalidFilters();
           }}
           className={cn(
             "p-4 rounded-lg border-2 transition-all hover:border-[var(--brand-blue)]/50",
@@ -413,7 +410,7 @@ export function DemographicFilters({
         <button
           onClick={() => {
             setPendingSurveyType("public");
-            clearInvalidFilters("public");
+            clearInvalidFilters();
           }}
           className={cn(
             "p-4 rounded-lg border-2 transition-all hover:border-[var(--brand-blue)]/50",
@@ -435,7 +432,7 @@ export function DemographicFilters({
         <button
           onClick={() => {
             setPendingSurveyType("merged");
-            clearInvalidFilters("merged");
+            clearInvalidFilters();
           }}
           className={cn(
             "p-4 rounded-lg border-2 transition-all hover:border-[var(--brand-blue)]/50",
@@ -459,6 +456,15 @@ export function DemographicFilters({
   const renderLocationSection = () => (
     <div className="space-y-6">
       <div className="flex gap-2 border-b overflow-x-auto">
+        <div className="flex-1">
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-4"
+          />
+        </div>
         <button
           onClick={() => handleLocationTabChange("district")}
           className={cn(
