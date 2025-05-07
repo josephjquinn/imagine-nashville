@@ -68,7 +68,11 @@ export const EquitableQualityOfLifeChart: React.FC<
   }, [data]);
 
   // If no valid data, show empty state
-  if (processedData.total === 0) {
+  if (
+    !processedData?.chartData ||
+    processedData.chartData.length === 0 ||
+    processedData.total === 0
+  ) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-500">
@@ -135,7 +139,7 @@ export const EquitableQualityOfLifeChart: React.FC<
       itemStyle: {
         color: category.itemStyle.color,
       },
-      data: [category.value],
+      data: [Number(category.value)],
     })),
     legend: {
       orient: "vertical",
