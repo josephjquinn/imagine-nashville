@@ -14,11 +14,16 @@ export type { SurveyType };
 const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
   const queryFilters: FilterOptions = {};
 
-  if (filters.district) {
-    // Get the ZIP codes for the selected district
-    const districtZips = DISTRICT_DATA[filters.district];
-    if (districtZips && districtZips.length > 0) {
-      queryFilters.Q113 = { in: districtZips };
+  // Handle age range filter first
+  if (filters.Q100) {
+    queryFilters.Q100 = filters.Q100;
+  }
+
+  if (filters.districts && filters.districts.length > 0) {
+    // Get all ZIP codes for the selected districts
+    const allDistrictZips = filters.districts.flatMap(district => DISTRICT_DATA[district] || []);
+    if (allDistrictZips.length > 0) {
+      queryFilters.Q113 = { in: allDistrictZips };
     }
   }
 
@@ -32,13 +37,6 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
 
   if (filters.neighborhood) {
     queryFilters.Neighborhood_New = filters.neighborhood;
-  }
-
-  if (filters.ageMin !== undefined && filters.ageMax !== undefined) {
-    queryFilters.Q100 = {
-      gte: parseInt(filters.ageMin),
-      lte: parseInt(filters.ageMax)
-    };
   }
 
   if (filters.income) {
@@ -177,6 +175,7 @@ export const useSurveyData = (type: SurveyType = 'merged', filters?: Demographic
         setIsLoading(true);
         const service = createSurveyService(type);
         const queryFilters = filters ? mapFiltersToQuery(filters) : {};
+        console.log('Query filters being sent to API:', queryFilters);
         const response = await service.getFilteredSurveyResponses(queryFilters);
         setData(response.data);
         setError(null);

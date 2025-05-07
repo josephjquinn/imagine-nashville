@@ -33,10 +33,18 @@ export const NeighborhoodBreakdown: React.FC = () => {
     setFilters(newFilters);
   };
 
-  const getFilterLabel = (key: FilterKey, value: string) => {
+  const getFilterLabel = (
+    key: FilterKey,
+    value: string | number | string[] | { gte: number; lte: number }
+  ) => {
+    // Don't show age filter if it's at default values
+    if (key === "ageMin" && value === 0) return null;
+    if (key === "ageMax" && value === 90) return null;
+
     const labels: Record<FilterKey, string> = {
       ageMin: "Age Min",
       ageMax: "Age Max",
+      Q100: "Age Range",
       income: "Income",
       gender: "Gender",
       ethnicity: "Ethnicity",
@@ -54,7 +62,16 @@ export const NeighborhoodBreakdown: React.FC = () => {
       neighborhood: "Neighborhood",
       districts: "Districts",
     };
-    return `${labels[key]}: ${value}`;
+
+    let displayValue = value;
+    if (key === "Q100" && typeof value === "object") {
+      const ageRange = value as { gte: number; lte: number };
+      displayValue = `${ageRange.gte}-${ageRange.lte} years`;
+    } else if (Array.isArray(value)) {
+      displayValue = value.join(", ");
+    }
+
+    return `${labels[key]}: ${displayValue}`;
   };
 
   if (isLoading) {
@@ -129,17 +146,22 @@ export const NeighborhoodBreakdown: React.FC = () => {
         {/* Active Filters Display */}
         {Object.keys(filters).length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mt-4">
-            {Object.entries(filters).map(([key, value]) => (
-              <Badge key={key} variant="secondary" className="gap-1">
-                {getFilterLabel(key as FilterKey, value as string)}
-                <button
-                  onClick={() => removeFilter(key as FilterKey)}
-                  className="ml-1 hover:text-destructive"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            ))}
+            {Object.entries(filters).map(([key, value]) => {
+              const label = getFilterLabel(key as FilterKey, value);
+              return (
+                label && (
+                  <Badge key={key} variant="secondary" className="gap-1">
+                    {label}
+                    <button
+                      onClick={() => removeFilter(key as FilterKey)}
+                      className="ml-1 hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                )
+              );
+            })}
           </div>
         )}
 

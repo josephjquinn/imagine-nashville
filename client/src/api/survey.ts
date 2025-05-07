@@ -188,7 +188,9 @@ class BaseSurveyService {
           if (typeof value === 'object') {
             if ('gte' in value && 'lte' in value) {
               const rangeFilter = value as RangeFilter;
-              countQuery = countQuery.gte(key, rangeFilter.gte).lte(key, rangeFilter.lte);
+              countQuery = countQuery
+                .filter(key, 'gte', rangeFilter.gte)
+                .filter(key, 'lte', rangeFilter.lte);
             } else if ('in' in value) {
               const arrayFilter = value as ArrayFilter;
               countQuery = countQuery.in(key, arrayFilter.in);
@@ -218,7 +220,9 @@ class BaseSurveyService {
             if (typeof value === 'object') {
               if ('gte' in value && 'lte' in value) {
                 const rangeFilter = value as RangeFilter;
-                query = query.gte(key, rangeFilter.gte).lte(key, rangeFilter.lte);
+                query = query
+                  .filter(key, 'gte', rangeFilter.gte)
+                  .filter(key, 'lte', rangeFilter.lte);
               } else if ('in' in value) {
                 const arrayFilter = value as ArrayFilter;
                 query = query.in(key, arrayFilter.in);

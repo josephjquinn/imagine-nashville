@@ -37,8 +37,12 @@ interface DemographicFiltersProps {
 export type SurveyType = "formal" | "public" | "merged";
 
 export interface DemographicFiltersState {
-  ageMin?: string;
-  ageMax?: string;
+  ageMin?: number;
+  ageMax?: number;
+  Q100?: {
+    gte: number;
+    lte: number;
+  };
   income?: string;
   gender?: string;
   ethnicity?: string;
@@ -141,22 +145,26 @@ export function DemographicFilters({
 
   const handleFilterChange = (
     key: keyof DemographicFiltersState,
-    value: string
+    value: string | number
   ) => {
     setPendingFilters((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleDistrictSelect = (district: string) => {
     setPendingFilters((prev) => {
+      const newFilters = { ...prev };
+      // Clear all other location filters first
+      delete newFilters.region;
+      delete newFilters.area;
+      delete newFilters.neighborhood;
+
       const currentDistricts = prev.districts || [];
       const newDistricts = currentDistricts.includes(district)
         ? currentDistricts.filter((d) => d !== district)
         : [...currentDistricts, district];
 
-      return {
-        ...prev,
-        districts: newDistricts.length > 0 ? newDistricts : undefined,
-      };
+      newFilters.districts = newDistricts.length > 0 ? newDistricts : undefined;
+      return newFilters;
     });
   };
 
@@ -169,29 +177,57 @@ export function DemographicFilters({
       return;
     }
 
-    // Clear other location types when selecting a new one
-    const newFilters = {
-      ...pendingFilters,
-      district: undefined,
-      region: type === "region" ? value : undefined,
-      area: type === "area" ? value : undefined,
-      neighborhood: type === "neighborhood" ? value : undefined,
-    };
-    setPendingFilters(newFilters);
+    // Clear all location filters and set only the selected one
+    setPendingFilters((prev) => {
+      const newFilters = { ...prev };
+      // Clear all location-related filters
+      delete newFilters.district;
+      delete newFilters.region;
+      delete newFilters.area;
+      delete newFilters.neighborhood;
+      delete newFilters.districts;
+      // Set the new location filter
+      newFilters[type] = value;
+      return newFilters;
+    });
   };
 
   const handleAgeRangeChange = (values: [number, number]) => {
     const [min, max] = values;
     setPendingFilters((prev) => ({
       ...prev,
-      ageMin: min.toString(),
-      ageMax: max.toString(),
+      ageMin: min,
+      ageMax: max,
     }));
   };
 
   const applyFilters = () => {
+    // Create a new filters object for the API
+    const apiFilters: Record<string, any> = {};
+
+    // Handle age range filter
+    if (
+      pendingFilters.ageMin !== undefined ||
+      pendingFilters.ageMax !== undefined
+    ) {
+      apiFilters.Q100 = {
+        gte: Number(pendingFilters.ageMin) || 0,
+        lte: Number(pendingFilters.ageMax) || 90,
+      };
+    }
+
+    // Copy other filters
+    Object.entries(pendingFilters).forEach(([key, value]) => {
+      if (key !== "ageMin" && key !== "ageMax" && value !== undefined) {
+        apiFilters[key] = value;
+      }
+    });
+
+    // Log the filters being sent to the API
+    console.log("Applying filters:", apiFilters);
+
     setActiveFilters(pendingFilters);
-    onFilterChange(pendingFilters);
+    onFilterChange(apiFilters);
     onSurveyTypeChange(pendingSurveyType);
     setIsOpen(false);
   };
@@ -208,16 +244,43 @@ export function DemographicFilters({
     delete newFilters[key];
     setActiveFilters(newFilters);
     setPendingFilters(newFilters);
-    onFilterChange(newFilters);
+
+    // Create a new filters object for the API
+    const apiFilters: Record<string, any> = {};
+
+    // Handle age range filter
+    if (newFilters.ageMin !== undefined || newFilters.ageMax !== undefined) {
+      apiFilters.Q100 = {
+        gte: Number(newFilters.ageMin) || 0,
+        lte: Number(newFilters.ageMax) || 90,
+      };
+    }
+
+    // Copy other filters
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (key !== "ageMin" && key !== "ageMax" && value !== undefined) {
+        apiFilters[key] = value;
+      }
+    });
+
+    // Log the filters being sent to the API
+    console.log("Removing filter, new filters:", apiFilters);
+
+    onFilterChange(apiFilters);
   };
 
   const getFilterLabel = (
     key: keyof DemographicFiltersState,
-    value: string | string[]
+    value: string | string[] | number
   ) => {
+    // Don't show age filter if it's at default values
+    if (key === "ageMin" && value === 0) return null;
+    if (key === "ageMax" && value === 90) return null;
+
     const labels: Record<string, string> = {
       ageMin: "Age Min",
       ageMax: "Age Max",
+      Q100: "Age Range",
       income: "Income",
       gender: "Gender",
       ethnicity: "Ethnicity",
@@ -248,12 +311,19 @@ export function DemographicFilters({
     } else if (key === "neighborhood") {
       const neighborhood = NEIGHBORHOOD_DATA.find((n) => n.value === value);
       if (neighborhood) displayValue = neighborhood.label;
+    } else if (key === "Q100" && typeof value === "object") {
+      const ageRange = value as { gte: number; lte: number };
+      displayValue = `${ageRange.gte}-${ageRange.lte} years`;
     }
 
     return `${labels[key]}: ${displayValue}`;
   };
 
   const activeFiltersCount = Object.keys(activeFilters).filter((key) => {
+    // Don't count age filters if they're at default values
+    if (key === "ageMin" && activeFilters[key] === 0) return false;
+    if (key === "ageMax" && activeFilters[key] === 90) return false;
+
     // Only count one location filter at a time
     if (["district", "region", "area", "neighborhood"].includes(key)) {
       return (
@@ -413,11 +483,14 @@ export function DemographicFilters({
                     <input
                       type="number"
                       min="0"
-                      max="120"
-                      value={pendingFilters.ageMin || ""}
-                      onChange={(e) =>
-                        handleFilterChange("ageMin", e.target.value)
-                      }
+                      max="90"
+                      value={pendingFilters.ageMin ?? ""}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (!isNaN(value)) {
+                          handleFilterChange("ageMin", value);
+                        }
+                      }}
                       disabled={getFilterDisabledState("ageMin")}
                       className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       placeholder="Min age"
@@ -427,11 +500,14 @@ export function DemographicFilters({
                     <input
                       type="number"
                       min="0"
-                      max="120"
-                      value={pendingFilters.ageMax || ""}
-                      onChange={(e) =>
-                        handleFilterChange("ageMax", e.target.value)
-                      }
+                      max="90"
+                      value={pendingFilters.ageMax ?? ""}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        if (!isNaN(value)) {
+                          handleFilterChange("ageMax", value);
+                        }
+                      }}
                       disabled={getFilterDisabledState("ageMax")}
                       className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                       placeholder="Max age"
@@ -440,10 +516,10 @@ export function DemographicFilters({
                 </div>
                 <Slider
                   min={0}
-                  max={120}
+                  max={90}
                   value={[
-                    pendingFilters.ageMin ? Number(pendingFilters.ageMin) : 0,
-                    pendingFilters.ageMax ? Number(pendingFilters.ageMax) : 120,
+                    pendingFilters.ageMin ?? 0,
+                    pendingFilters.ageMax ?? 90,
                   ]}
                   onValueChange={handleAgeRangeChange}
                   step={1}
@@ -1524,11 +1600,15 @@ export function DemographicFilters({
       </Dialog>
       {activeFiltersCount > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          {Object.entries(activeFilters).map(
-            ([key, value]) =>
-              value && (
+          {Object.entries(activeFilters).map(([key, value]) => {
+            const label = getFilterLabel(
+              key as keyof DemographicFiltersState,
+              value
+            );
+            return (
+              label && (
                 <Badge key={key} variant="secondary" className="gap-1">
-                  {getFilterLabel(key as keyof DemographicFiltersState, value)}
+                  {label}
                   <button
                     onClick={() =>
                       removeFilter(key as keyof DemographicFiltersState)
@@ -1539,7 +1619,8 @@ export function DemographicFilters({
                   </button>
                 </Badge>
               )
-          )}
+            );
+          })}
         </div>
       )}
     </div>
