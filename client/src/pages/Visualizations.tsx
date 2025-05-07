@@ -51,6 +51,7 @@ interface Section {
   id: string;
   title: string;
   description: string;
+  icon: string;
 }
 
 const sections: Section[] = [
@@ -58,22 +59,26 @@ const sections: Section[] = [
     id: "overview",
     title: "Overview",
     description: "Key metrics and overall survey results",
+    icon: "📊",
   },
   {
     id: "quality",
     title: "Quality of Life",
     description:
       "Insights into Nashville residents' quality of life and equity",
+    icon: "🏠",
   },
   {
     id: "priorities",
     title: "City Priorities",
     description: "Analysis of city priorities and performance ratings",
+    icon: "🎯",
   },
   {
     id: "demographics",
     title: "Demographics",
     description: "Demographic breakdown of survey respondents",
+    icon: "👥",
   },
 ];
 
@@ -359,30 +364,38 @@ const SurveyDashboard: React.FC = () => {
       <div className="w-full max-w-[95vw] mx-auto px-2 sm:px-4 py-4 sm:py-6">
         <div className="flex flex-col gap-4 sm:gap-6">
           <div className="flex justify-center w-full">
-            <div className="w-full sm:max-w-fit">
-              <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 p-1 bg-white rounded-full shadow-sm border border-gray-100">
+            <div className="w-full max-w-4xl">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-3">
                 {sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => setActiveSection(section.id)}
-                    className={`relative px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full transition-all duration-200 whitespace-nowrap text-[clamp(0.625rem,2vw,0.875rem)] ${
+                    className={`relative group p-2.5 sm:p-3 rounded-lg transition-all duration-200 ${
                       activeSection === section.id
-                        ? "bg-[var(--brand-blue)] text-white"
-                        : "text-gray-600 hover:text-[var(--brand-blue)] hover:bg-gray-50"
+                        ? "bg-[var(--brand-blue)] text-white shadow-md shadow-[var(--brand-blue)]/20"
+                        : "bg-white text-gray-600 hover:bg-gray-50 hover:text-[var(--brand-blue)] border border-gray-100"
                     }`}
                   >
-                    <div className="flex items-center gap-1 sm:gap-2">
-                      <span className="font-medium">{section.title}</span>
+                    <div className="flex flex-col items-center gap-1 sm:gap-1.5">
+                      <span className="text-xl sm:text-2xl">
+                        {section.icon}
+                      </span>
+                      <span className="font-semibold text-xs sm:text-sm">
+                        {section.title}
+                      </span>
                       <span
-                        className={`text-[clamp(0.5rem,1.5vw,0.75rem)] hidden [@media(min-width:1618px)]:inline ${
+                        className={`text-[10px] sm:text-xs text-center min-h-[2.5em] leading-tight ${
                           activeSection === section.id
                             ? "text-blue-100"
-                            : "text-gray-400"
+                            : "text-gray-400 group-hover:text-gray-500"
                         }`}
                       >
                         {section.description}
                       </span>
                     </div>
+                    {activeSection === section.id && (
+                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 bg-[var(--brand-blue)] rounded-full" />
+                    )}
                   </button>
                 ))}
               </div>
