@@ -5,6 +5,7 @@ import SurveyDashboard from "./pages/Visualizations";
 import { NeighborhoodBreakdown } from "./pages/NeighborhoodBreakdown";
 import { PDFProvider } from "./contexts/PDFContext";
 import { PDFDownloadButton } from "./components/PDFDownloadButton";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           </Route>
         </Routes>
         <PDFDownloadButton />
+        <Analytics />
       </Router>
     </PDFProvider>
   );
