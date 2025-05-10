@@ -1,5 +1,6 @@
 import { Navbar } from "../Navbar";
 import { Outlet } from "react-router-dom";
+import { MobileNotification } from "../MobileNotification";
 
 const SITE_VERSION = "1.0";
 
@@ -15,6 +16,9 @@ export function Layout() {
       <main className="flex-1 overflow-auto pt-16 pb-20">
         <Outlet />
       </main>
+
+      {/* Mobile Notification */}
+      <MobileNotification />
 
       {/* Fixed Footer */}
       <footer className="absolute bottom-0 w-full bg-white border-t border-gray-200 z-20">
