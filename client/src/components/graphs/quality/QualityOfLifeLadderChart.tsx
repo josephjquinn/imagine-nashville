@@ -15,7 +15,7 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
   data,
   graphId,
   title = "Quality of Life Ladder Averages",
-  subtitle = "Average ladder step over time",
+  subtitle = "If life were a ladder with 10 steps, which step would you place yourself on today?",
 }) => {
   // Check if we have valid data for either chart
   const hasValidData = data.some(
@@ -105,12 +105,10 @@ const QualityOfLifeLadderChart: React.FC<QualityOfLifeLadderChartProps> = ({
       nameGap: 50,
       nameTextStyle: {
         fontSize: 14,
-        fontWeight: "bold",
       },
       axisLabel: {
         formatter: (value: number) => value.toFixed(1),
         fontSize: 14,
-        fontWeight: "bold",
         margin: 15,
       },
       axisLine: {
