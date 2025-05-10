@@ -3,6 +3,7 @@ import { GenderPieChart } from "../components/graphs/demographics/GenderPieChart
 import { EthnicityPieChart } from "../components/graphs/demographics/EthnicityPieChart";
 import { AgeHistogramChart } from "../components/graphs/demographics/AgeHistogramChart";
 import { PriorityPerformanceChart } from "../components/graphs/priorities/PriorityPerformanceChart";
+import { Loading } from "../components/ui/loading";
 // import { PriorityQuadrantChart } from "../components/graphs/priorities/PriorityQuadrantChart";
 import { BelongingBarChart } from "../components/graphs/overview/BelongingPieChart";
 import { InclusionRatingsChart } from "../components/graphs/priorities/InclusionRatingsChart";
@@ -94,7 +95,7 @@ const SurveyDashboard: React.FC = () => {
 
   const renderSection = (sectionId: string) => {
     if (isLoading) {
-      return <div className="text-center py-8">Loading...</div>;
+      return <Loading />;
     }
 
     switch (sectionId) {
