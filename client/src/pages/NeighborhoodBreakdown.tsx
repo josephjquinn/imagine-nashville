@@ -12,6 +12,7 @@ import {
 } from "@/components/filters/DemographicFilters";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Loading } from "../components/ui/loading";
 
 type QuestionType = "mobility" | "housing" | "education";
 
@@ -75,17 +76,6 @@ export const NeighborhoodBreakdown: React.FC = () => {
 
     return `${labels[key]}: ${displayValue}`;
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading survey data...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -168,7 +158,9 @@ export const NeighborhoodBreakdown: React.FC = () => {
         )}
 
         <div className="space-y-4 sm:space-y-8 mt-4 sm:mt-8">
-          {selectedType === "mobility" ? (
+          {isLoading ? (
+            <Loading />
+          ) : selectedType === "mobility" ? (
             <>
               <section>
                 <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl overflow-hidden">

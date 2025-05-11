@@ -3,6 +3,7 @@ import { Layout } from "./components/layout/Layout";
 import { Home } from "./pages/Home";
 import SurveyDashboard from "./pages/Visualizations";
 import { NeighborhoodBreakdown } from "./pages/NeighborhoodBreakdown";
+import { Reports } from "./pages/Reports";
 import { PDFProvider } from "./contexts/PDFContext";
 import { PDFDownloadButton } from "./components/PDFDownloadButton";
 import { Analytics } from "@vercel/analytics/react";
@@ -19,6 +20,7 @@ function App() {
               path="/neighborhood-breakdown"
               element={<NeighborhoodBreakdown />}
             />
+            <Route path="/reports" element={<Reports />} />
           </Route>
         </Routes>
         <PDFDownloadButton />
