@@ -33,6 +33,11 @@ export function Home() {
                 <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
               </Button>
             </Link>
+            <Link to="/reports">
+              <Button className="w-full sm:w-auto bg-[var(--brand-blue)] text-white text-base sm:text-lg tracking-wider font-bold px-8 sm:px-14 py-4 sm:py-7 rounded-none hover:bg-[#E94E3C] transition-all duration-200 flex items-center justify-center gap-2 uppercase">
+                VIEW REPORTS <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+              </Button>
+            </Link>
             <a
               href="https://imaginenashville.org/"
               target="_blank"
