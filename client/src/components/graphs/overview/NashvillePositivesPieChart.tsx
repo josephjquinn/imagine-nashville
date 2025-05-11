@@ -21,8 +21,8 @@ export const NashvillePositivesPieChart: React.FC<
     let count = 0;
 
     data.forEach((response) => {
-      // Use Q230_1 for public survey and Q230_2 for formal survey
-      const value = response["Q230_1"] || response["Q230_2"];
+      // Use Q230_1 for public survey
+      const value = response["Q230_1"];
 
       if (value !== undefined && value !== null && value !== "") {
         const numValue = Number(value);
@@ -50,20 +50,6 @@ export const NashvillePositivesPieChart: React.FC<
   }
 
   const option: EChartsOption = {
-    title: {
-      text: title,
-      left: "center",
-      textStyle: {
-        fontSize: 16,
-        color: "#374151",
-      },
-      subtext:
-        "Percentage of things that are positive in Nashville (Mean Score)",
-      subtextStyle: {
-        fontSize: 12,
-        color: "#6b7280",
-      },
-    },
     tooltip: {
       trigger: "item",
       formatter: function (params: any) {
@@ -124,8 +110,8 @@ export const NashvillePositivesPieChart: React.FC<
       option={option}
       style={{ height: "400px" }}
       graphId={graphId}
-      title="What Makes Nashville Great"
-      subtitle="Top positive aspects of living in Nashville"
+      title="Quality of Life in Nashville"
+      subtitle="What percentage of aspects of life in Nashville would you classify as positive?"
     />
   );
 };
