@@ -15,7 +15,7 @@ interface NashvillePositivesPieChartProps {
 
 export const NashvillePositivesPieChart: React.FC<
   NashvillePositivesPieChartProps
-> = ({ data, graphId, title = "Positive Sentiment in Nashville" }) => {
+> = ({ data, graphId }) => {
   const processedData = useMemo(() => {
     let total = 0;
     let count = 0;
