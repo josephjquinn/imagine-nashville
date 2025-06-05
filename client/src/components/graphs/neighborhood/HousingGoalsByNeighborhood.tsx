@@ -207,15 +207,6 @@ export const HousingGoalsByNeighborhoodChart: React.FC<HousingGoalsProps> = ({
       secondPriorityPercentages,
     });
 
-    // Log sample data for debugging
-    if (data.length > 0) {
-      console.log("Sample response data:", {
-        Area_NEW: data[0].Area_NEW,
-        Q605: data[0].Q605,
-        Q610: data[0].Q610,
-      });
-    }
-
     // Find top two goals based on first priority
     const sortedGoals = Object.entries(goalValues)
       .sort(([, a], [, b]) => b - a)

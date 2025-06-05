@@ -35,8 +35,6 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const { addGraph, removeGraph } = usePDF();
   const isMobile = useIsMobile();
-  console.log("BaseGraph - isMobile:", isMobile);
-  console.log("BaseGraph - incoming option.legend:", option.legend);
 
   // Standardized title and subtitle styles
   const TITLE_STYLE = {
@@ -171,10 +169,6 @@ export const BaseGraph: React.FC<BaseGraphProps> = ({
 
   useEffect(() => {
     if (chartInstance.current) {
-      console.log(
-        "BaseGraph - setting option with legend:",
-        mergedOption.legend
-      );
       chartInstance.current.setOption(mergedOption);
     }
   }, [mergedOption]);

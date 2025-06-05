@@ -180,26 +180,6 @@ export const MobilityGoalsByNeighborhoodChart: React.FC<MobilityGoalsProps> = ({
       goalValues[goalId] = firstPercentage;
     });
 
-    // Debug output
-    console.log("Data processing summary:", {
-      totalResponses: data.length,
-      totalFirstPriorityResponses,
-      totalSecondPriorityResponses,
-      firstPriorityTotals,
-      secondPriorityTotals,
-      firstPriorityPercentages,
-      secondPriorityPercentages,
-    });
-
-    // Log sample data for debugging
-    if (data.length > 0) {
-      console.log("Sample response data:", {
-        Area_NEW: data[0].Area_NEW,
-        Q630: data[0].Q630,
-        Q635: data[0].Q635,
-      });
-    }
-
     // Find top two goals based on first priority
     const sortedGoals = Object.entries(goalValues)
       .sort(([, a], [, b]) => b - a)
