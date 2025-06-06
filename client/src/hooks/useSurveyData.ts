@@ -121,8 +121,8 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
 
   if (filters.children && filters.children.length > 0) {
     const childrenMap: Record<string, string> = {
-      "yes": "1",
-      "no": "2"
+      "yes": "2",
+      "no": "1"
     };
     queryFilters.Q920 = { in: filters.children.map(children => childrenMap[children]) };
   }
