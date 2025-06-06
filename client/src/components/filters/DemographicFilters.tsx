@@ -58,25 +58,44 @@ export interface DemographicFiltersState {
     gte: number;
     lte: number;
   };
-  income?: string;
-  gender?: string;
-  ethnicity?: string;
-  education?: string;
-  employment?: string;
-  housing?: string;
-  maritalStatus?: string;
-  children?: string;
-  politicalAffiliation?: string;
-  religiousAffiliation?: string;
-  sexualOrientation?: string;
+  income?: string[];
+  gender?: string[];
+  ethnicity?: string[];
+  education?: string[];
+  employment?: string[];
+  housing?: string[];
+  maritalStatus?: string[];
+  children?: string[];
+  politicalAffiliation?: string[];
+  religiousAffiliation?: string[];
+  sexualOrientation?: string[];
   district?: string;
-  region?: string;
-  area?: string;
-  neighborhood?: string;
+  region?: string[];
+  area?: string[];
+  neighborhood?: string[];
   districts?: string[];
   address?: string;
   zipCode?: string;
 }
+
+type ArrayFilterKey =
+  | "income"
+  | "gender"
+  | "ethnicity"
+  | "education"
+  | "employment"
+  | "housing"
+  | "maritalStatus"
+  | "children"
+  | "politicalAffiliation"
+  | "religiousAffiliation"
+  | "sexualOrientation"
+  | "region"
+  | "area"
+  | "neighborhood"
+  | "districts";
+
+type NumberFilterKey = "ageMin" | "ageMax";
 
 const FILTER_SECTIONS = [
   {
@@ -174,7 +193,40 @@ export function DemographicFilters({
     key: keyof DemographicFiltersState,
     value: string | number
   ) => {
-    setPendingFilters((prev) => ({ ...prev, [key]: value }));
+    setPendingFilters((prev) => {
+      const newFilters = { ...prev };
+
+      if (key === "ageMin" || key === "ageMax") {
+        newFilters[key] = value as number;
+        return newFilters;
+      }
+
+      if (key === "Q100") {
+        return newFilters; // Skip array handling for Q100
+      }
+
+      if (key === "district" || key === "address" || key === "zipCode") {
+        newFilters[key] = value as string;
+        return newFilters;
+      }
+
+      const currentValues = Array.isArray(prev[key])
+        ? (prev[key] as string[])
+        : [];
+
+      if (currentValues.includes(value as string)) {
+        const filteredValues = currentValues.filter((v) => v !== value);
+        if (filteredValues.length === 0) {
+          delete newFilters[key];
+        } else {
+          newFilters[key] = filteredValues;
+        }
+      } else {
+        newFilters[key] = [...currentValues, value as string];
+      }
+
+      return newFilters;
+    });
   };
 
   const handleDistrictSelect = (district: string) => {
@@ -211,22 +263,26 @@ export function DemographicFilters({
   };
 
   const handleLocationChange = (
-    type: "district" | "region" | "area" | "neighborhood",
+    type: "region" | "area" | "neighborhood",
     value: string
   ) => {
-    if (type === "district") {
-      handleDistrictSelect(value);
-      return;
-    }
-
     setPendingFilters((prev) => {
       const newFilters = { ...prev };
-      delete newFilters.district;
-      delete newFilters.region;
-      delete newFilters.area;
-      delete newFilters.neighborhood;
-      delete newFilters.districts;
-      newFilters[type] = value;
+      const currentValues = Array.isArray(prev[type])
+        ? (prev[type] as string[])
+        : [];
+
+      if (currentValues.includes(value)) {
+        const filteredValues = currentValues.filter((v) => v !== value);
+        if (filteredValues.length === 0) {
+          delete newFilters[type];
+        } else {
+          newFilters[type] = filteredValues;
+        }
+      } else {
+        newFilters[type] = [...currentValues, value];
+      }
+
       return newFilters;
     });
   };
@@ -348,7 +404,21 @@ export function DemographicFilters({
 
     let displayValue = value;
     if (Array.isArray(value)) {
-      displayValue = value.join(", ");
+      if (key === "region") {
+        displayValue = value
+          .map((v) => REGION_DATA.find((r) => r.value === v)?.label || v)
+          .join(", ");
+      } else if (key === "area") {
+        displayValue = value
+          .map((v) => AREA_DATA.find((a) => a.value === v)?.label || v)
+          .join(", ");
+      } else if (key === "neighborhood") {
+        displayValue = value
+          .map((v) => NEIGHBORHOOD_DATA.find((n) => n.value === v)?.label || v)
+          .join(", ");
+      } else {
+        displayValue = value.join(", ");
+      }
     } else if (key === "region") {
       const region = REGION_DATA.find((r) => r.value === value);
       if (region) displayValue = region.label;
@@ -381,6 +451,15 @@ export function DemographicFilters({
     }
     return true;
   }).length;
+
+  const isFilterSelected = (
+    key: keyof DemographicFiltersState,
+    value: string
+  ): boolean => {
+    const currentValues = pendingFilters[key];
+    if (!currentValues) return false;
+    return Array.isArray(currentValues) ? currentValues.includes(value) : false;
+  };
 
   const renderSurveyTypeSection = () => (
     <div className="space-y-4">
@@ -569,7 +648,7 @@ export function DemographicFilters({
                     disabled={getFilterDisabledState("region")}
                     className={cn(
                       "p-2 text-sm rounded-lg border-2 transition-colors",
-                      pendingFilters.region === region.value
+                      isFilterSelected("region", region.value)
                         ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                         : "border-muted hover:border-[var(--brand-blue)]/50",
                       getFilterDisabledState("region") &&
@@ -593,7 +672,7 @@ export function DemographicFilters({
                     disabled={getFilterDisabledState("area")}
                     className={cn(
                       "p-2 text-sm rounded-lg border-2 transition-colors",
-                      pendingFilters.area === area.value
+                      isFilterSelected("area", area.value)
                         ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                         : "border-muted hover:border-[var(--brand-blue)]/50",
                       getFilterDisabledState("area") &&
@@ -621,7 +700,7 @@ export function DemographicFilters({
                     disabled={getFilterDisabledState("neighborhood")}
                     className={cn(
                       "p-2 text-sm rounded-lg border-2 transition-colors",
-                      pendingFilters.neighborhood === neighborhood.value
+                      isFilterSelected("neighborhood", neighborhood.value)
                         ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                         : "border-muted hover:border-[var(--brand-blue)]/50",
                       getFilterDisabledState("neighborhood") &&
@@ -724,7 +803,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("gender")}
               className={cn(
                 "p-2 rounded-lg border-2 transition-colors",
-                pendingFilters.gender === gender
+                isFilterSelected("gender", gender)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("gender") &&
@@ -755,7 +834,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("ethnicity")}
               className={cn(
                 "p-2 rounded-lg border-2 transition-colors",
-                pendingFilters.ethnicity === value
+                isFilterSelected("ethnicity", value)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("ethnicity") &&
@@ -784,7 +863,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("education")}
               className={cn(
                 "p-2 rounded-lg border-2 transition-colors",
-                pendingFilters.education === value
+                isFilterSelected("education", value)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("education") &&
@@ -815,7 +894,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("income")}
               className={cn(
                 "p-2 text-sm rounded-lg border-2 transition-colors",
-                pendingFilters.income === value
+                isFilterSelected("income", value)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("income") &&
@@ -842,7 +921,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("housing")}
               className={cn(
                 "p-2 rounded-lg border-2 transition-colors",
-                pendingFilters.housing === status
+                isFilterSelected("housing", status)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("housing") &&
@@ -868,7 +947,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("children")}
               className={cn(
                 "p-2 rounded-lg border-2 transition-colors",
-                pendingFilters.children === value
+                isFilterSelected("children", value)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("children") &&
@@ -897,7 +976,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("maritalStatus")}
               className={cn(
                 "p-2 rounded-lg border-2 transition-colors",
-                pendingFilters.maritalStatus === value
+                isFilterSelected("maritalStatus", value)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("maritalStatus") &&
@@ -927,7 +1006,7 @@ export function DemographicFilters({
                 disabled={getFilterDisabledState("politicalAffiliation")}
                 className={cn(
                   "p-2 text-sm rounded-lg border-2 transition-colors",
-                  pendingFilters.politicalAffiliation === affiliation
+                  isFilterSelected("politicalAffiliation", affiliation)
                     ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                     : "border-muted hover:border-[var(--brand-blue)]/50",
                   getFilterDisabledState("politicalAffiliation") &&
@@ -954,7 +1033,7 @@ export function DemographicFilters({
                 disabled={getFilterDisabledState("religiousAffiliation")}
                 className={cn(
                   "p-2 text-sm rounded-lg border-2 transition-colors",
-                  pendingFilters.religiousAffiliation === affiliation
+                  isFilterSelected("religiousAffiliation", affiliation)
                     ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                     : "border-muted hover:border-[var(--brand-blue)]/50",
                   getFilterDisabledState("religiousAffiliation") &&
@@ -983,7 +1062,7 @@ export function DemographicFilters({
               disabled={getFilterDisabledState("sexualOrientation")}
               className={cn(
                 "p-2 text-sm rounded-lg border-2 transition-colors",
-                pendingFilters.sexualOrientation === value
+                isFilterSelected("sexualOrientation", value)
                   ? "bg-[var(--brand-blue)] text-white border-[var(--brand-blue)]"
                   : "border-muted hover:border-[var(--brand-blue)]/50",
                 getFilterDisabledState("sexualOrientation") &&
