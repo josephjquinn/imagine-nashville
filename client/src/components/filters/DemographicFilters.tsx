@@ -397,6 +397,16 @@ export function DemographicFilters({
         displayValue = value
           .map((v) => NEIGHBORHOOD_DATA.find((n) => n.value === v)?.label || v)
           .join(", ");
+      } else if (key === "ethnicity") {
+        const ethnicityMap: Record<string, string> = {
+          "1": "Hispanic",
+          "2": "Kurdish",
+          "3": "White",
+          "4": "Black",
+          "5": "Asian/Pacific",
+          "6": "Other",
+        };
+        displayValue = value.map((v) => ethnicityMap[v] || v).join(", ");
       } else {
         displayValue = value.join(", ");
       }
@@ -409,6 +419,16 @@ export function DemographicFilters({
     } else if (key === "neighborhood") {
       const neighborhood = NEIGHBORHOOD_DATA.find((n) => n.value === value);
       if (neighborhood) displayValue = neighborhood.label;
+    } else if (key === "ethnicity") {
+      const ethnicityMap: Record<string, string> = {
+        "1": "Hispanic",
+        "2": "Kurdish",
+        "3": "White",
+        "4": "Black",
+        "5": "Asian/Pacific",
+        "6": "Other",
+      };
+      displayValue = ethnicityMap[value as string] || value;
     } else if (key === "Q100" && typeof value === "object") {
       const ageRange = value as { gte: number; lte: number };
       displayValue = `${ageRange.gte}-${ageRange.lte} years`;
