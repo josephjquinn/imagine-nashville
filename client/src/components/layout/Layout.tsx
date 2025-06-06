@@ -2,7 +2,7 @@ import { Navbar } from "../Navbar";
 import { Outlet } from "react-router-dom";
 import { MobileNotification } from "../MobileNotification";
 
-const SITE_VERSION = "1.1";
+const SITE_VERSION = "1.2";
 
 export function Layout() {
   return (

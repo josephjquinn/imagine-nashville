@@ -17,12 +17,10 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
   const [graphs, setGraphs] = useState<Map<string, HTMLElement>>(new Map());
 
   const addGraph = useCallback((graphId: string, element: HTMLElement) => {
-    console.log(`Adding graph: ${graphId}`);
     setGraphs((prev) => new Map(prev).set(graphId, element));
   }, []);
 
   const removeGraph = useCallback((graphId: string) => {
-    console.log(`Removing graph: ${graphId}`);
     setGraphs((prev) => {
       const newGraphs = new Map(prev);
       newGraphs.delete(graphId);
@@ -36,7 +34,6 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    console.log(`Starting PDF generation with ${graphs.size} graphs`);
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
@@ -49,8 +46,6 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
 
     for (const [graphId, element] of graphs) {
       try {
-        console.log(`Processing graph: ${graphId}`);
-
         // Get the ECharts instance
         const chartInstance = echarts.getInstanceByDom(element);
         if (!chartInstance) {
@@ -95,8 +90,6 @@ export const PDFProvider: React.FC<{ children: React.ReactNode }> = ({
         pdf.addImage(dataUrl, "PNG", margin, currentY, imgWidth, imgHeight);
         currentY += imgHeight + 10; // Add some spacing between graphs
         successfulCaptures++;
-
-        console.log(`Successfully added graph to PDF: ${graphId}`);
       } catch (error) {
         console.error(`Error processing graph ${graphId}:`, error);
       }

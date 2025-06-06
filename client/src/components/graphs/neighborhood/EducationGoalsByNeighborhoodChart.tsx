@@ -194,26 +194,6 @@ export const EducationGoalsByNeighborhoodChart: React.FC<
       goalValues[goalId] = firstPercentage;
     });
 
-    // Debug output
-    console.log("Data processing summary:", {
-      totalResponses: data.length,
-      totalFirstPriorityResponses,
-      totalSecondPriorityResponses,
-      firstPriorityTotals,
-      secondPriorityTotals,
-      firstPriorityPercentages,
-      secondPriorityPercentages,
-    });
-
-    // Log sample data for debugging
-    if (data.length > 0) {
-      console.log("Sample response data:", {
-        Area_NEW: data[0].Area_NEW,
-        Q650: data[0].Q650,
-        Q655: data[0].Q655,
-      });
-    }
-
     // Find top two goals based on first priority
     const sortedGoals = Object.entries(goalValues)
       .sort(([, a], [, b]) => b - a)

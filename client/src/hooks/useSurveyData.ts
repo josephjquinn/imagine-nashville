@@ -34,19 +34,19 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
     }
   }
 
-  if (filters.region) {
-    queryFilters.Region_NEW = filters.region;
+  if (filters.region && filters.region.length > 0) {
+    queryFilters.Region_NEW = { in: filters.region };
   }
 
-  if (filters.area) {
-    queryFilters.Area_NEW = filters.area;
+  if (filters.area && filters.area.length > 0) {
+    queryFilters.Area_NEW = { in: filters.area };
   }
 
-  if (filters.neighborhood) {
-    queryFilters.Neighborhood_New = filters.neighborhood;
+  if (filters.neighborhood && filters.neighborhood.length > 0) {
+    queryFilters.Neighborhood_New = { in: filters.neighborhood };
   }
 
-  if (filters.income) {
+  if (filters.income && filters.income.length > 0) {
     const incomeMap: Record<string, string> = {
       "under-15k": "1",
       "15k-25k": "2",
@@ -57,24 +57,24 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
       "200k+": "7",
       "prefer-not": "8"
     };
-    queryFilters.Q987 = incomeMap[filters.income];
+    queryFilters.Q987 = { in: filters.income.map(income => incomeMap[income]) };
   }
 
-  if (filters.gender) {
+  if (filters.gender && filters.gender.length > 0) {
     const genderMap: Record<string, string> = {
       "male": "1",
       "female": "2",
       "other": "3",
       "prefer-not": "4"
     };
-    queryFilters.Q105 = genderMap[filters.gender];
+    queryFilters.Q105 = { in: filters.gender.map(gender => genderMap[gender]) };
   }
 
-  if (filters.ethnicity) {
-    queryFilters.HQ130 = filters.ethnicity;
+  if (filters.ethnicity && filters.ethnicity.length > 0) {
+    queryFilters.HQ130 = { in: filters.ethnicity };
   }
 
-  if (filters.education) {
+  if (filters.education && filters.education.length > 0) {
     const educationMap: Record<string, string> = {
       "less-than-high-school": "1",
       "high-school": "2",
@@ -83,29 +83,29 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
       "post-graduate": "5",
       "prefer-not": "6"
     };
-    queryFilters.Q935 = educationMap[filters.education];
+    queryFilters.Q935 = { in: filters.education.map(edu => educationMap[edu]) };
   }
 
-  if (filters.employment) {
+  if (filters.employment && filters.employment.length > 0) {
     const employmentMap: Record<string, string> = {
       "employed": "1",
       "unemployed": "2",
       "retired": "3",
       "student": "4"
     };
-    queryFilters.Q940 = employmentMap[filters.employment];
+    queryFilters.Q940 = { in: filters.employment.map(emp => employmentMap[emp]) };
   }
 
-  if (filters.housing) {
+  if (filters.housing && filters.housing.length > 0) {
     const housingMap: Record<string, string> = {
       "own": "1",
       "rent": "2",
       "other": "3"
     };
-    queryFilters.Q915 = housingMap[filters.housing];
+    queryFilters.Q915 = { in: filters.housing.map(housing => housingMap[housing]) };
   }
 
-  if (filters.maritalStatus) {
+  if (filters.maritalStatus && filters.maritalStatus.length > 0) {
     const maritalMap: Record<string, string> = {
       "married": "1",
       "separated": "2",
@@ -116,18 +116,18 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
       "living-together": "7",
       "prefer-not": "8"
     };
-    queryFilters.Q930 = maritalMap[filters.maritalStatus];
+    queryFilters.Q930 = { in: filters.maritalStatus.map(status => maritalMap[status]) };
   }
 
-  if (filters.children) {
+  if (filters.children && filters.children.length > 0) {
     const childrenMap: Record<string, string> = {
-      "yes": "1",
-      "no": "2"
+      "yes": "2",
+      "no": "1"
     };
-    queryFilters.Q920 = childrenMap[filters.children];
+    queryFilters.Q920 = { in: filters.children.map(children => childrenMap[children]) };
   }
 
-  if (filters.politicalAffiliation) {
+  if (filters.politicalAffiliation && filters.politicalAffiliation.length > 0) {
     const politicalMap: Record<string, string> = {
       "republican": "1",
       "democrat": "2",
@@ -135,10 +135,10 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
       "other": "4",
       "prefer-not": "5"
     };
-    queryFilters.Q955 = politicalMap[filters.politicalAffiliation];
+    queryFilters.Q955 = { in: filters.politicalAffiliation.map(affil => politicalMap[affil]) };
   }
 
-  if (filters.religiousAffiliation) {
+  if (filters.religiousAffiliation && filters.religiousAffiliation.length > 0) {
     const religiousMap: Record<string, string> = {
       "protestant": "1",
       "catholic": "2",
@@ -151,10 +151,10 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
       "not-sure": "9",
       "prefer-not": "10"
     };
-    queryFilters.Q990 = religiousMap[filters.religiousAffiliation];
+    queryFilters.Q990 = { in: filters.religiousAffiliation.map(affil => religiousMap[affil]) };
   }
 
-  if (filters.sexualOrientation) {
+  if (filters.sexualOrientation && filters.sexualOrientation.length > 0) {
     const orientationMap: Record<string, string> = {
       "straight": "1",
       "gay": "2",
@@ -163,7 +163,7 @@ const mapFiltersToQuery = (filters: DemographicFiltersState): FilterOptions => {
       "not-sure": "5",
       "prefer-not": "6"
     };
-    queryFilters.Q980 = orientationMap[filters.sexualOrientation];
+    queryFilters.Q980 = { in: filters.sexualOrientation.map(orient => orientationMap[orient]) };
   }
 
   return queryFilters;
