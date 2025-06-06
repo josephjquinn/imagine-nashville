@@ -78,25 +78,6 @@ export interface DemographicFiltersState {
   zipCode?: string;
 }
 
-type ArrayFilterKey =
-  | "income"
-  | "gender"
-  | "ethnicity"
-  | "education"
-  | "employment"
-  | "housing"
-  | "maritalStatus"
-  | "children"
-  | "politicalAffiliation"
-  | "religiousAffiliation"
-  | "sexualOrientation"
-  | "region"
-  | "area"
-  | "neighborhood"
-  | "districts";
-
-type NumberFilterKey = "ageMin" | "ageMax";
-
 const FILTER_SECTIONS = [
   {
     id: "survey-type",
